@@ -1,0 +1,18 @@
+# Admin lives at /admin via Apache Alias-style setup. Since /admin is OUTSIDE
+# the document root in the recommended deployment, this file applies only when
+# /admin is symlinked or aliased into /public. Stops directory listing and
+# allows PHP to execute directly (rather than going through index.php).
+Options -Indexes
+DirectoryIndex index.php
+
+# Allow PHP files in /admin to run directly (don't route through front controller)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule \.php$ - [L]
+</IfModule>
+
+# Deny access to bootstrap/header/footer partials directly
+<FilesMatch "^_">
+    Require all denied
+</FilesMatch>

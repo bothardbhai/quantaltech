@@ -1,0 +1,209 @@
+# =============================================================================
+
+# Quantal AI — Apache configuration
+
+# =============================================================================
+
+# Place document root at this directory (/public). The /admin folder lives at
+
+# /public/admin/ — admin PHP files are served directly (the rule below picks
+
+# them up because they're real files).
+
+# Everything outside /public/ (config/, core/, pages/, partials/, db/) is not
+
+# web-accessible.
+
+# =============================================================================
+
+# Disable directory browsing
+
+Options -Indexes -MultiViews
+
+# Default charset
+
+AddDefaultCharset UTF-8
+
+# -----------------------------------------------------------------------------
+
+# URL rewriting
+
+# -----------------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS and redirect www to non-www
+    # RewriteCond %{HTTPS} off [OR]
+    # RewriteCond %{HTTP_HOST} ^www\.quantaltech\.ai$ [NC]
+    # RewriteRule ^(.*)$ https://quantaltech.ai/$1 [R=301,L]
+
+    # ------------------------------------------------------------------
+    # 301 Redirects for old URLs
+    # ------------------------------------------------------------------
+
+    RewriteRule ^blog/voice-ai-engineering/?$ https://quantaltech.ai/blog [R=301,L]
+    RewriteRule ^blog/kyc-document-ai/?$ https://quantaltech.ai/blog [R=301,L]
+    RewriteRule ^blog/agent-automation/?$ https://quantaltech.ai/blog [R=301,L]
+
+    RewriteRule ^solutions/?$ https://quantaltech.ai/services [R=301,L]
+
+    RewriteRule ^refund-cancellation-policy/?$ https://quantaltech.ai/refund-policy [R=301,L]
+
+    RewriteRule ^blogs/?$ https://quantaltech.ai/blog [R=301,L]
+    RewriteRule ^blogs/the-human-touch-of-automation/?$ https://quantaltech.ai/blog [R=301,L]
+
+    # ------------------------------------------------------------------
+    # Recommended URL Structure Redirects
+    # ------------------------------------------------------------------
+
+    RewriteRule ^services/voice/?$ https://quantaltech.ai/services/voice-ai [R=301,L]
+    RewriteRule ^services/text/?$ https://quantaltech.ai/services/text-ai [R=301,L]
+    RewriteRule ^services/image/?$ https://quantaltech.ai/services/image-document-ai [R=301,L]
+    RewriteRule ^services/process-auto/?$ https://quantaltech.ai/services/process-automation [R=301,L]
+    RewriteRule ^hire/?$ https://quantaltech.ai/hire-ai-engineers [R=301,L]
+
+    RewriteRule ^solutions/text-ai/?$ https://quantaltech.ai/services/text-ai [R=301,L]
+    RewriteRule ^solutions/process-automation/?$ https://quantaltech.ai/services/process-automation [R=301,L]
+    RewriteRule ^solutions/voice-ai/?$ https://quantaltech.ai/services/voice-ai [R=301,L]
+
+    # ================================
+    # Custom 301 Redirects - 21-07-2026
+    # ================================
+
+    RewriteRule ^blog/voice-ai-engineering/?$ https://quantaltech.ai/blog [R=301,L]
+    RewriteRule ^blog/kyc-document-ai/?$ https://quantaltech.ai/blog [R=301,L]
+    RewriteRule ^blog/agent-automation/?$ https://quantaltech.ai/blog [R=301,L]
+
+    RewriteRule ^solutions/?$ https://quantaltech.ai/services [R=301,L]
+
+    RewriteRule ^refund-cancellation-policy/?$ https://quantaltech.ai/refund-policy [R=301,L]
+
+    RewriteRule ^blogs/?$ https://quantaltech.ai/blog [R=301,L]
+    RewriteRule ^blogs/the-human-touch-of-automation/?$ https://quantaltech.ai/blog [R=301,L]
+
+    # If the request is for an existing file or directory in /public, serve it
+    # directly (this lets /assets/css/style.css etc. work without going through
+    # index.php).
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Strip trailing slashes (except for the root) so /about/ -> /about. Avoids
+    # duplicate URLs for SEO.
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [R=301,L]
+
+    # Send everything else to the front controller
+    RewriteRule ^ index.php [L]
+
+</IfModule>
+
+# -----------------------------------------------------------------------------
+
+# HTTPS enforcement (uncomment in production once SSL is verified working)
+
+# -----------------------------------------------------------------------------
+
+# <IfModule mod_rewrite.c>
+
+# RewriteCond %{HTTPS} off
+
+# RewriteRule ^(.\*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# </IfModule>
+
+# -----------------------------------------------------------------------------
+
+# Security headers
+
+# -----------------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    # Drop server signatures
+    Header unset Server
+    Header unset X-Powered-By
+
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(woff|woff2|ttf)$">
+        Header set Access-Control-Allow-Origin "https://quantaltech.ai"
+    </FilesMatch>
+</IfModule>
+
+# -----------------------------------------------------------------------------
+
+# Cache headers — long for static assets, short for HTML
+
+# -----------------------------------------------------------------------------
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 hour"
+
+    # CSS / JS — 1 month (busted via filename if you ever need to)
+    ExpiresByType text/css                     "access plus 1 month"
+    ExpiresByType application/javascript       "access plus 1 month"
+    ExpiresByType text/javascript              "access plus 1 month"
+
+    # Images — 6 months
+    ExpiresByType image/jpeg                   "access plus 6 months"
+    ExpiresByType image/png                    "access plus 6 months"
+    ExpiresByType image/gif                    "access plus 6 months"
+    ExpiresByType image/webp                   "access plus 6 months"
+    ExpiresByType image/svg+xml                "access plus 6 months"
+    ExpiresByType image/x-icon                 "access plus 6 months"
+
+    # Fonts — 1 year
+    ExpiresByType font/woff                    "access plus 1 year"
+    ExpiresByType font/woff2                   "access plus 1 year"
+    ExpiresByType application/font-woff        "access plus 1 year"
+    ExpiresByType application/font-woff2       "access plus 1 year"
+    ExpiresByType application/x-font-ttf       "access plus 1 year"
+
+    # HTML — short (so content updates show up)
+    ExpiresByType text/html                    "access plus 0 seconds"
+
+</IfModule>
+
+# -----------------------------------------------------------------------------
+
+# Compression
+
+# -----------------------------------------------------------------------------
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/json application/xml
+    AddOutputFilterByType DEFLATE image/svg+xml application/rss+xml
+</IfModule>
+
+# -----------------------------------------------------------------------------
+
+# Block access to sensitive file types
+
+# -----------------------------------------------------------------------------
+
+<FilesMatch "(^\.|\.(env|sql|log|md|json|lock|gitignore|gitattributes|htaccess|htpasswd))$">
+Require all denied
+</FilesMatch>
+
+# Block PHP execution in uploads (defense-in-depth against malicious uploads)
+
+<IfModule mod_rewrite.c>
+    RewriteRule ^uploads/.*\.(php|phtml|phar|pl|py|jsp|asp|sh|cgi)$ - [F,L,NC]
+</IfModule>
+
+# -----------------------------------------------------------------------------
+
+# Custom error pages — let the front controller handle 404s
+
+# -----------------------------------------------------------------------------
+
+ErrorDocument 404 /index.php

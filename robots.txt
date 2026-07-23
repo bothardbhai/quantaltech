@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin/login.php
+Disallow: /search/
+Disallow: /*?
+
+Allow: /
+
+Sitemap: https://quantaltech.ai/sitemap.xml

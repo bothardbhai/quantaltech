@@ -1,0 +1,23 @@
+# Real config — copy from config.example.php and never commit
+/config/config.php
+
+# User uploads (created at runtime as YYYY-MM subdirs)
+/public/uploads/blog/*
+/public/uploads/pages/*
+!/public/uploads/blog/.gitkeep
+!/public/uploads/pages/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.iml
+
+# Logs
+*.log
+
+# Composer (not used in v1, but reserved)
+/vendor/
+composer.lock
