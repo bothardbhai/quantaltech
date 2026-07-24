@@ -63,6 +63,52 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="scroll-to-top scroll-to-target" data-target="html"><span class="fas fa-angle-up"></span></div>
 
 <header class="main-header header-style-one header-1">
+    <!-- Top Bar -->
+    <div class="header-top">
+        <div class="container">
+            <div class="header-top-inner">
+
+                <!-- Left -->
+                <div class="header-top-left">
+                    <a href="https://www.linkedin.com/company/quantal-ai" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+
+                    <a href="https://www.youtube.com/@QuantaltechAI" target="_blank" rel="noopener" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+
+                    <a href="https://www.instagram.com/quantaltech.ai/" target="_blank" rel="noopener" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="https://www.upwork.com/agencies/1866102204539548169/" target="_blank" rel="noopener" aria-label="Upwork">
+                        <i class="fa-brands fa-upwork"></i>
+                    </a>
+
+                    <a href="https://www.glassdoor.co.in/Overview/Working-at-Quantal-AI-EI_IE10895843.11,21.htm" target="_blank" rel="noopener" aria-label="Glassdoor">
+                        <i class="fa-regular fa-quotes"></i>
+                    </a>
+                </div>
+
+                <!-- Right -->
+                <div class="header-top-right">
+
+                    <a href="mailto:contact@quantaltech.ai">
+                        <i class="far fa-envelope"></i>
+                        contact@quantaltech.ai
+                    </a>
+
+                    <a href="tel:+13158093225">
+                        <i class="fas fa-phone-alt"></i>
+                        +1 315 809 3225
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
     <div class="header-lower">
         <div class="main-box">
             <div class="nav-outer">
@@ -139,7 +185,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 ?>
             </ul>
             <ul class="social-links">
-                <li><a href="https://www.linkedin.com/company/quantaltech-ai" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></li>
+                <li><a href="https://www.linkedin.com/company/quantal-ai" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></li>
             </ul>
         </nav>
     </div>

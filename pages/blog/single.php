@@ -1,16 +1,16 @@
 <?php
+
 /**
  * Public blog single-post page. Slug is in $blog_slug (set by router).
  *
  * Per-post SEO overrides flow through $page_seo so seo-head.php picks them up.
  * Falls back to title/excerpt when meta_title / meta_description are blank.
  */
-
 $slug = $GLOBALS['blog_slug'] ?? '';
 $active_page = 'blog';
 
 $post = null;
-$pdo  = db();
+$pdo = db();
 
 if ($pdo && $slug !== '') {
     try {
@@ -56,14 +56,62 @@ if ($pdo) {
     }
 }
 
+$toc = [];
+
+if (!empty($post['body_html'])) {
+    libxml_use_internal_errors(true);
+
+    $dom = new DOMDocument();
+    $dom->loadHTML('<?xml encoding="utf-8" ?>' . $post['body_html']);
+
+    $xpath = new DOMXPath($dom);
+    $headings = $xpath->query('//h1 | //h2');
+
+    foreach ($headings as $heading) {
+        $text = trim($heading->textContent);
+
+        if ($text === '') {
+            continue;
+        }
+
+        // Generate ID if not already present
+        $id = $heading->getAttribute('id');
+
+        if (empty($id)) {
+            $id = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $text), '-'));
+            $heading->setAttribute('id', $id);
+            $heading->setAttribute('style', 'scroll-margin-top:120px;');
+        }
+
+        $toc[] = [
+            'title' => $text,
+            'id' => $id,
+            'tag' => strtolower($heading->nodeName),
+        ];
+    }
+
+    // Save updated HTML with IDs
+    $body = $dom->getElementsByTagName('body')->item(0);
+
+    $updatedHtml = '';
+
+    foreach ($body->childNodes as $child) {
+        $updatedHtml .= $dom->saveHTML($child);
+    }
+
+    $post['body_html'] = $updatedHtml;
+
+    libxml_clear_errors();
+}
+
 // Wire per-post SEO into $page_seo so seo-head.php uses it
 $page_title = $post['meta_title'] !== '' ? $post['meta_title'] : $post['title'] . ' - ' . SITE_NAME;
-$page_seo['title']            = $page_title;
+$page_seo['title'] = $page_title;
 $page_seo['meta_description'] = $post['meta_description'] !== '' ? $post['meta_description'] : $post['excerpt'];
-$page_seo['meta_keywords']    = $post['meta_keywords'];
-$page_seo['og_image']         = $post['og_image']    !== '' ? $post['og_image']    : $post['featured_image'];
-$page_seo['canonical']        = (defined('SITE_URL') ? SITE_URL : '') . '/blog/' . $post['slug'];
-$page_seo['schema_json']      = $post['schema_json'];
+$page_seo['meta_keywords'] = $post['meta_keywords'];
+$page_seo['og_image'] = $post['og_image'] !== '' ? $post['og_image'] : $post['featured_image'];
+$page_seo['canonical'] = (defined('SITE_URL') ? SITE_URL : '') . '/blog/' . $post['slug'];
+$page_seo['schema_json'] = $post['schema_json'];
 ?>
 
 <!-- Page Banner -->
@@ -81,13 +129,63 @@ $page_seo['schema_json']      = $post['schema_json'];
 <section class="news-details-wrapper section-padding">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-9">
+
+            <!-- Sidebar -->
+            <div class="col-xl-4 col-lg-4">
+                <div class="service-sidebar">
+                    <div class="sidebar-widget service-sidebar-single">
+                        <div class="blog-toc-card">
+                            <div class="blog-toc-title">
+                                <div class="blog-toc-icon">
+                                    <i class="fas fa-list-ul"></i>
+                                </div>
+                                <h4>Table of Contents</h4>
+                            </div>
+
+                            <ul class="blog-toc-menu">
+                                <?php if (!empty($toc)): ?>
+                                    <?php foreach ($toc as $item): ?>
+                                        <li class="toc-<?= $item['tag']; ?>">
+                                            <a href="#<?= attr($item['id']) ?>">
+                                                <?= e($item['title']) ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+
+                        <div class="service-details-help">
+                            <div class="help-shape-1"></div>
+                            <div class="help-shape-2"></div>
+                            <h2 class="help-title">Talk to <br> us about <br> your project</h2>
+                            <div class="help-icon">
+                                <span class="lnr-icon-phone-handset"></span>
+                            </div>
+                            <div class="help-contact">
+                                <p>Need help? Talk to an AI expert</p>
+                                <a href="tel:+13158093225">+1 315 809 3225</a>
+                            </div>
+                        </div>
+
+                        <div class="sidebar-widget service-sidebar-single mt-4">
+                            <div class="service-sidebar-single-btn wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="1200m">
+                                <a href="<?= url('/contact') ?>" class="theme-btn btn-style-one d-grid">
+                                    <span class="btn-title"><span class="fas fa-paper-plane"></span> Schedule a Demo</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-8 col-lg-8">
                 <article class="news-details">
                     <ul class="post-list" style="list-style:none;padding:0;display:flex;gap:18px;color:#666;font-size:14px;margin-bottom:20px;">
                         <?php if ($post['published_at']): ?>
                             <li>
                                 <i class="fa-light fa-calendar-days"></i>
-                                <?= e(date('F j, Y', strtotime((string)$post['published_at']))) ?>
+                                <?= e(date('F j, Y', strtotime((string) $post['published_at']))) ?>
                             </li>
                         <?php endif; ?>
                         <?php if (!empty($post['author_name'])): ?>
@@ -99,12 +197,12 @@ $page_seo['schema_json']      = $post['schema_json'];
 
                     <?php if (!empty($post['featured_image'])): ?>
                         <div class="news-image" style="margin-bottom:30px;">
-                            <img src="<?= attr(media_url($post['featured_image'])) ?>" alt="<?= attr($post['featured_alt'] ?: $post['title']) ?>" style="width:100%;border-radius:8px;">
+                            <img src="<?= attr($post['featured_image']) ?>" alt="<?= attr($post['featured_alt'] ?: $post['title']) ?>" style="width:100%;border-radius:8px;">
                         </div>
                     <?php endif; ?>
 
-                    <div class="news-content rich-text">
-                        <?= $post['body_html']  /* sanitized at save-time */ ?>
+                    <div class="news-content rich-text disc">
+                        <?= $post['body_html'] /* sanitized at save-time */ ?>
                     </div>
 
                     <?php if (!empty($faqs)): ?>
@@ -113,19 +211,19 @@ $page_seo['schema_json']      = $post['schema_json'];
                             <?php foreach ($faqs as $faq): ?>
                                 <details style="margin-bottom:12px;border:1px solid #eee;border-radius:6px;padding:14px 18px;">
                                     <summary style="cursor:pointer;font-weight:600;"><?= e($faq['question']) ?></summary>
-                                    <div style="margin-top:10px;color:#555;line-height:1.7;"><?= e($faq['answer']) ?></div>
+                                    <div style="margin-top:10px;line-height:1.7;"><?= e($faq['answer']) ?></div>
                                 </details>
                             <?php endforeach; ?>
                         </div>
                         <?= jsonld([
                             '@context' => 'https://schema.org',
-                            '@type'    => 'FAQPage',
+                            '@type' => 'FAQPage',
                             'mainEntity' => array_map(static fn(array $faq) => [
                                 '@type' => 'Question',
-                                'name'  => $faq['question'],
+                                'name' => $faq['question'],
                                 'acceptedAnswer' => [
                                     '@type' => 'Answer',
-                                    'text'  => $faq['answer'],
+                                    'text' => $faq['answer'],
                                 ],
                             ], $faqs),
                         ]) ?>

@@ -1,107 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <?xml-stylesheet type="text/xsl" href="/download/ee9399ad7-b42dbbbd3/sitemap.xsl"?> -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
        <loc>https://quantaltech.ai/</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>1.0000</priority>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>weekly</changefreq>
+       <priority>1.0</priority>
   </url>
   <url>
        <loc>https://quantaltech.ai/about</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>weekly</changefreq>
+       <priority>0.8</priority>
   </url>
   <url>
        <loc>https://quantaltech.ai/services</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
-  </url>
-  <url>
-       <loc>https://quantaltech.ai/services/voice</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
-  </url>
-  <url>
-       <loc>https://quantaltech.ai/services/text</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
-  </url>
-  <url>
-       <loc>https://quantaltech.ai/services/image</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
-  </url>
-  <url>
-       <loc>https://quantaltech.ai/services/process-auto</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>weekly</changefreq>
+       <priority>0.9</priority>
   </url>
   <url>
        <loc>https://quantaltech.ai/blog</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
        <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <priority>0.8</priority>
   </url>
   <url>
        <loc>https://quantaltech.ai/success-stories</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>weekly</changefreq>
+       <priority>0.7</priority>
   </url>
   <url>
        <loc>https://quantaltech.ai/podcast</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>weekly</changefreq>
+       <priority>0.7</priority>
   </url>
   <url>
        <loc>https://quantaltech.ai/terms-of-service</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>yearly</changefreq>
+       <priority>0.3</priority>
   </url>
   <url>
        <loc>https://quantaltech.ai/refund-policy</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>yearly</changefreq>
+       <priority>0.3</priority>
   </url>
   <url>
-       <loc>https://quantaltech.ai/hire</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <loc>https://quantaltech.ai/hire-ai-engineers</loc>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>monthly</changefreq>
+       <priority>0.8</priority>
   </url>
   <url>
        <loc>https://quantaltech.ai/contact</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.8000</priority>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>monthly</changefreq>
+       <priority>0.8</priority>
   </url>
   <url>
-       <loc>https://quantaltech.ai/podcast?filter=upcoming</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.6400</priority>
+       <loc>https://quantaltech.ai/services/voice-ai</loc>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>monthly</changefreq>
+       <priority>0.8</priority>
   </url>
   <url>
-       <loc>https://quantaltech.ai/podcast?filter=past</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.6400</priority>
+       <loc>https://quantaltech.ai/services/text-ai</loc>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>monthly</changefreq>
+       <priority>0.8</priority>
   </url>
   <url>
-       <loc>https://quantaltech.ai/podcast?filter=all</loc>
-       <lastmod>2026-07-17T06:16:09+00:00</lastmod>
-       <changefreq>daily</changefreq>
-       <priority>0.6400</priority>
+       <loc>https://quantaltech.ai/services/image-document-ai</loc>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>monthly</changefreq>
+       <priority>0.8</priority>
+  </url>
+  <url>
+       <loc>https://quantaltech.ai/services/process-automation</loc>
+       <lastmod>2026-07-20T12:16:28+00:00</lastmod>
+       <changefreq>monthly</changefreq>
+       <priority>0.8</priority>
   </url>
 </urlset>

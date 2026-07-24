@@ -4,11 +4,11 @@
  * Voice AI Solutions - content from quantaltech.ai/services/voice
  * Uses theme's service-details layout via _subservice.php.
  */
-$page_title = 'Voice AI Solutions - Quantal AI';
+$page_title = 'Voice AI Services - Quantal AI';
 $active_page = 'services';
 
 $current_slug = 'voice';
-$page_label = 'Voice AI Solutions';
+$page_label = 'Voice AI Services';
 $crumb = 'Voice AI';
 $hero_image = 'images/quantal/services/voice_ai.png';
 

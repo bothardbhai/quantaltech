@@ -11,6 +11,14 @@
  */
 ?>
 
+<a href="https://wa.me/13158093225?text=Hello%20Quantal%20AI,%20I%20would%20like%20to%20know%20more%20about%20your%20services."
+   class="whatsapp-float"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
 <!-- Main Footer -->
 <footer class="footer-section fix bg-cover" style="background-image: url('<?= asset('images/home-1/footer-line.png') ?>');">
   <div class="container">
@@ -87,11 +95,11 @@
                 <h4 class="font-size-24 text-white font-weight-500">Our Solutions</h4>
               </div>
               <ul class="user-links">
+                <li><a href="<?= url('/services') ?>">All Services</a></li>
                 <li><a href="<?= url('/services/voice') ?>">Voice AI</a></li>
                 <li><a href="<?= url('/services/text') ?>">Text AI</a></li>
                 <li><a href="<?= url('/services/image') ?>">Image / Document AI</a></li>
                 <li><a href="<?= url('/services/process-auto') ?>">Process Automation</a></li>
-                <li><a href="<?= url('/services') ?>">All Solutions</a></li>
               </ul>
             </div>
           </div>

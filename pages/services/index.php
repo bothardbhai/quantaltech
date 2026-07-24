@@ -1,16 +1,16 @@
 <?php
 /** Based on theme template - content swapped to Quantal AI. */
-$page_title = 'AI Solutions - Quantal AI';
+$page_title = 'AI Services - Quantal AI';
 $active_page = 'services';
 ?>
 
 <!-- Start main-content -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
     <div class="container">
-        <h1 style="color:#fff;font-size:36px;margin:0 0 14px;line-height:1.2;">AI Solutions</h1>
+        <h1 style="color:#fff;font-size:36px;margin:0 0 14px;line-height:1.2;">AI Services</h1>
         <p style="opacity:0.75;margin:0;font-size:14px;">
             <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
-            <span>Solutions</span>
+            <span>Services</span>
         </p>
     </div>
 </section>
@@ -19,7 +19,7 @@ $active_page = 'services';
 <section class="service-wrapper service-two section-padding section-bg-3">
   <div class="shape">
     <div class="light-shape"></div>
-    <h2 class="title-shadow style-2">solutions</h2>
+    <h2 class="title-shadow style-2">Services</h2>
     <img src="<?= asset('images/home-2/service/shape-01.webp') ?>" alt="" class="shape-1 left-to-right-ani d-none d-xl-block">
   </div>
   <div class="auto-container">

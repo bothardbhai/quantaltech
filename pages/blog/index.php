@@ -64,7 +64,7 @@ $total_pages = max(1, (int) ceil($total / $posts_per_page));
                             <div class="news-image">
                                 <a href="<?= url('/blog/' . $post['slug']) ?>">
                                     <?php if ($post['featured_image']): ?>
-                                        <img width="100%" src="<?= attr(media_url($post['featured_image'])) ?>" alt="<?= attr($post['featured_alt'] ?: $post['title']) ?>">
+                                        <img width="100%" src="<?= attr($post['featured_image']) ?>" alt="<?= attr($post['featured_alt'] ?: $post['title']) ?>">
                                     <?php else: ?>
                                         <img src="<?= asset('images/home-1/news/news-1.jpg') ?>" alt="<?= attr($post['title']) ?>">
                                     <?php endif; ?>

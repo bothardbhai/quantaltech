@@ -26,6 +26,19 @@ $active_page = 'hire';
  */
 ?>
 
+<!-- Start main-content -->
+<section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
+    <div class="container">
+        <h1 style="color:#fff;font-size:36px;margin:0 0 14px;line-height:1.2;"><?= e($page_title) ?></h1>
+        <p style="opacity:0.75;margin:0;font-size:14px;">
+            <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
+            <a href="" style="color:#72aee6;">Hire with Us</a> &nbsp;/&nbsp;
+            <span>Hire AI Engineers</span>
+        </p>
+    </div>
+</section>
+<!-- end main-content -->
+
 <!-- About Section -->
 <section class="about-section section-padding fix">
 	<div class="about-vector tm-gsap-animate-circle d-none d-xxl-block"><img src="<?= asset('images/home-1/about/about-vector.png') ?>" alt="img"></div>

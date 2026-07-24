@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Media library — upload, view, copy path, and delete files.
  *
@@ -9,7 +10,7 @@
  */
 require __DIR__ . '/bootstrap.php';
 
-$pdo  = db();
+$pdo = db();
 $user = auth_user();
 
 // Extension => [category, allowed MIME types, max size in bytes]
@@ -17,24 +18,24 @@ $user = auth_user();
 // them as application/zip or application/octet-stream — both are accepted
 // alongside their "proper" MIME type.
 const MEDIA_ALLOWED_TYPES = [
-    'jpg'  => ['image',    ['image/jpeg'], 5 * 1024 * 1024],
-    'jpeg' => ['image',    ['image/jpeg'], 5 * 1024 * 1024],
-    'png'  => ['image',    ['image/png'], 5 * 1024 * 1024],
-    'gif'  => ['image',    ['image/gif'], 5 * 1024 * 1024],
-    'webp' => ['image',    ['image/webp'], 5 * 1024 * 1024],
-    'svg'  => ['image',    ['image/svg+xml'], 5 * 1024 * 1024],
-    'pdf'  => ['document', ['application/pdf'], 15 * 1024 * 1024],
-    'doc'  => ['document', ['application/msword'], 15 * 1024 * 1024],
+    'jpg' => ['image', ['image/jpeg'], 5 * 1024 * 1024],
+    'jpeg' => ['image', ['image/jpeg'], 5 * 1024 * 1024],
+    'png' => ['image', ['image/png'], 5 * 1024 * 1024],
+    'gif' => ['image', ['image/gif'], 5 * 1024 * 1024],
+    'webp' => ['image', ['image/webp'], 5 * 1024 * 1024],
+    'svg' => ['image', ['image/svg+xml'], 5 * 1024 * 1024],
+    'pdf' => ['document', ['application/pdf'], 15 * 1024 * 1024],
+    'doc' => ['document', ['application/msword'], 15 * 1024 * 1024],
     'docx' => ['document', ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip', 'application/octet-stream'], 15 * 1024 * 1024],
-    'xls'  => ['document', ['application/vnd.ms-excel'], 15 * 1024 * 1024],
+    'xls' => ['document', ['application/vnd.ms-excel'], 15 * 1024 * 1024],
     'xlsx' => ['document', ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/zip', 'application/octet-stream'], 15 * 1024 * 1024],
-    'ppt'  => ['document', ['application/vnd.ms-powerpoint'], 15 * 1024 * 1024],
+    'ppt' => ['document', ['application/vnd.ms-powerpoint'], 15 * 1024 * 1024],
     'pptx' => ['document', ['application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/zip', 'application/octet-stream'], 15 * 1024 * 1024],
-    'txt'  => ['document', ['text/plain'], 15 * 1024 * 1024],
-    'csv'  => ['document', ['text/csv', 'text/plain', 'application/vnd.ms-excel'], 15 * 1024 * 1024],
-    'mp4'  => ['video',    ['video/mp4'], 50 * 1024 * 1024],
-    'webm' => ['video',    ['video/webm'], 50 * 1024 * 1024],
-    'mov'  => ['video',    ['video/quicktime'], 50 * 1024 * 1024],
+    'txt' => ['document', ['text/plain'], 15 * 1024 * 1024],
+    'csv' => ['document', ['text/csv', 'text/plain', 'application/vnd.ms-excel'], 15 * 1024 * 1024],
+    'mp4' => ['video', ['video/mp4'], 50 * 1024 * 1024],
+    'webm' => ['video', ['video/webm'], 50 * 1024 * 1024],
+    'mov' => ['video', ['video/quicktime'], 50 * 1024 * 1024],
 ];
 
 /**
@@ -73,13 +74,13 @@ function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by): array
 
     // Real MIME sniff — don't trust the browser-supplied type
     $finfo = new finfo(FILEINFO_MIME_TYPE);
-    $mime  = $finfo->file($file['tmp_name']) ?: '';
+    $mime = $finfo->file($file['tmp_name']) ?: '';
     if (!in_array($mime, $allowed_mimes, true)) {
         return ['ok' => false, 'name' => $original_name, 'message' => 'File content does not match a supported ' . $ext . ' file (detected ' . $mime . ').'];
     }
 
     // Safe destination filename: <random>-<sanitized-basename>.<ext>
-    $ym   = date('Y-m');
+    $ym = date('Y-m');
     $base = pathinfo($original_name, PATHINFO_FILENAME);
     $base = preg_replace('/[^a-zA-Z0-9_-]/', '-', $base) ?? '';
     $base = trim($base, '-');
@@ -108,13 +109,13 @@ function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by): array
              VALUES (:p, :on, :mt, :sz, :w, :h, :u)'
         );
         $stmt->execute([
-            ':p'  => $rel_path,
+            ':p' => $rel_path,
             ':on' => $original_name,
             ':mt' => $mime,
             ':sz' => (int) $file['size'],
-            ':w'  => $w,
-            ':h'  => $h,
-            ':u'  => $uploaded_by,
+            ':w' => $w,
+            ':h' => $h,
+            ':u' => $uploaded_by,
         ]);
     } catch (PDOException $e) {
         // DB row is the only way this file will ever show up again — if it
@@ -132,8 +133,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
     csrf_verify_or_die();
 
     $successes = [];
-    $failures  = [];
-    $files     = $_FILES['media'] ?? null;
+    $failures = [];
+    $files = $_FILES['media'] ?? null;
 
     if ($files && is_array($files['name'])) {
         $count = count($files['name']);
@@ -142,14 +143,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
                 continue;
             }
             $single = [
-                'name'     => $files['name'][$i],
-                'type'     => $files['type'][$i],
+                'name' => $files['name'][$i],
+                'type' => $files['type'][$i],
                 'tmp_name' => $files['tmp_name'][$i],
-                'error'    => $files['error'][$i],
-                'size'     => $files['size'][$i],
+                'error' => $files['error'][$i],
+                'size' => $files['size'][$i],
             ];
-            $result = $pdo ? media_process_upload($single, $pdo, $user['id'] ?? null)
-                           : ['ok' => false, 'name' => $single['name'], 'message' => 'Database unavailable.'];
+            $result = $pdo
+                ? media_process_upload($single, $pdo, $user['id'] ?? null)
+                : ['ok' => false, 'name' => $single['name'], 'message' => 'Database unavailable.'];
             if ($result['ok']) {
                 $successes[] = $result['name'];
             } else {
@@ -197,11 +199,12 @@ $rows = [];
 if ($pdo) {
     try {
         $rows = $pdo->query('SELECT * FROM media ORDER BY created_at DESC LIMIT 200')->fetchAll();
-    } catch (PDOException $e) {}
+    } catch (PDOException $e) {
+    }
 }
 
 $admin_page_title = 'Media';
-$admin_active     = 'media';
+$admin_active = 'media';
 require __DIR__ . '/_header.php';
 ?>
 
@@ -255,10 +258,11 @@ require __DIR__ . '/_header.php';
     <div class="admin-card">
         <div class="admin-card__body">
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;">
-                <?php foreach ($rows as $r):
+                <?php
+                foreach ($rows as $r):
                     $is_image = str_starts_with((string) $r['mime_type'], 'image/');
-                    $ext      = strtoupper((string) pathinfo((string) $r['path'], PATHINFO_EXTENSION));
-                ?>
+                    $ext = strtoupper((string) pathinfo((string) $r['path'], PATHINFO_EXTENSION));
+                    ?>
                     <div style="border:1px solid var(--admin-border);border-radius:6px;padding:8px;background:#fff;">
                         <div style="aspect-ratio:1;background:#f6f7fb;border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px;">
                             <?php if ($is_image): ?>
@@ -273,7 +277,7 @@ require __DIR__ . '/_header.php';
                             <form method="post" style="display:inline;" onsubmit="return confirm('Delete this file permanently?');">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="id" value="<?= (int)$r['id'] ?>">
+                                <input type="hidden" name="id" value="<?= (int) $r['id'] ?>">
                                 <button type="submit" class="admin-btn admin-btn--danger admin-btn--small">×</button>
                             </form>
                         </div>

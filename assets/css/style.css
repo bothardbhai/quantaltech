@@ -23069,6 +23069,9 @@ Sidebar
   margin: 28px 0 14px;
   line-height: 1.25;
 }
+.rich-text strong {
+  color: var(--theme-color-white);
+}
 .rich-text p {
   margin-bottom: 18px;
   line-height: 1.7;
@@ -23105,6 +23108,30 @@ Sidebar
 .rich-text pre {
   padding: 16px;
   overflow: auto;
+}
+.rich-text table,
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
+  border-color: var(--theme-color1);
+  border-width: 1.5pt;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.rich-text td {
+  color: var(--text-color);
+}
+
+.disc ul {
+  list-style-type: disc !important;
+  padding-left: 20px !important;
+}
+
+.disc ul li {
+  list-style-type: disc !important;
 }
 
 /* Service Detail Page Design  */
@@ -26017,4 +26044,188 @@ AI Benefits
   .services-details__content .accordion-box {
     padding: 22px 14px;
   }
+}
+
+/* Blog Table of Content Css  */
+.blog-toc-card {
+  background: #181616;
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 30px;
+}
+
+.blog-toc-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.blog-toc-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #2b2b2b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+}
+
+.blog-toc-title h4 {
+  color: #fff;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.blog-toc-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blog-toc-menu li {
+  position: relative;
+  padding-left: 18px;
+  margin-bottom: 18px;
+}
+
+.blog-toc-menu li:last-child {
+  margin-bottom: 0;
+}
+
+.blog-toc-menu li::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #8c8c8c;
+  position: absolute;
+  left: 0;
+  top: 10px;
+}
+
+.blog-toc-menu li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.7;
+  transition: all 0.3s ease;
+}
+
+.blog-toc-menu li a:hover {
+  color: #4da3ff;
+  padding-left: 5px;
+}
+
+/* H2 Styling */
+.blog-toc-menu .toc-h2 {
+  padding-left: 35px;
+}
+
+.blog-toc-menu .toc-h2 a {
+  font-size: 14px;
+  font-weight: 500;
+  color: #d8d8d8;
+}
+
+.blog-toc-menu .toc-h2::before {
+  left: 18px;
+  width: 4px;
+  height: 4px;
+}
+
+/* Whatsapp icon  */
+.whatsapp-float {
+  position: fixed;
+  right: 20px;
+  bottom: 65px;
+  width: 40px;
+  height: 40px;
+  background: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  transition: all 0.3s ease;
+  animation: whatsapp-pulse 2s infinite;
+}
+
+.whatsapp-float i {
+  line-height: 1;
+}
+
+.whatsapp-float:hover {
+  background: #1ebe5d;
+  color: #fff;
+  transform: translateY(-5px) scale(1.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  animation: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .whatsapp-float {
+    width: 40px;
+    height: 40px;
+    right: 20px;
+    bottom: 65px;
+    font-size: 21px;
+  }
+}
+
+/*==============================
+Top Header
+==============================*/
+
+.header-top {
+  /* position: absolute; */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background: transparent;
+  padding: 5px 0 0 0;
+}
+
+.header-top-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-top-left,
+.header-top-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-top-left a,
+.header-top-right a {
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.header-top-left a:hover,
+.header-top-right a:hover {
+  color: var(--theme-color1);
+}
+
+.header-top-left i {
+  font-size: 16px;
+}
+
+.header-top-right i {
+  margin-right: 8px;
 }

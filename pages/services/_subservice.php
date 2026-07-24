@@ -25,11 +25,10 @@
  * the actual 4 service categories with the current one highlighted.
  */
 $service_links = [
-    'voice' => 'Voice AI Solutions',
-    'text' => 'Text AI Solutions',
+    'voice' => 'Voice AI Services',
+    'text' => 'Text AI Services',
     'image' => 'Image / Document AI',
     'process-auto' => 'Process Automation',
-    'ai-engineering' => 'AI Engineering',
 ];
 ?>
 
