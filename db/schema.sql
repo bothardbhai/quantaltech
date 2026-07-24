@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS `media` (
     `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `path`          VARCHAR(500) NOT NULL,            -- relative to /public, e.g. '/uploads/blog/2025/img.jpg'
     `original_name` VARCHAR(255) NOT NULL,
+    `category`      ENUM('blog','page','service','media') NOT NULL DEFAULT 'media',
     `mime_type`     VARCHAR(80)  NOT NULL,
     `size_bytes`    INT UNSIGNED NOT NULL,
     `width`         INT UNSIGNED NULL,

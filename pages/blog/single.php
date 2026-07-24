@@ -197,7 +197,7 @@ $page_seo['schema_json'] = $post['schema_json'];
 
                     <?php if (!empty($post['featured_image'])): ?>
                         <div class="news-image" style="margin-bottom:30px;">
-                            <img src="<?= attr($post['featured_image']) ?>" alt="<?= attr($post['featured_alt'] ?: $post['title']) ?>" style="width:100%;border-radius:8px;">
+                            <img src="<?= url($post['featured_image']) ?>" alt="<?= attr($post['featured_alt'] ?: $post['title']) ?>" style="width:100%;border-radius:8px;">
                         </div>
                     <?php endif; ?>
 

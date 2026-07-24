@@ -98,12 +98,13 @@ if ($pdo) {
     try {
         $user = auth_user();
         $stmt = $pdo->prepare(
-            'INSERT INTO media (path, original_name, mime_type, size_bytes, width, height, uploaded_by)
-             VALUES (:p, :on, :mt, :sz, :w, :h, :u)'
+            'INSERT INTO media (path, original_name, category, mime_type, size_bytes, width, height, uploaded_by)
+             VALUES (:p, :on, :cat, :mt, :sz, :w, :h, :u)'
         );
         $stmt->execute([
             ':p' => $rel_path,
             ':on'=> $file['name'],
+            ':cat'=> 'blog',
             ':mt'=> $mime,
             ':sz'=> $file['size'],
             ':w' => $w,

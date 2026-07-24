@@ -61,12 +61,17 @@ $total_pages = max(1, (int) ceil($total / $posts_per_page));
                 <?php foreach ($posts as $post): ?>
                     <div class="col-lg-4 col-md-6">
                         <div class="news-items wow fadeInUp" data-wow-delay=".3s">
-                            <div class="news-image">
+                            <div class="news-image blog-image">
                                 <a href="<?= url('/blog/' . $post['slug']) ?>">
-                                    <?php if ($post['featured_image']): ?>
-                                        <img width="100%" src="<?= attr($post['featured_image']) ?>" alt="<?= attr($post['featured_alt'] ?: $post['title']) ?>">
+                                    <?php if (!empty($post['featured_image'])): ?>
+                                        <img
+                                            width="100%"
+                                            src="<?= url($post['featured_image']) ?>"
+                                            alt="<?= attr($post['featured_alt'] ?: $post['title']) ?>">
                                     <?php else: ?>
-                                        <img src="<?= asset('images/home-1/news/news-1.jpg') ?>" alt="<?= attr($post['title']) ?>">
+                                        <img
+                                            src="<?= asset('images/home-1/news/news-1.jpg') ?>"
+                                            alt="<?= attr($post['title']) ?>">
                                     <?php endif; ?>
                                 </a>
                             </div>
@@ -79,11 +84,15 @@ $total_pages = max(1, (int) ceil($total / $posts_per_page));
                                         <?php endif; ?>
                                     </li>
                                 </ul>
-                                <h3>
-                                    <a href="<?= url('/blog/' . $post['slug']) ?>"><?= e($post['title']) ?></a>
+                                <h3 class="blog-title">
+                                    <a href="<?= url('/blog/' . $post['slug']) ?>">
+                                        <?= e($post['title']) ?>
+                                    </a>
                                 </h3>
                                 <?php if ($post['excerpt']): ?>
-                                    <p><?= e($post['excerpt']) ?></p>
+                                    <p class="blog-excerpt">
+                                        <?= e($post['excerpt']) ?>
+                                    </p>
                                 <?php endif; ?>
                                 <a href="<?= url('/blog/' . $post['slug']) ?>" class="theme-btn-2">
                                     Read More <i class="fa-regular fa-arrow-up-right"></i>

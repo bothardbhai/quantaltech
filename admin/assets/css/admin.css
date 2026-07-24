@@ -316,6 +316,24 @@ a:hover { color: var(--admin-accent-hover); }
 .admin-modal__body { padding: 20px; }
 .admin-modal__foot { padding: 14px 20px; border-top: 1px solid var(--admin-border); display: flex; justify-content: flex-end; gap: 10px; }
 
+/* ---------- Media card actions (equal-width/height Copy & Delete) ---------- */
+.media-card__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 8px;
+}
+.media-card__actions form { display: contents; }
+.media-card__actions .admin-btn {
+    width: 100%;
+    height: 30px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
 /* ---------- Media type badge (non-image previews) ---------- */
 .media-badge {
     font-size: 12px; font-weight: 700; letter-spacing: 0.4px; color: var(--admin-muted);

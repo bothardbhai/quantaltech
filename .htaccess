@@ -39,7 +39,9 @@ AddDefaultCharset UTF-8
     # RewriteRule ^(.*)$ https://quantaltech.ai/$1 [R=301,L]
 
     # ------------------------------------------------------------------
+
     # 301 Redirects for old URLs
+
     # ------------------------------------------------------------------
 
     RewriteRule ^blog/voice-ai-engineering/?$ https://quantaltech.ai/blog [R=301,L]
@@ -50,8 +52,12 @@ AddDefaultCharset UTF-8
 
     RewriteRule ^refund-cancellation-policy/?$ https://quantaltech.ai/refund-policy [R=301,L]
 
+    # Old blogs URLs
+
     RewriteRule ^blogs/?$ https://quantaltech.ai/blog [R=301,L]
     RewriteRule ^blogs/the-human-touch-of-automation/?$ https://quantaltech.ai/blog [R=301,L]
+    RewriteRule ^blogs/extracting-insight-from-chaos/?$ https://quantaltech.ai/blog [R=301,L]
+    RewriteRule ^blogs/removing-background-revealing-future/?$ https://quantaltech.ai/blog [R=301,L]
 
     # ------------------------------------------------------------------
     # Recommended URL Structure Redirects
@@ -66,21 +72,6 @@ AddDefaultCharset UTF-8
     RewriteRule ^solutions/text-ai/?$ https://quantaltech.ai/services/text-ai [R=301,L]
     RewriteRule ^solutions/process-automation/?$ https://quantaltech.ai/services/process-automation [R=301,L]
     RewriteRule ^solutions/voice-ai/?$ https://quantaltech.ai/services/voice-ai [R=301,L]
-
-    # ================================
-    # Custom 301 Redirects - 21-07-2026
-    # ================================
-
-    RewriteRule ^blog/voice-ai-engineering/?$ https://quantaltech.ai/blog [R=301,L]
-    RewriteRule ^blog/kyc-document-ai/?$ https://quantaltech.ai/blog [R=301,L]
-    RewriteRule ^blog/agent-automation/?$ https://quantaltech.ai/blog [R=301,L]
-
-    RewriteRule ^solutions/?$ https://quantaltech.ai/services [R=301,L]
-
-    RewriteRule ^refund-cancellation-policy/?$ https://quantaltech.ai/refund-policy [R=301,L]
-
-    RewriteRule ^blogs/?$ https://quantaltech.ai/blog [R=301,L]
-    RewriteRule ^blogs/the-human-touch-of-automation/?$ https://quantaltech.ai/blog [R=301,L]
 
     # If the request is for an existing file or directory in /public, serve it
     # directly (this lets /assets/css/style.css etc. work without going through

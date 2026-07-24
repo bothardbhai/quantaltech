@@ -3,17 +3,72 @@
 /**
  * Media library — upload, view, copy path, and delete files.
  *
- * Supports images, PDFs, videos, and common office documents. Files are
- * stored under /uploads/media/<YYYY-MM>/ and tracked in the `media` table;
- * the blog editor's own uploads (CKEditor, /uploads/blog/...) are tracked
- * the same way and show up here too.
+ * Supports images, PDFs, videos, and common office documents. Each upload is
+ * tagged with a category (blog/page/service/media), which decides both the
+ * storage folder and the Media Master filter. Files are tracked in the
+ * `media` table as an index over the real files on disk — the table mirrors
+ * the filesystem (upload writes both; delete removes both) rather than being
+ * the source of truth on its own. The blog editor's own inline image uploads
+ * (CKEditor, /uploads/blog/...) are tracked the same way and show up here too.
  */
 require __DIR__ . '/bootstrap.php';
 
 $pdo = db();
 $user = auth_user();
 
-// Extension => [category, allowed MIME types, max size in bytes]
+// Upload categories: each maps to its own storage folder (see media_category_dirs()).
+const MEDIA_CATEGORY_LABELS = [
+    'blog'    => 'Blog',
+    'page'    => 'Page',
+    'service' => 'Service',
+    'media'   => 'Media',
+];
+
+/**
+ * Storage folder for a given category. Blog/Media get YYYY/MM subfolders;
+ * Page/Service upload directly into their own folder.
+ *
+ * @return array{0: string, 1: string} [relative path (from site root), absolute path]
+ */
+function media_category_dirs(string $category): array
+{
+    $ym = date('Y/m');
+    return match ($category) {
+        'blog'    => ['/uploads/blog/' . $ym, UPLOADS_DIR . '/blog/' . $ym],
+        'page'    => ['/uploads/page', UPLOADS_DIR . '/page'],
+        'service' => ['/uploads/service', UPLOADS_DIR . '/service'],
+        default   => ['/uploads/media/' . $ym, UPLOADS_DIR . '/media/' . $ym],
+    };
+}
+
+/**
+ * Turn an original filename into the on-disk filename: sanitized original
+ * name + current timestamp + original extension (e.g. "about-us-banner-1721819254.jpg").
+ * No random IDs — the name stays human-readable. Falls back to appending a
+ * counter in the rare case two files land on the exact same name+second.
+ */
+function media_build_filename(string $original_name, string $abs_dir): string
+{
+    $ext  = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
+    $base = pathinfo($original_name, PATHINFO_FILENAME);
+    $base = str_replace(' ', '-', trim($base));
+    $base = preg_replace('/[^A-Za-z0-9_-]/', '', $base) ?? '';
+    $base = preg_replace('/-+/', '-', $base) ?? '';
+    $base = trim($base, '-');
+    $base = $base === '' ? 'file' : substr($base, 0, 100);
+    $ext_suffix = $ext !== '' ? '.' . $ext : '';
+
+    $ts = time();
+    $filename = $base . '-' . $ts . $ext_suffix;
+    $i = 2;
+    while (is_file($abs_dir . '/' . $filename)) {
+        $filename = $base . '-' . $ts . '-' . $i . $ext_suffix;
+        $i++;
+    }
+    return $filename;
+}
+
+// Extension => [type, allowed MIME types, max size in bytes]
 // Office formats (docx/xlsx/pptx) are ZIP containers, so finfo often reports
 // them as application/zip or application/octet-stream — both are accepted
 // alongside their "proper" MIME type.
@@ -39,10 +94,11 @@ const MEDIA_ALLOWED_TYPES = [
 ];
 
 /**
- * Validate and store a single uploaded file (one slot of $_FILES['media']).
- * Returns ['ok' => bool, 'name' => original filename, 'message' => string].
+ * Validate and store a single uploaded file (one slot of $_FILES['media'])
+ * under the given category's folder. Returns
+ * ['ok' => bool, 'name' => original filename, 'message' => string].
  */
-function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by): array
+function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by, string $category): array
 {
     $original_name = (string) $file['name'];
 
@@ -59,17 +115,18 @@ function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by): array
     if (!isset(MEDIA_ALLOWED_TYPES[$ext])) {
         return ['ok' => false, 'name' => $original_name, 'message' => 'Unsupported file type: .' . $ext];
     }
-    [$category, $allowed_mimes, $max_bytes] = MEDIA_ALLOWED_TYPES[$ext];
+    [$type, $allowed_mimes, $max_bytes] = MEDIA_ALLOWED_TYPES[$ext];
 
     if ((int) $file['size'] > $max_bytes) {
         return ['ok' => false, 'name' => $original_name, 'message' => 'Exceeds the ' . round($max_bytes / 1024 / 1024) . ' MB limit for this file type.'];
     }
 
-    // Duplicate filename check
-    $stmt = $pdo->prepare('SELECT id FROM media WHERE original_name = :n LIMIT 1');
-    $stmt->execute([':n' => $original_name]);
+    // Duplicate filename check, scoped to the category (same name is fine in
+    // different categories since they live in different folders).
+    $stmt = $pdo->prepare('SELECT id FROM media WHERE original_name = :n AND category = :c LIMIT 1');
+    $stmt->execute([':n' => $original_name, ':c' => $category]);
     if ($stmt->fetch()) {
-        return ['ok' => false, 'name' => $original_name, 'message' => 'A file with this name already exists in the Media Library. Rename the file and try again.'];
+        return ['ok' => false, 'name' => $original_name, 'message' => 'A file with this name already exists in this category. Rename the file and try again.'];
     }
 
     // Real MIME sniff — don't trust the browser-supplied type
@@ -79,19 +136,14 @@ function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by): array
         return ['ok' => false, 'name' => $original_name, 'message' => 'File content does not match a supported ' . $ext . ' file (detected ' . $mime . ').'];
     }
 
-    // Safe destination filename: <random>-<sanitized-basename>.<ext>
-    $ym = date('Y-m');
-    $base = pathinfo($original_name, PATHINFO_FILENAME);
-    $base = preg_replace('/[^a-zA-Z0-9_-]/', '-', $base) ?? '';
-    $base = trim($base, '-');
-    $base = $base === '' ? 'file' : substr($base, 0, 60);
-    $filename = bin2hex(random_bytes(4)) . '-' . $base . '.' . $ext;
-
-    $rel_dir = '/uploads/media/' . $ym;
-    $abs_dir = UPLOADS_DIR . '/media/' . $ym;
+    [$rel_dir, $abs_dir] = media_category_dirs($category);
     if (!is_dir($abs_dir) && !mkdir($abs_dir, 0755, true) && !is_dir($abs_dir)) {
         return ['ok' => false, 'name' => $original_name, 'message' => 'Could not create the upload directory.'];
     }
+
+    // Original filename preserved, invalid characters stripped, spaces to
+    // hyphens, timestamped to stay unique — no random IDs.
+    $filename = media_build_filename($original_name, $abs_dir);
 
     $rel_path = $rel_dir . '/' . $filename;
     $abs_path = $abs_dir . '/' . $filename;
@@ -99,18 +151,19 @@ function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by): array
         return ['ok' => false, 'name' => $original_name, 'message' => 'Could not save the file to disk.'];
     }
 
-    [$w, $h] = ($category === 'image' && $mime !== 'image/svg+xml')
+    [$w, $h] = ($type === 'image' && $mime !== 'image/svg+xml')
         ? (getimagesize($abs_path) ?: [null, null])
         : [null, null];
 
     try {
         $stmt = $pdo->prepare(
-            'INSERT INTO media (path, original_name, mime_type, size_bytes, width, height, uploaded_by)
-             VALUES (:p, :on, :mt, :sz, :w, :h, :u)'
+            'INSERT INTO media (path, original_name, category, mime_type, size_bytes, width, height, uploaded_by)
+             VALUES (:p, :on, :cat, :mt, :sz, :w, :h, :u)'
         );
         $stmt->execute([
             ':p' => $rel_path,
             ':on' => $original_name,
+            ':cat' => $category,
             ':mt' => $mime,
             ':sz' => (int) $file['size'],
             ':w' => $w,
@@ -132,6 +185,13 @@ function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by): array
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'upload') {
     csrf_verify_or_die();
 
+    $category = (string) ($_POST['category'] ?? '');
+    if (!isset(MEDIA_CATEGORY_LABELS[$category])) {
+        flash('error', 'Choose an upload category.');
+        header('Location: ' . ADMIN_URL . '/media.php');
+        exit;
+    }
+
     $successes = [];
     $failures = [];
     $files = $_FILES['media'] ?? null;
@@ -150,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
                 'size' => $files['size'][$i],
             ];
             $result = $pdo
-                ? media_process_upload($single, $pdo, $user['id'] ?? null)
+                ? media_process_upload($single, $pdo, $user['id'] ?? null, $category)
                 : ['ok' => false, 'name' => $single['name'], 'message' => 'Database unavailable.'];
             if ($result['ok']) {
                 $successes[] = $result['name'];
@@ -167,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
         flash('error', implode(' | ', $failures));
     }
     if (!$successes && !$failures) {
-        flash('error', 'No files were selected.');
+        flash('error', 'Choose at least one file to upload.');
     }
     header('Location: ' . ADMIN_URL . '/media.php');
     exit;
@@ -182,23 +242,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch();
         if ($row) {
-            // Delete from disk
+            // Delete from disk — tolerate the file already being gone (e.g.
+            // removed manually) so the DB row (and thus the stale list entry)
+            // still gets cleaned up either way.
             $abs = ROOT_DIR . $row['path'];
             if (is_file($abs) && str_starts_with(realpath($abs) ?: '', realpath(UPLOADS_DIR) ?: '')) {
                 @unlink($abs);
             }
             $pdo->prepare('DELETE FROM media WHERE id = :id')->execute([':id' => $id]);
             flash('success', 'File deleted.');
+        } else {
+            flash('error', 'File not found — it may have already been deleted.');
         }
     }
-    header('Location: ' . ADMIN_URL . '/media.php');
+    header('Location: ' . ADMIN_URL . '/media.php' . (isset($_POST['category']) ? '?category=' . urlencode((string) $_POST['category']) : ''));
     exit;
+}
+
+$category_filter = (string) ($_GET['category'] ?? '');
+if (!isset(MEDIA_CATEGORY_LABELS[$category_filter])) {
+    $category_filter = '';
 }
 
 $rows = [];
 if ($pdo) {
     try {
-        $rows = $pdo->query('SELECT * FROM media ORDER BY created_at DESC LIMIT 200')->fetchAll();
+        if ($category_filter !== '') {
+            $stmt = $pdo->prepare('SELECT * FROM media WHERE category = :c ORDER BY created_at DESC LIMIT 200');
+            $stmt->execute([':c' => $category_filter]);
+            $rows = $stmt->fetchAll();
+        } else {
+            $rows = $pdo->query('SELECT * FROM media ORDER BY created_at DESC LIMIT 200')->fetchAll();
+        }
     } catch (PDOException $e) {
     }
 }
@@ -211,11 +286,18 @@ require __DIR__ . '/_header.php';
 <div class="admin-page-header">
     <div>
         <h1>Media library</h1>
-        <div class="subtitle"><?= count($rows) ?> file<?= count($rows) === 1 ? '' : 's' ?> uploaded</div>
+        <div class="subtitle"><?= count($rows) ?> file<?= count($rows) === 1 ? '' : 's' ?><?= $category_filter !== '' ? ' in ' . e(MEDIA_CATEGORY_LABELS[$category_filter]) : '' ?></div>
     </div>
     <div>
         <button type="button" class="admin-btn" id="open-upload-modal">Upload Media</button>
     </div>
+</div>
+
+<div style="margin-bottom:14px;">
+    <a href="?" class="<?= $category_filter === '' ? 'admin-btn admin-btn--small' : 'admin-btn admin-btn--ghost admin-btn--small' ?>">All</a>
+    <?php foreach (MEDIA_CATEGORY_LABELS as $cat_key => $cat_label): ?>
+        <a href="?category=<?= urlencode($cat_key) ?>" class="<?= $category_filter === $cat_key ? 'admin-btn admin-btn--small' : 'admin-btn admin-btn--ghost admin-btn--small' ?>"><?= e($cat_label) ?></a>
+    <?php endforeach; ?>
 </div>
 
 <div class="admin-modal-overlay" id="upload-modal-overlay">
@@ -228,9 +310,18 @@ require __DIR__ . '/_header.php';
             <div class="admin-modal__body">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="upload">
+                <div class="form-row">
+                    <label for="media-category">Upload category</label>
+                    <select id="media-category" name="category" required>
+                        <option value="">Select a category…</option>
+                        <?php foreach (MEDIA_CATEGORY_LABELS as $cat_key => $cat_label): ?>
+                            <option value="<?= attr($cat_key) ?>"><?= e($cat_label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="form-row" style="margin-bottom:0;">
                     <label for="media-files">Choose one or more files</label>
-                    <input type="file" id="media-files" name="media[]" multiple
+                    <input type="file" id="media-files" name="media[]" multiple required
                            accept=".jpg,.jpeg,.png,.gif,.webp,.svg,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.mp4,.webm,.mov">
                     <div class="help">
                         Images (JPG, PNG, GIF, WEBP, SVG) up to 5&nbsp;MB<br>
@@ -241,7 +332,7 @@ require __DIR__ . '/_header.php';
             </div>
             <div class="admin-modal__foot">
                 <button type="button" class="admin-btn admin-btn--ghost" id="cancel-upload-modal">Cancel</button>
-                <button type="submit" class="admin-btn">Upload</button>
+                <button type="submit" class="admin-btn" id="upload-submit" disabled>Upload</button>
             </div>
         </form>
     </div>
@@ -262,6 +353,7 @@ require __DIR__ . '/_header.php';
                 foreach ($rows as $r):
                     $is_image = str_starts_with((string) $r['mime_type'], 'image/');
                     $ext = strtoupper((string) pathinfo((string) $r['path'], PATHINFO_EXTENSION));
+                    $display_name = pathinfo((string) $r['original_name'], PATHINFO_FILENAME);
                     ?>
                     <div style="border:1px solid var(--admin-border);border-radius:6px;padding:8px;background:#fff;">
                         <div style="aspect-ratio:1;background:#f6f7fb;border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px;">
@@ -271,14 +363,16 @@ require __DIR__ . '/_header.php';
                                 <span class="media-badge"><?= e($ext !== '' ? $ext : 'FILE') ?></span>
                             <?php endif; ?>
                         </div>
-                        <div class="text-mono" style="font-size:11px;word-break:break-all;color:var(--admin-muted);" title="<?= attr($r['original_name']) ?>"><?= e($r['path']) ?></div>
-                        <div style="display:flex;gap:4px;margin-top:6px;">
-                            <button type="button" class="admin-btn admin-btn--ghost admin-btn--small copy-path" data-path="<?= attr($r['path']) ?>" style="flex:1;">Copy</button>
-                            <form method="post" style="display:inline;" onsubmit="return confirm('Delete this file permanently?');">
+                        <div style="font-size:12px;font-weight:600;word-break:break-word;" title="<?= attr($r['original_name']) ?>"><?= e($display_name !== '' ? $display_name : $r['original_name']) ?></div>
+                        <div class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px;"><?= e(MEDIA_CATEGORY_LABELS[$r['category']] ?? $r['category']) ?></div>
+                        <div class="media-card__actions">
+                            <button type="button" class="admin-btn admin-btn--ghost admin-btn--small copy-path" data-path="<?= attr($r['path']) ?>">Copy</button>
+                            <form method="post" onsubmit="return confirm('Delete this file permanently? This cannot be undone.');">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= (int) $r['id'] ?>">
-                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--small">×</button>
+                                <input type="hidden" name="category" value="<?= attr($category_filter) ?>">
+                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--small">Delete</button>
                             </form>
                         </div>
                     </div>
@@ -302,16 +396,30 @@ require __DIR__ . '/_header.php';
 
 <script>
 (function() {
-    const overlay  = document.getElementById('upload-modal-overlay');
-    const openBtn  = document.getElementById('open-upload-modal');
-    const closeBtn = document.getElementById('close-upload-modal');
-    const cancelBtn= document.getElementById('cancel-upload-modal');
+    const overlay     = document.getElementById('upload-modal-overlay');
+    const openBtn     = document.getElementById('open-upload-modal');
+    const closeBtn    = document.getElementById('close-upload-modal');
+    const cancelBtn   = document.getElementById('cancel-upload-modal');
+    const categorySel = document.getElementById('media-category');
+    const filesInput  = document.getElementById('media-files');
+    const submitBtn   = document.getElementById('upload-submit');
+
     function open()  { overlay.classList.add('is-open'); }
     function close() { overlay.classList.remove('is-open'); }
     openBtn.addEventListener('click', open);
     closeBtn.addEventListener('click', close);
     cancelBtn.addEventListener('click', close);
     overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+
+    // Upload stays disabled until both a category and at least one file are chosen.
+    function updateSubmitState() {
+        const hasCategory = categorySel.value !== '';
+        const hasFiles = filesInput.files && filesInput.files.length > 0;
+        submitBtn.disabled = !(hasCategory && hasFiles);
+    }
+    categorySel.addEventListener('change', updateSubmitState);
+    filesInput.addEventListener('change', updateSubmitState);
+    updateSubmitState();
 })();
 </script>
 

@@ -26229,3 +26229,96 @@ Top Header
 .header-top-right i {
   margin-right: 8px;
 }
+
+/* ===========================
+   Blog Card Image
+=========================== */
+
+.blog-image {
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.blog-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ===========================
+   Blog Card Content
+=========================== */
+
+.news-content {
+  padding-top: 20px;
+}
+
+/* Publish Date */
+
+.news-content .post-list {
+  margin-bottom: 15px;
+  padding-top: 8px;
+}
+
+/* ===========================
+   Blog Title
+=========================== */
+
+.blog-title {
+  line-height: 1.5;
+  min-height: 64px;
+  margin-bottom: 15px;
+}
+
+.blog-title a {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* ===========================
+   Blog Excerpt
+=========================== */
+
+.blog-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  line-height: 1.7;
+  min-height: 82px;
+
+  margin-bottom: 20px;
+}
+
+/* ===========================
+   Equal Height Cards
+=========================== */
+
+.news-items {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-content .theme-btn-2 {
+  margin-top: auto;
+}

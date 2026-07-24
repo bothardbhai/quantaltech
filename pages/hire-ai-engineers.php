@@ -5,7 +5,7 @@
  * markup. Same sections, animation hooks, and shape decorations as the theme;
  * only copy and content imagery are swapped.
  */
-$page_title = 'Hire Experienced AI Engineers - Quantal AI';
+$page_title = 'Hire Experienced AI Engineers';
 $active_page = 'hire';
 ?>
 

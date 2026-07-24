@@ -113,10 +113,17 @@ function execute_migration(\PDO $pdo, string $file, string $filename): bool
             return false;
         }
 
+        // Strip full-line SQL comments first. Filtering whole chunks that
+        // merely *start* with "--" (the previous approach) discards an
+        // entire statement whenever a comment header precedes it with no
+        // semicolon in between (e.g. a header + a single ALTER TABLE) —
+        // the migration then silently logs as "executed" having run nothing.
+        $sql = preg_replace('/^\s*--.*$/m', '', $sql) ?? $sql;
+
         // Split by semicolon and filter empty statements
         $statements = array_filter(
             array_map('trim', explode(';', $sql)),
-            fn($s) => !empty($s) && !str_starts_with($s, '--')
+            fn($s) => $s !== ''
         );
 
         foreach ($statements as $statement) {

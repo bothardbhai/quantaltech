@@ -1,11 +1,17 @@
 # Real config — copy from config.example.php and never commit
 /config/config.php
 
-# User uploads (created at runtime as YYYY-MM subdirs)
-/public/uploads/blog/*
-/public/uploads/pages/*
-!/public/uploads/blog/.gitkeep
-!/public/uploads/pages/.gitkeep
+# User uploads (created at runtime as YYYY/MM subdirs, or flat for page/service)
+/uploads/blog/*
+/uploads/media/*
+/uploads/page/*
+/uploads/service/*
+/uploads/pages/*
+!/uploads/blog/.gitkeep
+!/uploads/media/.gitkeep
+!/uploads/page/.gitkeep
+!/uploads/service/.gitkeep
+!/uploads/pages/.gitkeep
 
 # OS / editor
 .DS_Store
