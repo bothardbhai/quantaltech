@@ -7,7 +7,7 @@ $active_page = 'services';
 <!-- Start main-content -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
     <div class="container">
-        <h1 style="color:#fff;font-size:36px;margin:0 0 14px;line-height:1.2;">AI Services</h1>
+        <h1 style="color:#fff;font-size:36px;margin:25px 0 12px;;line-height:1.2;">AI Services</h1>
         <p style="opacity:0.75;margin:0;font-size:14px;">
             <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
             <span>Services</span>

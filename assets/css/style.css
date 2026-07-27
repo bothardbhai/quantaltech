@@ -116,6 +116,11 @@ License: copyright commercial
   --container-pt: 120px;
   --container-pb: 120px;
   --gradient-1: linear-gradient(90deg, #2fe7d9 0%, #6a54ff 100%);
+  /* Real, live-measured header dimensions (kept in sync by script.js'
+     updateHeaderMetrics()). Fallbacks below match the header's typical
+     rendered size and only apply for the instant before JS runs. */
+  --header-top-height: 36px;
+  --main-header-height: 120px;
 }
 
 @font-face {
@@ -3420,15 +3425,53 @@ Scroll To Top style
   opacity: 0;
   padding: 0px;
   position: fixed;
-  top: 0px;
+  top: 34px !important;
   visibility: hidden;
   width: 100%;
   z-index: 99999;
+  transition: top 0.3s ease;
 }
 .sticky-header.fixed-header {
   opacity: 1;
   visibility: visible;
   z-index: 9999;
+  /* Sits directly under the top bar once it's fixed too, so the two read as
+     one unbroken bar instead of two independently-scrolling pieces. */
+  top: var(--header-top-height, 34px);
+}
+/* Mobile */
+@media (max-width: 991px) {
+  .sticky-header.fixed-header {
+    top: 0;
+  }
+  .sticky-header {
+    top: 0px !important;
+  }
+}
+
+/* ---------- Top bar becomes part of the same sticky unit ----------
+   Reuses the theme's existing "fixed-header animated slideInDown" class
+   trio (already applied to .sticky-header on scroll, see script.js) so the
+   top bar animates in lock-step with the nav bar instead of a bespoke
+   transition. Background/shadow are copied 1:1 from .sticky-header so
+   there's no visible seam between the two rows. */
+.header-top.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99999;
+  background-color: rgba(10, 8, 8, 0.9843137255);
+  -webkit-box-shadow:
+    2px 2px 5px 1px rgba(0, 0, 0, 0.05),
+    -2px 0px 5px 1px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    2px 2px 5px 1px rgba(0, 0, 0, 0.05),
+    -2px 0px 5px 1px rgba(0, 0, 0, 0.05);
+  /* Padding intentionally left as-is (not overridden here): its rendered
+     height must stay identical to the default state, since --header-top-height
+     is measured from that default state and used to dock .sticky-header
+     directly beneath it. */
 }
 .sticky-header .logo {
   padding: 10px 0;
@@ -3517,7 +3560,6 @@ Scroll To Top style
   }
 }
 @media only screen and (max-width: 1023px) {
-  .header-top,
   .main-header .main-menu {
     display: none;
   }
@@ -3542,11 +3584,32 @@ Scroll To Top style
     justify-content: space-between;
   }
 }
+/* Tablet: keep the top bar, just tighten it so icons + contact info fit
+   cleanly without wrapping or crowding the edges. */
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+  .header-top {
+    padding: 6px 0;
+  }
+  .header-top-left,
+  .header-top-right {
+    gap: 12px;
+  }
+  .header-top-left a,
+  .header-top-right a {
+    font-size: 12px;
+  }
+}
 @media only screen and (max-width: 767px) {
   .main-slider .title {
     padding: 7px 20px;
   }
   .main-slider .title:before {
+    display: none;
+  }
+  /* Mobile: drop the top bar entirely (Option A) — social links + contact
+     info give way to the compact logo/hamburger row, which already has its
+     own "Call" / "Email" entries in the mobile menu drawer. */
+  .header-top {
     display: none;
   }
 }
@@ -26228,6 +26291,31 @@ Top Header
 
 .header-top-right i {
   margin-right: 8px;
+}
+
+/* ===========================
+   Header overlap spacing
+   ===========================
+   .main-header is intentionally position:absolute (it overlays transparently
+   on top of hero/banner sections), so it takes up no space in normal flow —
+   the next section has to reserve that space itself or content sits under
+   the header. --main-header-height is the real, live-measured header height
+   (script.js' updateHeaderMetrics()), so this keeps working automatically if
+   the top bar's height ever changes — no per-page padding needed.
+
+   :where() keeps this at zero specificity so any section with its own
+   deliberate top spacing (e.g. .hero-1's symmetric 155px) still wins; it
+   only fills in where nothing more specific already sets padding-top. */
+:where(header.main-header + *) {
+  padding-top: var(--main-header-height, 120px);
+}
+
+/* Legacy per-page banners hardcoded a manual top offset inline (~120px,
+   tuned by hand for the header). Reclaim it with !important — the only way
+   to beat an inline style short of editing every page — so they track the
+   real header height instead of a stale guess. */
+.page-banner {
+  padding-top: var(--main-header-height, 120px) !important;
 }
 
 /* ===========================

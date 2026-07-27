@@ -1,21 +1,21 @@
 <?php
+
 /**
  * Podcasts listing page.
- * 
+ *
  * Future database integration ready for webinar event management.
  */
-
-$page_title  = 'Podcasts - Quantal AI';
+$page_title = 'Podcasts - Quantal AI';
 $active_page = 'resources';
 
 $pdo = db();
 $webinars_per_page = 6;
-$current_page   = max(1, (int) ($_GET['page'] ?? 1));
-$offset         = ($current_page - 1) * $webinars_per_page;
+$current_page = max(1, (int) ($_GET['page'] ?? 1));
+$offset = ($current_page - 1) * $webinars_per_page;
 
 $webinars = [];
 $total = 0;
-$filter = $_GET['filter'] ?? 'upcoming'; // upcoming, past, all
+$filter = $_GET['filter'] ?? 'upcoming';  // upcoming, past, all
 
 // Placeholder: when podcasts table is added, replace this with live query
 // For now, showing template structure
@@ -23,13 +23,13 @@ if (false && $pdo) {
     try {
         $where = "status = 'published'";
         if ($filter === 'upcoming') {
-            $where .= " AND scheduled_at > NOW()";
+            $where .= ' AND scheduled_at > NOW()';
         } elseif ($filter === 'past') {
-            $where .= " AND scheduled_at <= NOW()";
+            $where .= ' AND scheduled_at <= NOW()';
         }
-        
+
         $total = (int) $pdo->query("SELECT COUNT(*) FROM webinars WHERE $where")->fetchColumn();
-        $stmt  = $pdo->prepare(
+        $stmt = $pdo->prepare(
             "SELECT id, slug, title, excerpt, featured_image, featured_alt, speaker_name, speaker_title, 
                     scheduled_at, duration_minutes, registration_url, published_at
              FROM webinars
@@ -52,7 +52,7 @@ $total_pages = max(1, (int) ceil($total / $webinars_per_page));
 <!-- Page Banner -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
     <div class="container">
-        <h1 style="color:#fff;font-size:42px;margin:0 0 12px;">Podcasts</h1>
+        <h1 style="color:#fff;font-size:42px;margin:25px 0 12px;">Podcasts</h1>
         <p style="opacity:0.7;margin:0;">
             <a href="/" style="color:#72aee6;">Home</a> &nbsp;/&nbsp; <a href="#" style="color:#72aee6;">Resources</a> &nbsp;/&nbsp; Podcasts
         </p>
@@ -103,7 +103,7 @@ $total_pages = max(1, (int) ceil($total / $webinars_per_page));
                                     <li>
                                         <i class="fa-light fa-calendar-days"></i>
                                         <?php if ($webinar['scheduled_at']): ?>
-                                            <?= e(date('M j, Y', strtotime((string)$webinar['scheduled_at']))) ?>
+                                            <?= e(date('M j, Y', strtotime((string) $webinar['scheduled_at']))) ?>
                                         <?php endif; ?>
                                     </li>
                                     <li>

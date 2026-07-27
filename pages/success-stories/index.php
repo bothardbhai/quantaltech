@@ -1,17 +1,17 @@
 <?php
+
 /**
  * Success Stories / Case Studies listing page.
- * 
+ *
  * Similar structure to blog index. Future database integration ready.
  */
-
-$page_title  = 'Success Stories - Quantal AI';
+$page_title = 'Success Stories - Quantal AI';
 $active_page = 'resources';
 
 $pdo = db();
 $stories_per_page = 6;
-$current_page   = max(1, (int) ($_GET['page'] ?? 1));
-$offset         = ($current_page - 1) * $stories_per_page;
+$current_page = max(1, (int) ($_GET['page'] ?? 1));
+$offset = ($current_page - 1) * $stories_per_page;
 
 $stories = [];
 $total = 0;
@@ -19,7 +19,7 @@ $total = 0;
 if ($pdo) {
     try {
         $total = (int) $pdo->query("SELECT COUNT(*) FROM success_stories WHERE status = 'published'")->fetchColumn();
-        $stmt  = $pdo->prepare(
+        $stmt = $pdo->prepare(
             "SELECT id, slug, title, excerpt, featured_image, featured_alt, company_name, industry, published_at
              FROM success_stories
              WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())
@@ -41,7 +41,7 @@ $total_pages = max(1, (int) ceil($total / $stories_per_page));
 <!-- Page Banner -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
     <div class="container">
-        <h1 style="color:#fff;font-size:42px;margin:0 0 12px;">Success Stories</h1>
+        <h1 style="color:#fff;font-size:42px;margin:25px 0 12px;">Success Stories</h1>
         <p style="opacity:0.7;margin:0;">
             <a href="/" style="color:#72aee6;">Home</a> &nbsp;/&nbsp; <a href="#" style="color:#72aee6;">Resources</a> &nbsp;/&nbsp; Success Stories
         </p>

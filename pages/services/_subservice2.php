@@ -158,7 +158,7 @@ $service_links = [
 <!-- Start main-content -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
     <div class="container">
-        <h1 style="color:#fff;font-size:36px;margin:0 0 14px;line-height:1.2;"><?= e($page_label) ?></h1>
+        <h1 style="color:#fff;font-size:36px;margin:25px 0 14px;line-height:1.2;"><?= e($page_title) ?></h1>
         <p style="opacity:0.75;margin:0;font-size:14px;">
             <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
             <a href="<?= url('/services') ?>" style="color:#72aee6;">Services</a> &nbsp;/&nbsp;

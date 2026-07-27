@@ -70,11 +70,14 @@ var THEMEMASCOT = {};
 			var siteHeader = $('.header-style-one');
 			var scrollLink = $('.scroll-to-top');
 			var sticky_header = $('.main-header .sticky-header');
+			var header_top = $('.main-header .header-top');
 			if (windowpos > 100) {
 				sticky_header.addClass("fixed-header animated slideInDown");
+				header_top.addClass("fixed-header animated slideInDown");
 				scrollLink.fadeIn(300);
 			} else {
 				sticky_header.removeClass("fixed-header animated slideInDown");
+				header_top.removeClass("fixed-header animated slideInDown");
 				scrollLink.fadeOut(300);
 			}
 			if (windowpos > 1) {
@@ -85,6 +88,40 @@ var THEMEMASCOT = {};
 		}
 	}
 	headerStyle();
+
+	// Keep --main-header-height / --header-top-height (used by CSS to space
+	// page content below the absolutely-positioned header, and to dock the
+	// sticky top bar directly above the sticky nav bar) in sync with the
+	// header's real rendered size, so both keep working if its height ever
+	// changes (top bar hidden on mobile, content wraps, etc).
+	function updateHeaderMetrics() {
+		var $headerTop = $('.main-header > .header-top');
+		var $headerLower = $('.main-header > .header-lower');
+		if (!$headerLower.length) {
+			return;
+		}
+		// topH stays exact (unbuffered): it docks .sticky-header flush under
+		// .header-top, and any padding there would show up as a visible gap
+		// between the two. The content-overlap total gets a couple px of
+		// headroom instead, since a sub-pixel shortfall there (e.g. a web
+		// font swapping in after this first measurement) just means a hair
+		// of extra breathing room, not a visible seam.
+		var topH = $headerTop.length ? Math.ceil($headerTop.outerHeight()) : 0;
+		var lowerH = Math.ceil($headerLower.outerHeight() || 0);
+		var root = document.documentElement;
+		root.style.setProperty('--header-top-height', topH + 'px');
+		root.style.setProperty('--main-header-height', (topH + lowerH + 2) + 'px');
+	}
+	updateHeaderMetrics();
+	$(window).on('load', updateHeaderMetrics);
+
+	(function () {
+		var resizeTimer;
+		$(window).on('resize', function () {
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(updateHeaderMetrics, 150);
+		});
+	})();
 
 	// Header hide on scroll down, show on scroll up (optional)
 

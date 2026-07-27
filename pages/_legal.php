@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shared legal / policy page renderer.
  *

@@ -117,7 +117,7 @@ $page_seo['schema_json'] = $post['schema_json'];
 <!-- Page Banner -->
 <section class="page-banner" style="padding:100px 0 60px;background:#1d2327;color:#fff;">
     <div class="container">
-        <h1 style="color:#fff;font-size:36px;margin:0 0 14px;line-height:1.2;"><?= e($post['title']) ?></h1>
+        <h1 style="color:#fff;font-size:36px;margin:25px 0 14px;line-height:1.2;"><?= e($post['title']) ?></h1>
         <p style="opacity:0.75;margin:0;font-size:14px;">
             <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
             <a href="<?= url('/blog') ?>" style="color:#72aee6;">Blog</a> &nbsp;/&nbsp;

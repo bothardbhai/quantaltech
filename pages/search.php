@@ -1,27 +1,27 @@
 <?php
+
 /**
  * Full search results page — the /search destination the header search
  * form posts to. Serves as the no-JS fallback for the live search
  * dropdown (assets/js/live-search.js), which intercepts the same form for
  * an in-page experience when JS is available.
  */
-
 require_once CORE_DIR . '/search.php';
 
 $raw_query = is_string($_GET['q'] ?? null) ? $_GET['q'] : '';
 
-$page_title  = $raw_query !== '' ? 'Search results for "' . $raw_query . '" - Quantal AI' : 'Search - Quantal AI';
+$page_title = $raw_query !== '' ? 'Search results for "' . $raw_query . '" - Quantal AI' : 'Search - Quantal AI';
 $active_page = '';
 
 $search = search_site(db(), $raw_query, 20);
-$query  = $search['query'];
+$query = $search['query'];
 $results = $search['results'];
 ?>
 
 <!-- Page Banner -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
     <div class="container">
-        <h1 style="color:#fff;font-size:36px;margin:0 0 14px;line-height:1.2;">Search</h1>
+        <h1 style="color:#fff;font-size:36px;margin:25px 0 12px;line-height:1.2;">Search</h1>
         <p style="opacity:0.75;margin:0;font-size:14px;">
             <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
             <span>Search</span>

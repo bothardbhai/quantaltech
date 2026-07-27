@@ -1,15 +1,15 @@
 <?php
+
 /**
  * Success Story / Case Study detail page. Slug is in $success_story_slug (set by router).
  *
  * Future database integration ready. Currently shows template.
  */
-
 $slug = $GLOBALS['success_story_slug'] ?? '';
 $active_page = 'resources';
 
 $story = null;
-$pdo  = db();
+$pdo = db();
 
 if ($pdo && $slug !== '') {
     try {
@@ -45,12 +45,12 @@ if (!$story) {
 
 // Wire per-story SEO into $page_seo so seo-head.php uses it
 $page_title = $story['meta_title'] !== '' ? $story['meta_title'] : $story['title'] . ' - ' . SITE_NAME;
-$page_seo['title']            = $page_title;
+$page_seo['title'] = $page_title;
 $page_seo['meta_description'] = $story['meta_description'] !== '' ? $story['meta_description'] : $story['excerpt'];
-$page_seo['meta_keywords']    = $story['meta_keywords'];
-$page_seo['og_image']         = $story['og_image']    !== '' ? $story['og_image']    : $story['featured_image'];
-$page_seo['canonical']        = (defined('SITE_URL') ? SITE_URL : '') . '/success-stories/' . $story['slug'];
-$page_seo['schema_json']      = $story['schema_json'];
+$page_seo['meta_keywords'] = $story['meta_keywords'];
+$page_seo['og_image'] = $story['og_image'] !== '' ? $story['og_image'] : $story['featured_image'];
+$page_seo['canonical'] = (defined('SITE_URL') ? SITE_URL : '') . '/success-stories/' . $story['slug'];
+$page_seo['schema_json'] = $story['schema_json'];
 ?>
 
 <!-- Page Banner -->
@@ -64,7 +64,7 @@ $page_seo['schema_json']      = $story['schema_json'];
             <span>
                 <i class="fa-light fa-calendar-days"></i>
                 <?php if ($story['published_at']): ?>
-                    <?= e(date('F j, Y', strtotime((string)$story['published_at']))) ?>
+                    <?= e(date('F j, Y', strtotime((string) $story['published_at']))) ?>
                 <?php endif; ?>
             </span>
         </p>
@@ -115,7 +115,7 @@ $page_seo['schema_json']      = $story['schema_json'];
                         <p style="color:#999;font-size:12px;margin:0 0 5px;text-transform:uppercase;">Published</p>
                         <p style="color:#fff;margin:0;">
                             <?php if ($story['published_at']): ?>
-                                <?= e(date('M j, Y', strtotime((string)$story['published_at']))) ?>
+                                <?= e(date('M j, Y', strtotime((string) $story['published_at']))) ?>
                             <?php else: ?>
                                 N/A
                             <?php endif; ?>
