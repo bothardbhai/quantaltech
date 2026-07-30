@@ -23481,7 +23481,7 @@ tr {
 =========================================*/
 
 .ai-platforms-section {
-  margin-top: 60px;
+  /* margin-top: 60px; */
   padding-top: 35px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }

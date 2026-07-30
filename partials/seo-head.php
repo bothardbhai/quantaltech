@@ -39,7 +39,19 @@ $_canonical   = first_nonempty(
     $page_seo['canonical'] ?? ''
 );
 
-$_schema_json = $page_seo['schema_json'] ?? '';
+// Template-level override -> DB value. (Unlike title/description/canonical
+// above, schema_json/robots previously had NO template-level override at
+// all, so a page with no matching `pages` table row — e.g. every service
+// detail page — could never surface its own JSON-LD or robots directive.)
+$_schema_json = first_nonempty(
+    $page_schema_json     ?? '',
+    $page_seo['schema_json'] ?? ''
+);
+
+$_robots      = first_nonempty(
+    $page_robots          ?? '',
+    $page_seo['robots']   ?? ''
+);
 
 // Build absolute URL for og:image if a relative path was provided
 if ($_og_image !== '' && !preg_match('#^https?://#', $_og_image) && defined('SITE_URL') && SITE_URL) {
@@ -55,6 +67,9 @@ if ($_og_image !== '' && !preg_match('#^https?://#', $_og_image) && defined('SIT
 <?php endif; ?>
 <?php if ($_canonical !== ''): ?>
 <link rel="canonical" href="<?= attr($_canonical) ?>">
+<?php endif; ?>
+<?php if ($_robots !== ''): ?>
+<meta name="robots" content="<?= attr($_robots) ?>">
 <?php endif; ?>
 
 <!-- Open Graph -->

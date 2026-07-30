@@ -192,7 +192,48 @@ function router_resolve(string $path): array
         }
     }
 
+    // Service Master fallback — only reached when no literal
+    // /pages/services/{slug}.php file exists for this path (checked above,
+    // so a hand-written page always takes priority). Looks up a published
+    // row in the `services` table and, if found, renders it through the
+    // dynamic bridge template instead of requiring a PHP file per service.
+    if (str_starts_with($path, '/services/')) {
+        $slug = trim(substr($path, strlen('/services/')), '/');
+        if ($slug !== '' && preg_match('/^[a-z0-9\-]+$/', $slug)) {
+            $template = PAGES_DIR . '/services/_service-dynamic.php';
+            if (is_file($template) && router_service_exists($slug)) {
+                $GLOBALS['service_slug'] = $slug;
+                return [
+                    'template'       => $template,
+                    'canonical_path' => '/services/' . $slug,
+                    'active_page'    => 'services',
+                    'status'         => 200,
+                ];
+            }
+        }
+    }
+
     return router_404();
+}
+
+/**
+ * Check whether a published service row exists for this slug, without
+ * pulling the whole row (the dynamic template loads it again itself — this
+ * is just routing's "does this URL exist" check).
+ */
+function router_service_exists(string $slug): bool
+{
+    $pdo = function_exists('db') ? db() : null;
+    if (!$pdo) {
+        return false;
+    }
+    try {
+        $stmt = $pdo->prepare("SELECT id FROM services WHERE slug = :slug AND status = 'published' LIMIT 1");
+        $stmt->execute([':slug' => $slug]);
+        return (bool) $stmt->fetch();
+    } catch (PDOException $e) {
+        return false;
+    }
 }
 
 /**

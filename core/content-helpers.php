@@ -365,3 +365,67 @@ function delete_service(\PDO $pdo, int $id): array
         return ['success' => false, 'error' => $e->getMessage()];
     }
 }
+
+/**
+ * Fetch published services by ID, in the caller-specified order. Used to
+ * resolve a service's Related Services picker (which stores IDs, not URLs)
+ * into real rows at render time.
+ */
+function get_services_by_ids(\PDO $pdo, array $ids): array
+{
+    $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+    if (empty($ids)) {
+        return [];
+    }
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare("SELECT * FROM services WHERE id IN ($placeholders) AND status = 'published'");
+    $stmt->execute($ids);
+
+    $by_id = [];
+    foreach ($stmt->fetchAll() ?: [] as $row) {
+        $by_id[(int) $row['id']] = $row;
+    }
+    $ordered = [];
+    foreach ($ids as $id) {
+        if (isset($by_id[$id])) {
+            $ordered[] = $by_id[$id];
+        }
+    }
+    return $ordered;
+}
+
+/**
+ * Fetch published blog posts by ID, each with its first category name
+ * resolved, in the caller-specified order. Used to resolve a service's
+ * Knowledge Hub picker (which stores post IDs, not titles/images) into real
+ * rows at render time.
+ */
+function get_blog_posts_by_ids(\PDO $pdo, array $ids): array
+{
+    $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+    if (empty($ids)) {
+        return [];
+    }
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare(
+        "SELECT p.id, p.slug, p.title, p.excerpt, p.featured_image,
+                (SELECT c.name FROM post_categories pc
+                 JOIN categories c ON c.id = pc.category_id
+                 WHERE pc.post_id = p.id ORDER BY c.name ASC LIMIT 1) AS category_name
+         FROM posts p
+         WHERE p.id IN ($placeholders) AND p.status = 'published'"
+    );
+    $stmt->execute($ids);
+
+    $by_id = [];
+    foreach ($stmt->fetchAll() ?: [] as $row) {
+        $by_id[(int) $row['id']] = $row;
+    }
+    $ordered = [];
+    foreach ($ids as $id) {
+        if (isset($by_id[$id])) {
+            $ordered[] = $by_id[$id];
+        }
+    }
+    return $ordered;
+}

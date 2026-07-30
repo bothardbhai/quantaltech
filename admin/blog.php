@@ -80,24 +80,6 @@ function save_post_faqs(PDO $pdo, int $post_id, array $questions, array $answers
     }
 }
 
-/**
- * Sanitize CKEditor HTML output. Allow a generous subset of tags suitable for
- * blog content; strip <script>, on* attrs, javascript: hrefs.
- */
-function sanitize_post_html(string $html): string
-{
-    // Strip <script> blocks entirely
-    $html = preg_replace('#<script\b[^>]*>.*?</script>#is', '', $html) ?? '';
-    // Strip <style> blocks
-    $html = preg_replace('#<style\b[^>]*>.*?</style>#is', '', $html) ?? '';
-    // Remove on* attributes (event handlers)
-    $html = preg_replace('#\s+on[a-z]+\s*=\s*"[^"]*"#i', '', $html) ?? '';
-    $html = preg_replace("#\s+on[a-z]+\s*=\s*'[^']*'#i", '', $html) ?? '';
-    // Block javascript: in href/src
-    $html = preg_replace('#(href|src)\s*=\s*"javascript:[^"]*"#i', '$1="#"', $html) ?? '';
-    return $html;
-}
-
 // ===========================================================================
 // DELETE
 // ===========================================================================
@@ -138,7 +120,7 @@ if ($action === 'new' || $action === 'edit') {
         $title           = trim((string) ($_POST['title'] ?? ''));
         $slug_raw        = trim((string) ($_POST['slug'] ?? ''));
         $excerpt         = trim((string) ($_POST['excerpt'] ?? ''));
-        $body_html       = sanitize_post_html((string) ($_POST['body_html'] ?? ''));
+        $body_html       = sanitize_html_fragment((string) ($_POST['body_html'] ?? ''));
         $featured_image  = trim((string) ($_POST['featured_image'] ?? ''));
         $featured_alt    = trim((string) ($_POST['featured_alt'] ?? ''));
         $status          = in_array($_POST['status'] ?? 'draft', ['draft', 'published', 'archived'], true)

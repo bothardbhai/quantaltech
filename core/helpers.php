@@ -97,3 +97,40 @@ function first_nonempty(string ...$candidates): string
     }
     return '';
 }
+
+/**
+ * Sanitize admin-authored HTML meant to be rendered raw (not escaped).
+ * Strips <script>/<style> blocks, on* event handler attributes, and
+ * javascript: URLs. Shared by any admin field that stores trusted-but-should-
+ * still-be-defanged HTML (blog body, service section headings, etc.).
+ */
+function sanitize_html_fragment(string $html): string
+{
+    // Strip <script> blocks entirely
+    $html = preg_replace('#<script\b[^>]*>.*?</script>#is', '', $html) ?? '';
+    // Strip <style> blocks
+    $html = preg_replace('#<style\b[^>]*>.*?</style>#is', '', $html) ?? '';
+    // Remove on* attributes (event handlers)
+    $html = preg_replace('#\s+on[a-z]+\s*=\s*"[^"]*"#i', '', $html) ?? '';
+    $html = preg_replace("#\s+on[a-z]+\s*=\s*'[^']*'#i", '', $html) ?? '';
+    // Block javascript: in href/src
+    $html = preg_replace('#(href|src)\s*=\s*"javascript:[^"]*"#i', '$1="#"', $html) ?? '';
+    return $html;
+}
+
+/**
+ * CKEditor's classic build always wraps its root content in a block element
+ * (usually a single outer <p>). Fields that get inserted inline (e.g. inside
+ * an existing <h2>) need that wrapper removed, or the browser ends up with
+ * an invalid block-inside-inline nesting. Only strips the wrapper when the
+ * ENTIRE string is one top-level <p>...</p> — leaves multi-paragraph content
+ * untouched.
+ */
+function strip_wrapping_p(string $html): string
+{
+    $trimmed = trim($html);
+    if (preg_match('#^<p>(.*)</p>$#is', $trimmed, $m) && !preg_match('#</p>\s*<p>#i', $trimmed)) {
+        return trim($m[1]);
+    }
+    return $html;
+}

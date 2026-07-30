@@ -55,7 +55,13 @@
             <p><a href="mailto:contact@quantaltech.ai">contact@quantaltech.ai</a></p>
             <h4 class="call-title"><a href="tel:+13158093225">+1 315 809 3225</a></h4>
             <!--<p>H 7 Sickanagar, V P Road, Mumbai — 400004</p>-->
-            <p>430 Park Avenue, New York, NY — 10022</p>
+            <p>
+              <a href="https://www.google.com/maps/search/?api=1&query=430+Park+Avenue,+New+York,+NY+10022"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                    430 Park Avenue, New York, NY — 10022
+              </a>
+            </p>
             
             <div class="social-icon">
               <a href="https://www.linkedin.com/company/quantal-ai" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>

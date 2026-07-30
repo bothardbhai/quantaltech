@@ -1,7 +1,19 @@
 <?php
-/** Based on theme template - content swapped to Quantal AI. */
+
+/**
+ * Based on theme template - content swapped to Quantal AI.
+ *
+ * The 6 cards below are unchanged static content. Any additional published
+ * Service Master entry (i.e. not already one of those 6 hand-written pages)
+ * is appended after them using the same card markup, auto-numbered
+ * continuing from 07 — this is what makes a brand-new admin-created service
+ * actually reachable from navigation instead of only via a typed URL.
+ */
 $page_title = 'AI Services - Quantal AI';
 $active_page = 'services';
+
+$pdo = db();
+$dynamic_services = $pdo ? get_services($pdo, ['status' => 'published']) : [];
 ?>
 
 <!-- Start main-content -->
@@ -24,91 +36,25 @@ $active_page = 'services';
   </div>
   <div class="auto-container">
     <div class="row">
-      <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".1s">
-        <div class="service-block-two">
-          <div class="head">
-            <div class="icon"><i class="flaticon-tech flaticon-tech-interaction-1"></i></div>
-            <div class="num">01</div>
-          </div>
-          <div class="content">
-            <h3 class="title"><a href="<?= url('/services/voice') ?>">Voice AI</a></h3>
-            <p class="text">Conversational, multilingual, sentiment-aware voice agents that transform customer interactions and lead nurturing.</p>
-            <a href="<?= url('/services/voice') ?>" class="theme-btn-main theme-btn-main2">
-              <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
-              <span class="theme-btn">Read More</span>
-              <span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".2s">
-        <div class="service-block-two">
-          <div class="head">
-            <div class="icon"><i class="flaticon-tech flaticon-tech-interaction-1"></i></div>
-            <div class="num">02</div>
-          </div>
-          <div class="content">
-            <h3 class="title"><a href="<?= url('/services/text') ?>">Text AI</a></h3>
-            <p class="text">Intelligent chatbots, NLP-powered insights, AI email marketing, and personalized outreach.</p>
-            <a href="<?= url('/services/text') ?>" class="theme-btn-main theme-btn-main2">
-              <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
-              <span class="theme-btn">Read More</span>
-              <span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span>
-            </a>
+      <?php foreach ($dynamic_services as $i => $svc): ?>
+        <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".<?= $i + 1 ?>s">
+          <div class="service-block-two">
+            <div class="head">
+              <div class="icon"><i class="<?= attr($svc['icon_class']) ?>"></i></div>
+              <!-- <div class="num"><?= sprintf('%02d', 6 + $i + 1) ?></div> -->
+            </div>
+            <div class="content">
+              <h3 class="title"><a href="<?= url('/services/' . attr($svc['slug'])) ?>"><?= e($svc['name']) ?></a></h3>
+              <p class="text"><?= e($svc['excerpt']) ?></p>
+              <a href="<?= url('/services/' . attr($svc['slug'])) ?>" class="theme-btn-main theme-btn-main2">
+                <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
+                <span class="theme-btn">Read More</span>
+                <span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".3s">
-        <div class="service-block-two">
-          <div class="head">
-            <div class="icon"><i class="flaticon-tech flaticon-tech-interaction-1"></i></div>
-            <div class="num">03</div>
-          </div>
-          <div class="content">
-            <h3 class="title"><a href="<?= url('/services/image') ?>">Image / Document AI</a></h3>
-            <p class="text">KYC verification, fraud detection, signature authentication, and invoice processing with computer vision.</p>
-            <a href="<?= url('/services/image') ?>" class="theme-btn-main theme-btn-main2">
-              <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
-              <span class="theme-btn">Read More</span>
-              <span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".4s">
-        <div class="service-block-two">
-          <div class="head">
-            <div class="icon"><i class="flaticon-tech flaticon-tech-interaction-1"></i></div>
-            <div class="num">04</div>
-          </div>
-          <div class="content">
-            <h3 class="title"><a href="<?= url('/services/process-auto') ?>">Process Automation</a></h3>
-            <p class="text">Reporting, reconciliations, compliance, and workflow automation that streamlines operations.</p>
-            <a href="<?= url('/services/process-auto') ?>" class="theme-btn-main theme-btn-main2">
-              <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
-              <span class="theme-btn">Read More</span>
-              <span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".5s">
-        <div class="service-block-two">
-          <div class="head">
-            <div class="icon"><i class="flaticon-tech flaticon-tech-interaction-1"></i></div>
-            <div class="num">05</div>
-          </div>
-          <div class="content">
-            <h3 class="title"><a href="<?= url('/services') ?>">AI Agents</a></h3>
-            <p class="text">Autonomous agents that orchestrate multi-step workflows across CRM, calendar, email, and data systems.</p>
-            <a href="<?= url('/services') ?>" class="theme-btn-main theme-btn-main2">
-              <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
-              <span class="theme-btn">Read More</span>
-              <span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span>
-            </a>
-          </div>
-        </div>
-      </div>
+      <?php endforeach; ?>
       <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".6s">
         <div class="service-block-two">
           <div class="head">
@@ -126,6 +72,7 @@ $active_page = 'services';
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </section>

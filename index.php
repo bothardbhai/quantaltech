@@ -50,6 +50,7 @@ if (file_exists(CONFIG_DIR . '/config.php')) {
 
 require CORE_DIR . '/helpers.php';
 require CORE_DIR . '/db.php';
+require CORE_DIR . '/content-helpers.php';
 require CORE_DIR . '/auth.php';
 require CORE_DIR . '/csrf.php';
 require CORE_DIR . '/mailer.php';
