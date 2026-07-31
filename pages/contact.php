@@ -133,7 +133,7 @@ $active_page = 'contact';
 					<h2 class="title split-text split-in-right">
 					Bringing AI expertise into your business
 					</h2>
-					<div class="text mt-3">We are always ready to help you and answer your questions. Drop us a line, give us a call, or visit our Mumbai office &mdash; we&rsquo;d love to hear about your AI project.</div>
+					<div class="text mt-3">We are always ready to help you and answer your questions. Drop us a line, give us a call, or visit our New York - we&rsquo;d love to hear about your AI project.</div>
 				</div>
 				<ul class="list-unstyled contact-details__info">
 					<li class="d-block d-sm-flex align-items-sm-center ">

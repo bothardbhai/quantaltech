@@ -600,7 +600,7 @@ $active_page = 'hire';
 						</div>
 						</div>
 					</div>
-					<div class="swiper-slide">
+					<!-- <div class="swiper-slide">
 						<div class="testimonial-block">
 						<p class="text">"They built a fully functional AI voice agent using Vapi - voice logic, integrations, testing, production rollout - with impressive technical skill and attention to detail."</p>
 						<div class="infu">
@@ -613,7 +613,7 @@ $active_page = 'hire';
 							</div>
 						</div>
 						</div>
-					</div>
+					</div> -->
 					<div class="swiper-slide">
 						<div class="testimonial-block">
 						<p class="text">"Quantal AI and Team are EXPERTS at building ANY AI functionality you're seeking! Each project completed ON TIME and UNDER BUDGET. Highly Recommended!"</p>
@@ -633,7 +633,7 @@ $active_page = 'hire';
 						<p class="text">"Their technical aptitude is outstanding - highly competent, creative, thoughtful, and reliable. They built a complex integration connecting PhotoRoom, Google Cloud, AWS, and Shopify, and it works beautifully."</p>
 						<div class="infu">
 							<div class="image">
-							<img src="<?= asset('images/quantal/clients/grip.png') ?>" alt="David Friedland">
+							<img src="<?= asset('images/quantal/clients/Osteopathic.webp') ?>" alt="David Friedland">
 							</div>
 							<div class="name-info">
 							<h5 class="name">David Friedland</h5>

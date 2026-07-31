@@ -25,7 +25,7 @@ $active_page = $active_page ?? 'home';
         <img src="<?= asset('images/home-1/hero/right-shape.png') ?>" alt="img">
     </div>
     <div class="container">
-        <div class="row g-xl-0 g-4 align-items-center">
+        <div class="row g-xl-0 g-4 align-items-center pt-5">
         <div class="col-xl-9">
             <div class="hero-content">
             <h1 class="hero-title split-text split-in-right">
@@ -140,7 +140,7 @@ $active_page = $active_page ?? 'home';
                     </svg>
                 </div>
                 <div class="experience count-box">
-                    <h3 class="num"><span class="count-text" data-speed="3000" data-stop="40" data-lag="0">40+</span></h3>
+                    <h3 class="num"><span class="count-text" data-speed="3000" data-stop="80" data-lag="0">80+</span></h3>
                 </div>
             </div>
           </div>
@@ -845,7 +845,7 @@ $active_page = $active_page ?? 'home';
           <div class="cards-content">
             <div class="award-block">
               <div class="head">
-                <div class="num">40+</div>
+                <div class="num">80+</div>
                 <div class="icon">
                   <img src="<?= asset('images/home-1/award/award-icon.webp') ?>" alt="Production AI Projects Delievered - Award Winner">
                 </div>
@@ -914,7 +914,7 @@ $active_page = $active_page ?? 'home';
               Senior AI engineers, fast onboarding without long hiring cycles, production-first systems &mdash; with 100% transparent communication and delivery from planning to deployment.
             </p>
             <div class="experience count-box wow fadeInUp" data-wow-delay=".5s">
-              <h3 class="num"><span class="count-text" data-speed="3000" data-stop="40">0</span>+</h3>
+              <h3 class="num"><span class="count-text" data-speed="3000" data-stop="80">0</span>+</h3>
               <p class="text-1">Production AI Projects Delivered</p>
             </div>
             <div class="image right-to-left-ani">
@@ -1052,7 +1052,7 @@ $active_page = $active_page ?? 'home';
                             <p class="text">&ldquo;Working with Quantal AI team has been an absolute pleasure. Their technical aptitude is outstanding &mdash; they&rsquo;re not only highly competent but also creative, thoughtful, and reliable. They built a complex integration for our wine business connecting PhotoRoom, Google Cloud, AWS, and Shopify, and it works beautifully.&rdquo;</p>
                             <div class="infu">
                             <div class="image">
-                                <img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="David F">
+                                <img src="<?= asset('images/quantal/clients/Osteopathic.webp') ?>" alt="David F">
                             </div>
                             <div class="name-info">
                                 <h5 class="name">David F</h5>

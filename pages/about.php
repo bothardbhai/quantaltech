@@ -558,7 +558,7 @@ $active_page = 'about';
 						<p class="text">&ldquo;Working with Quantal AI team has been an absolute pleasure. Their technical aptitude is outstanding &mdash; they&rsquo;re not only highly competent but also creative, thoughtful, and reliable. They built a complex integration for our wine business connecting PhotoRoom, Google Cloud, AWS, and Shopify, and it works beautifully.&rdquo;</p>
 						<div class="infu">
 							<div class="image">
-							<img src="<?= asset('images/home-1/testimonial/clients-01.png') ?>" alt="David F">
+							<img src="<?= asset('images/quantal/clients/Osteopathic.webp') ?>" alt="David F">
 							</div>
 							<div class="name-info">
 							<h5 class="name">David F</h5>
