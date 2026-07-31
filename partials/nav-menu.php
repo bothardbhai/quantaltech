@@ -16,34 +16,6 @@ $active = $active_page ?? '';
 //
 // NOTE: Some theme entries (Pricing, FAQ, Testimonial, Team Details, Project Details,
 // 404) are kept here for convenience but commented out. Uncomment as content goes live.
-
-// Fetch all active services from database
-$service_children = [];
-
-try {
-    // CHANGE THIS QUERY TO MATCH YOUR TABLE STRUCTURE
-    $stmt = $pdo->prepare('
-        SELECT name, slug
-        FROM services
-        WHERE status = 1
-        ORDER BY sort_order ASC
-    ');
-
-    $stmt->execute();
-
-    $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    foreach ($services as $service) {
-        $service_children[] = [
-            'label' => $service['name'],
-            'href' => '/services/' . $service['slug'],
-            'key' => 'services',
-        ];
-    }
-} catch (Exception $e) {
-    $service_children = [];
-}
-
 $menu = [
     [
         'label' => 'Home',
@@ -59,7 +31,14 @@ $menu = [
         'label' => 'Services',
         'href' => '/services',
         'key' => 'services',
-        'children' => $service_children,
+        'children' => [
+            // ['label' => 'All Solutions',         'href' => '/services', 'key' => 'services'],
+            ['label' => 'Voice AI', 'href' => '/services/voice', 'key' => 'services'],
+            ['label' => 'Text AI', 'href' => '/services/text', 'key' => 'services'],
+            ['label' => 'Image / Document AI', 'href' => '/services/image', 'key' => 'services'],
+            ['label' => 'Process Automation', 'href' => '/services/process-auto', 'key' => 'services'],
+            // ['label' => 'Ai Engineering', 'href' => '/services/ai-engineering', 'key' => 'services'],
+        ],
     ],
     [
         'label' => 'Resources',

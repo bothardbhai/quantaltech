@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-ini_set('display_errors', 1);  // never show to browser
-ini_set('log_errors', 1);
+ini_set('display_errors', 4);  // never show to browser
+ini_set('log_errors', 4);
 ini_set('error_log', './php_error.log');
 error_reporting(E_ALL);
 

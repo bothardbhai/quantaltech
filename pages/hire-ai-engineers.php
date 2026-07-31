@@ -236,6 +236,66 @@ $active_page = 'hire';
 							<img src="<?= asset('images/quantal/clients/nortmaq.png') ?>" alt="Nortmaq">
 						</div>
 					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/xanevo.jpg') ?>" alt="Xanevo">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/ackuity.jpg') ?>" alt="Ackuity">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/benow_logo.png') ?>" alt="Benow">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/brandtrust.jpg') ?>" alt="Brand Trust">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/civiq.png') ?>" alt="Civiq">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/corsano.png') ?>" alt="Corsano">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/desert_recovery_center.png') ?>" alt="Desert Recovery Center">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/northwell-health.png') ?>" alt="Northwell Health">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/osteopathic_healing_hands.png') ?>" alt="Osteopathic Healing Hands">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/sanofi.png') ?>" alt="Sanofi">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/street.png') ?>" alt="Street">
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="brand-img2 image-fluid">
+							<img src="<?= asset('images/quantal/clients/tbl.webp') ?>" alt="TBL">
+						</div>
+					</div>
 				</div>
 			</div>
 			<!-- <div class="swiper brand-slider2">

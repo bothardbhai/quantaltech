@@ -247,6 +247,16 @@ $service_links ??= [
                                             ['nortmaq.png', 'Nortmaq'],
                                             ['xanevo.jpg', 'Xanevo'],
                                             ['ackuity.jpg', 'Ackuity'],
+                                            ['benow_logo.png', 'Benow'],
+                                            ['brandtrust.jpg', 'Brand Trust'],
+                                            ['civiq.png', 'Civiq'],
+                                            ['corsano.png', 'Corsano'],
+                                            ['desert_recovery_center.png', 'Desert Recovery Center'],
+                                            ['northwell-health.png', 'Northwell Health'],
+                                            ['osteopathic_healing_hands.png', 'Osteopathic Healing Hands'],
+                                            ['sanofi.png', 'Sanofi'],
+                                            ['street.png', 'Street'],
+                                            ['tbl.webp', 'TBL'],
                                         ];
                                         foreach ($clients as $client):
                                             ?>
