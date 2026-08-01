@@ -1,6 +1,6 @@
 <?php
 /** About - based on theme's page-about.html, content swapped to Quantal AI. */
-$page_title = 'About - Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'About - Quantal AI';
 $active_page = 'about';
 ?>
 

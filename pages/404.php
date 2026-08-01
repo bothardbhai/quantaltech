@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Source: page-404.html (theme original)
  * Stage 1: structural conversion only — content port happens in Stage 3.
  */
-$page_title  = $page_title  ?? 'Page Not Found — Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Page Not Found — Quantal AI';
 $active_page = $active_page ?? '';
 ?>
 <!-- 404 Section -->

@@ -9,7 +9,7 @@
  * continuing from 07 — this is what makes a brand-new admin-created service
  * actually reachable from navigation instead of only via a typed URL.
  */
-$page_title = 'AI Services - Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'AI Services - Quantal AI';
 $active_page = 'services';
 
 $pdo = db();

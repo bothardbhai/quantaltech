@@ -5,7 +5,7 @@
  *
  * Future database integration ready for webinar event management.
  */
-$page_title = 'Podcasts - Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Podcasts - Quantal AI';
 $active_page = 'resources';
 
 $pdo = db();

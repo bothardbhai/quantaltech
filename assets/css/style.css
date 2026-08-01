@@ -7038,7 +7038,7 @@ Section Title
   align-items: center;
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+  display: block;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
@@ -7127,13 +7127,14 @@ Section Title
   }
 }
 .feature-list-items li .list-item .text {
-  background-color: var(--theme-color-black);
+  /* background-color: var(--theme-color-black); */
   border-radius: 30px;
   font-size: 16px;
   font-weight: 400;
   letter-spacing: -0.32px;
   padding: 0 10px;
   position: relative;
+  width: 180px;
 }
 @media (max-width: 1199.98px) {
   .feature-list-items li .list-item .text {

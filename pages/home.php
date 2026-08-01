@@ -4,7 +4,7 @@
  * Source: index.html (theme original)
  * Stage 1: structural conversion only - content port happens in Stage 3.
  */
-$page_title = $page_title ?? 'Quantal AI - Enterprise AI Solutions & Intelligent Automation';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Quantal AI - Enterprise AI Solutions & Intelligent Automation';
 $active_page = $active_page ?? 'home';
 ?>
 
@@ -353,6 +353,7 @@ $active_page = $active_page ?? 'home';
             <li>
               <h4 class="title">Senior AI Engineers</h4>
               <div class="list-item">
+                <span class="dot"></span>
                 <span class="text">15+ years experience</span>
                 <span class="dot"></span>
                 <span class="text">100% job success</span>
@@ -361,6 +362,7 @@ $active_page = $active_page ?? 'home';
             <li>
               <h4 class="title">Fast Onboarding</h4>
               <div class="list-item">
+                <span class="dot"></span>
                 <span class="text">24-hour response</span>
                 <span class="dot"></span>
                 <span class="text">No long hiring cycles</span>
@@ -369,6 +371,7 @@ $active_page = $active_page ?? 'home';
             <li>
               <h4 class="title">Production-First Systems</h4>
               <div class="list-item">
+                <span class="dot"></span>
                 <span class="text">Real LLM experience</span>
                 <span class="dot"></span>
                 <span class="text">Scalable deployments</span>
@@ -377,6 +380,7 @@ $active_page = $active_page ?? 'home';
             <li>
               <h4 class="title">Transparent Delivery</h4>
               <div class="list-item">
+                <span class="dot"></span>
                 <span class="text">On time</span>
                 <span class="dot"></span>
                 <span class="text">Under budget</span>

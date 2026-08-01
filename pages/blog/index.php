@@ -6,7 +6,7 @@
  * Uses theme card markup. The original theme template lives at
  * /pages/blog/_grid_reference.php for visual reference.
  */
-$page_title = 'Blog - Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Blog - Quantal AI';
 $active_page = 'blog';
 
 $pdo = db();

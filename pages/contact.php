@@ -1,6 +1,6 @@
 <?php
 /** Based on theme template - content swapped to Quantal AI. */
-$page_title = 'Contact Us - Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Contact Us - Quantal AI';
 $active_page = 'contact';
 ?>
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SEO head partial — outputs <title>, meta tags, Open Graph, Twitter Card,
  * canonical, and JSON-LD schema.
@@ -6,36 +7,35 @@
  * Reads from $page_seo (set by index.php from DB) with template-level overrides
  * via $page_title, $canonical, $page_description.
  */
-
 $site_defaults = seo_site_defaults();
 
 // Resolve each value with proper fallback chain:
 //   template variable -> DB value -> site default -> empty
-$_title       = first_nonempty(
-    $page_title           ?? '',
-    $page_seo['title']    ?? '',
+$_title = first_nonempty(
+    $page_title ?? '',
+    $page_seo['title'] ?? '',
     $site_defaults['site_name'] ?? ''
 );
 
 $_description = first_nonempty(
-    $page_description     ?? '',
+    $page_description ?? '',
     $page_seo['meta_description'] ?? '',
     $site_defaults['description'] ?? ''
 );
 
-$_keywords    = first_nonempty(
-    $page_keywords        ?? '',
-    $page_seo['meta_keywords']    ?? ''
+$_keywords = first_nonempty(
+    $page_keywords ?? '',
+    $page_seo['meta_keywords'] ?? ''
 );
 
-$_og_image    = first_nonempty(
-    $page_og_image        ?? '',
+$_og_image = first_nonempty(
+    $page_og_image ?? '',
     $page_seo['og_image'] ?? '',
     $site_defaults['og_image'] ?? ''
 );
 
-$_canonical   = first_nonempty(
-    $canonical            ?? '',
+$_canonical = first_nonempty(
+    $canonical ?? '',
     $page_seo['canonical'] ?? ''
 );
 
@@ -44,13 +44,13 @@ $_canonical   = first_nonempty(
 // all, so a page with no matching `pages` table row — e.g. every service
 // detail page — could never surface its own JSON-LD or robots directive.)
 $_schema_json = first_nonempty(
-    $page_schema_json     ?? '',
+    $page_schema_json ?? '',
     $page_seo['schema_json'] ?? ''
 );
 
-$_robots      = first_nonempty(
-    $page_robots          ?? '',
-    $page_seo['robots']   ?? ''
+$_robots = first_nonempty(
+    $page_robots ?? '',
+    $page_seo['robots'] ?? ''
 );
 
 // Build absolute URL for og:image if a relative path was provided

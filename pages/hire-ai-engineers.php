@@ -5,7 +5,7 @@
  * markup. Same sections, animation hooks, and shape decorations as the theme;
  * only copy and content imagery are swapped.
  */
-$page_title = 'Hire Experienced AI Engineers';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Hire Experienced AI Engineers';
 $active_page = 'hire';
 ?>
 

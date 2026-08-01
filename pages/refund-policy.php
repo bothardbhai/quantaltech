@@ -4,7 +4,7 @@
  * Refund & Cancellation Policy - content from quantaltech.ai/refund-cancellation-policy
  * Renders via shared legal template using theme page-title + services-details typography.
  */
-$page_title = 'Refund & Cancellation Policy - Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Refund & Cancellation Policy - Quantal AI';
 $active_page = '';
 
 $banner_title = 'Refund & Cancellation Policy';

@@ -5,7 +5,7 @@
  *
  * Similar structure to blog index. Future database integration ready.
  */
-$page_title = 'Success Stories - Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Success Stories - Quantal AI';
 $active_page = 'resources';
 
 $pdo = db();

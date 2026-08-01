@@ -21,17 +21,17 @@
  * right-hand timeline. Defaults to the 4 steps from the reference design;
  * override before including this file if a page needs different steps.
  */
-$page_title = $page_title ?? 'Thank You — Quantal AI';
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Thank You — Quantal AI';
 $active_page = $active_page ?? '';
 
 $thankyou_title = $thankyou_title ?? 'Thanks';
 $thankyou_text = $thankyou_text ?? 'Our team will get back to you within one business day to discuss next steps.';
 
 $next_steps = $next_steps ?? [
-	['title' => 'We Review Your Request', 'desc' => 'Within one business day, our team carefully reviews your submission to understand what you are looking for.'],
-	['title' => 'We Reach Out', 'desc' => 'We get in touch to learn more about your requirements whether you are exploring AI solutions or looking to bring the right talent on board.'],
-	['title' => 'We Share the Right Approach', 'desc' => 'Based on your needs, we recommend the best path forward whether that is a tailored AI solution, a consultation, or matching you with the right professional.'],
-	['title' => 'We Get to Work', 'desc' => 'Once aligned, our team moves quickly to deliver results on time and within budget.'],
+    ['title' => 'We Review Your Request', 'desc' => 'Within one business day, our team carefully reviews your submission to understand what you are looking for.'],
+    ['title' => 'We Reach Out', 'desc' => 'We get in touch to learn more about your requirements whether you are exploring AI solutions or looking to bring the right talent on board.'],
+    ['title' => 'We Share the Right Approach', 'desc' => 'Based on your needs, we recommend the best path forward whether that is a tailored AI solution, a consultation, or matching you with the right professional.'],
+    ['title' => 'We Get to Work', 'desc' => 'Once aligned, our team moves quickly to deliver results on time and within budget.'],
 ];
 ?>
 
