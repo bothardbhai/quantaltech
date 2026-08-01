@@ -598,7 +598,7 @@ $service_links ??= [
                                                     <div class="testimonial-block">
                                                         <p class="text">&ldquo;Working with Quantal AI team has been an absolute pleasure. Their technical aptitude is outstanding &mdash; they&rsquo;re not only highly competent but also creative, thoughtful, and reliable. They built a complex integration for our wine business connecting PhotoRoom, Google Cloud, AWS, and Shopify, and it works beautifully.&rdquo;</p>
                                                         <div class="infu">
-                                                            <div class="image"><img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="David F"></div>
+                                                            <div class="image"><img src="<?= asset('images/quantal/clients/osteopathic_healing_hands.png') ?>" alt="David F"></div>
                                                             <div class="name-info"><h5 class="name">David F</h5><span>Osteopathic Healing Hands</span></div>
                                                         </div>
                                                     </div>
@@ -798,7 +798,10 @@ $service_links ??= [
                                     <div class="col-md-6 wow fadeInUp" data-wow-delay="<?= 0.2 + $i * 0.2 ?>s">
                                         <article class="knowledge-card">
                                             <div class="knowledge-image">
-                                                <img src="<?= asset($post['image']) ?>" alt="<?= attr($post['category']) ?>">
+                                                <img src="<?= preg_match('/^https?:\/\//', $post['image'])
+            ? e($post['image'])
+            : url($post['image']) ?>"
+                                                    alt="<?= attr($post['category']) ?>">
                                             </div>
                                             <div class="knowledge-content">
                                                 <span class="knowledge-category"><?= e($post['category']) ?></span>
