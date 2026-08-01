@@ -26411,3 +26411,204 @@ Top Header
 .news-content .theme-btn-2 {
   margin-top: auto;
 }
+
+/* About is Video Section */
+.brand-video {
+  max-width: 500px; /* Adjust as needed */
+  margin: 30px 0;
+}
+
+.video-wrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.video-wrapper img {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+}
+
+/* Thumbnail trigger — dark overlay + zoom + play-button scale on hover */
+.video-thumbnail {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.video-thumbnail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.35);
+  transition: background-color 0.4s ease;
+}
+
+.video-thumbnail img {
+  transform: scale(1);
+  transition: transform 0.5s ease;
+}
+
+.video-thumbnail:hover::before {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.video-thumbnail:hover img {
+  transform: scale(1.06);
+}
+
+.play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: 2;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.video-thumbnail:hover .play-btn {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+/* Subtle ring so the button reads as "playable" even before hovering */
+.play-btn::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.video-thumbnail:hover .play-btn::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============================================================
+   Video Popup Modal (vanilla JS — no lightbox library)
+   ============================================================ */
+.video-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.85);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+
+.video-modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s ease, visibility 0s linear 0s;
+}
+
+.video-modal {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+  max-height: 80vh;
+  background: #000;
+  border-radius: 16px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transform: scale(0.92);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
+}
+
+.video-modal-overlay.is-open .video-modal {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.video-modal__player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 80vh;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.video-modal__player video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 16px;
+  object-fit: contain;
+}
+
+.video-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.video-modal__close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08);
+}
+
+/* Locks background scroll while the modal is open (toggled by JS) */
+body.video-modal-open {
+  overflow: hidden;
+}
+
+@media (max-width: 991px) {
+  .video-modal {
+    max-width: 700px;
+  }
+}
+
+@media (max-width: 575px) {
+  .video-modal {
+    width: 95%;
+    max-height: 85vh;
+  }
+  .video-modal__close {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+}

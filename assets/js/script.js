@@ -123,6 +123,64 @@ var THEMEMASCOT = {};
 		});
 	})();
 
+	// Video popup modal — generic and reusable (vanilla JS, no lightbox
+	// library): any element anywhere on the page with data-video-modal +
+	// data-video-src opens this same modal with that source. No-ops on pages
+	// that don't include the modal markup.
+	(function () {
+		var overlay = document.getElementById('videoModalOverlay');
+		if (!overlay) { return; }
+
+		var modalVideo = overlay.querySelector('#videoModalPlayer');
+		var closeBtn = overlay.querySelector('.video-modal__close');
+		var lastTrigger = null;
+
+		function openModal(src, trigger) {
+			lastTrigger = trigger || null;
+			modalVideo.src = src;
+			overlay.classList.add('is-open');
+			document.body.classList.add('video-modal-open');
+			modalVideo.currentTime = 0;
+			// Autoplay can be blocked by the browser (e.g. no prior user
+			// gesture) — controls stay usable either way, so ignore the rejection.
+			modalVideo.play().catch(function () {});
+		}
+
+		function closeModal() {
+			if (!overlay.classList.contains('is-open')) { return; }
+			overlay.classList.remove('is-open');
+			document.body.classList.remove('video-modal-open');
+			modalVideo.pause();
+			modalVideo.currentTime = 0;
+			modalVideo.removeAttribute('src');
+			modalVideo.load(); // fully releases the previous source
+			if (lastTrigger) { lastTrigger.focus(); }
+		}
+
+		document.addEventListener('click', function (e) {
+			var trigger = e.target.closest ? e.target.closest('[data-video-modal]') : null;
+			if (trigger) {
+				e.preventDefault();
+				var src = trigger.getAttribute('data-video-src');
+				if (src) { openModal(src, trigger); }
+				return;
+			}
+			// Backdrop click closes the modal; clicks inside .video-modal itself
+			// (video, close button) don't reach the overlay element.
+			if (e.target === overlay) {
+				closeModal();
+			}
+		});
+
+		closeBtn.addEventListener('click', closeModal);
+
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape') {
+				closeModal();
+			}
+		});
+	})();
+
 	// Header hide on scroll down, show on scroll up (optional)
 
 	if ($(window).width() > 991) {

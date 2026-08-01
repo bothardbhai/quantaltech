@@ -43,7 +43,7 @@ $active_page = 'about';
 			</svg>
 			</div>
 			<div class="experience count-box">
-			<h3 class="num"><span class="count-text" data-speed="3000" data-stop="40" data-lag="0">40+</span></h3>
+			<h3 class="num"><span class="count-text" data-speed="3000" data-stop="80" data-lag="0">80+</span></h3>
 			</div>
 		</div>
 		</div>
@@ -62,6 +62,23 @@ $active_page = 'about';
 		<p class="about-text wow fadeInUp" data-wow-delay=".3s">Quantal AI is a GenAI engineering studio. We help companies move beyond experimentation by designing and deploying intelligent systems &mdash; from AI agents and automation platforms to knowledge systems and generative AI applications.</p>
 		<div class="about-box wow fadeInUp" data-wow-delay=".5s">
 			<h6 class="para-text">Our team brings deep hands-on experience across AI strategy, custom development, and automation. We don&rsquo;t just prototype AI &mdash; we build systems that run in production.</h6>
+		</div>
+		<div class="brand-video wow fadeInUp" data-wow-delay=".7s">
+			<div class="video-wrapper">
+				<button type="button"
+				class="video-thumbnail"
+				data-video-modal
+				data-video-src="<?= asset('/video/quantal-ai-upwork-final.mp4') ?>"
+				aria-label="Play brand explainer video">
+
+					<img src="<?= asset('images/home-1/about-image.jpg') ?>"
+						alt="Brand Explainer Video">
+
+					<span class="play-btn">
+						<i class="fa-solid fa-play"></i>
+					</span>
+				</button>
+			</div>
 		</div>
 		<a class="theme-btn-main wow fadeInUp" data-wow-delay=".9s" href="<?= url('/contact') ?>">
 			<span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i> </span>
@@ -86,6 +103,20 @@ $active_page = 'about';
 </div>
 </section>
 <!-- End About Section -->
+
+<!-- Video Popup Modal — generic & reusable: any [data-video-modal] trigger
+     anywhere on the page opens this same modal with its own data-video-src.
+     Vanilla JS only, see assets/js/script.js. -->
+<div class="video-modal-overlay" id="videoModalOverlay">
+	<div class="video-modal" role="dialog" aria-modal="true" aria-label="Video player">
+		<button type="button" class="video-modal__close" aria-label="Close video">
+			<i class="fa fa-times"></i>
+		</button>
+		<div class="video-modal__player">
+			<video id="videoModalPlayer" playsinline controls></video>
+		</div>
+	</div>
+</div>
 
 <!-- feature Section Start -->
 <section class="feature-section1 section-padding bb-top fix">
@@ -133,6 +164,7 @@ $active_page = 'about';
 					Innovation
 					</h4>
 					<div class="list-item">
+					<span class="dot"></span>
 					<span class="text">Forward-thinking</span>
 					<span class="dot"></span>
 					<span class="text">Research-driven</span>
@@ -142,6 +174,7 @@ $active_page = 'about';
 					<h4 class="title">
 					Reliability
 					</h4>
+					<span class="dot"></span>
 					<div class="list-item">
 					<span class="text">Robust systems</span>
 					<span class="dot"></span>
@@ -152,6 +185,7 @@ $active_page = 'about';
 					<h4 class="title">
 					Collaboration
 					</h4>
+					<span class="dot"></span>
 					<div class="list-item">
 					<span class="text">Aligned with goals</span>
 					<span class="dot"></span>
@@ -162,6 +196,7 @@ $active_page = 'about';
 					<h4 class="title">
 					Integrity
 					</h4>
+					<span class="dot"></span>
 					<div class="list-item">
 					<span class="text">Transparent</span>
 					<span class="dot"></span>
