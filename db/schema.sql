@@ -193,6 +193,12 @@ CREATE TABLE IF NOT EXISTS `services` (
     `faq_intro` TEXT NULL,
     `faqs_json` JSON NULL,
 
+    -- Final CTA (bottom-of-page band, distinct from the mid-page cta_* fields above)
+    `final_cta_title_html` MEDIUMTEXT   NULL,
+    `final_cta_desc`       TEXT         NULL,
+    `final_cta_btn_text`   VARCHAR(150) NOT NULL DEFAULT '',
+    `final_cta_btn_url`    VARCHAR(500) NOT NULL DEFAULT '',
+
     -- Content & SEO
     `meta_title`        VARCHAR(255) NOT NULL DEFAULT '',
     `meta_description`  VARCHAR(320) NOT NULL DEFAULT '',

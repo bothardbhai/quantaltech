@@ -6,6 +6,11 @@
  */
 $page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Quantal AI - Enterprise AI Solutions & Intelligent Automation';
 $active_page = $active_page ?? 'home';
+
+// "AI Services Built for Your Real Operations" slider — every published
+// Service Master entry becomes a slide automatically (service_number order).
+$pdo = db();
+$home_services = $pdo ? get_services($pdo, ['status' => 'published']) : [];
 ?>
 
 <section class="hero-section fix hero-1 bg-cover" style="background-image: url('<?= asset('images/home-1/hero/hero-bg.jpg') ?>');">
@@ -407,16 +412,21 @@ $active_page = $active_page ?? 'home';
     </div>
     <div class="swiper service-slide">
         <div class="swiper-wrapper">
+        <?php
+        foreach ($home_services as $svc):
+          $svc_url = url('/services/' . $svc['slug']);
+          $svc_image = $svc['featured_image'] !== '' ? media_url($svc['featured_image']) : asset('images/quantal/services/image_ai.png');
+          ?>
         <div class="swiper-slide">
             <div class="service-block">
             <div class="image">
-                <img src="<?= asset('images/quantal/services/voice_ai.png') ?>" alt="Voice AI">
+                <img src="<?= attr($svc_image) ?>" alt="<?= attr($svc['name']) ?>">
             </div>
             <div class="content">
-                <span class="tag">Voice</span>
-                <h4 class="title"><a href="<?= url('/services/voice') ?>">Voice AI Solutions</a></h4>
-                <p class="text">Conversational, multilingual, sentiment-aware voice agents for customer service, lead nurturing, and reminders.</p>
-                <a href="<?= url('/services/voice') ?>" class="theme-btn-main theme-btn-main2">
+                <span class="tag"><?= e($svc['name']) ?></span>
+                <h4 class="title"><a href="<?= attr($svc_url) ?>"><?= e($svc['title']) ?></a></h4>
+                <p class="text"><?= e(truncate_text($svc['excerpt'], 85)) ?></p>
+                <a href="<?= attr($svc_url) ?>" class="theme-btn-main theme-btn-main2">
                 <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
                 <span class="theme-btn">Read More</span>
                 <span class="theme-btn-arrow-right">
@@ -426,72 +436,7 @@ $active_page = $active_page ?? 'home';
             </div>
             </div>
         </div>
-        <div class="swiper-slide">
-            <div class="service-block">
-            <div class="image">
-                <img src="<?= asset('images/quantal/services/text_ai.png') ?>" alt="Text AI">
-            </div>
-            <div class="content">
-                <span class="tag">Text</span>
-                <h4 class="title"><a href="<?= url('/services/text') ?>">Text AI Solutions</a></h4>
-                <p class="text">
-                Intelligent chatbots, NLP-powered market intelligence, AI email marketing, and personalized outreach.
-                </p>
-                <a href="<?= url('/services/text') ?>" class="theme-btn-main theme-btn-main2">
-                    <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
-                    </span>
-                    <span class="theme-btn">Read More</span>
-                    <span class="theme-btn-arrow-right">
-                        <i class="far fa-long-arrow-right"></i>
-                    </span>
-                </a>
-            </div>
-            </div>
-        </div>
-        <div class="swiper-slide">
-            <div class="service-block">
-            <div class="image">
-                <img src="<?= asset('images/quantal/services/image_ai.png') ?>" alt="Image / Document AI">
-            </div>
-            <div class="content">
-                <span class="tag">Vision</span>
-                <h4 class="title"><a href="<?= url('/services/image') ?>">Image / Document AI</a></h4>
-                <p class="text">
-                KYC verification, fraud detection, signature verification, and invoice processing with computer vision.
-                </p>
-                <a href="<?= url('/services/image') ?>" class="theme-btn-main theme-btn-main2">
-                    <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
-                    </span>
-                    <span class="theme-btn">Read More</span>
-                    <span class="theme-btn-arrow-right">
-                        <i class="far fa-long-arrow-right"></i>
-                    </span>
-                </a>
-            </div>
-            </div>
-        </div>
-        <div class="swiper-slide">
-            <div class="service-block">
-            <div class="image">
-                <img src="<?= asset('images/quantal/services/process_ai.png') ?>" alt="Process Automation">
-            </div>
-            <div class="content">
-                <span class="tag">Automation</span>
-                <h4 class="title"><a href="<?= url('/services/process-auto') ?>">Process Automation</a></h4>
-                <p class="text">
-                Reporting, reconciliations, compliance, and workflow automation that streamlines operations.
-                </p>
-                <a href="<?= url('/services/process-auto') ?>" class="theme-btn-main theme-btn-main2">
-                    <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
-                    </span>
-                    <span class="theme-btn">Read More</span>
-                    <span class="theme-btn-arrow-right">
-                        <i class="far fa-long-arrow-right"></i>
-                    </span>
-                </a>
-            </div>
-            </div>
-        </div>
+        <?php endforeach; ?>
         </div>
         <div class="swiper-dot color-style-two border-style center">
         <div class="dot"></div>

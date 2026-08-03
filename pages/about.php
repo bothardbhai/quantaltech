@@ -2,6 +2,44 @@
 /** About - based on theme's page-about.html, content swapped to Quantal AI. */
 $page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'About - Quantal AI';
 $active_page = 'about';
+
+// Services section below — every published Service Master entry becomes a
+// card automatically (service_number order), capped at 5 to fit the section's
+// fixed 1-solo / 2-stacked / 2-stacked column layout, same as it always was.
+$pdo = db();
+$about_services = $pdo ? array_slice(get_services($pdo, ['status' => 'published']), 0, 5) : [];
+
+/**
+ * Render one .service-block-two card for the About page services section.
+ * Kept as a function since the same markup is needed once for the solo
+ * first-column card and up to twice each for the two stacked columns.
+ */
+function about_service_card(array $svc, int $num, string $extra_class = ''): void
+{
+    $url = url('/services/' . $svc['slug']);
+    ?>
+    <div class="service-block-two<?= $extra_class !== '' ? ' ' . attr($extra_class) : '' ?>">
+        <div class="head">
+            <div class="icon">
+                <i class="<?= attr($svc['icon_class'] !== '' ? $svc['icon_class'] : 'flaticon-tech flaticon-tech-interaction-1') ?>"></i>
+            </div>
+            <div class="num"><?= sprintf('%02d', $num) ?></div>
+        </div>
+        <div class="content">
+            <h3 class="title"><a href="<?= attr($url) ?>"><?= e($svc['name']) ?></a></h3>
+            <p class="text"><?= e(truncate_text($svc['excerpt'], 85)) ?></p>
+            <a href="<?= attr($url) ?>" class="theme-btn-main theme-btn-main2">
+                <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
+                </span>
+                <span class="theme-btn">Read More</span>
+                <span class="theme-btn-arrow-right">
+                    <i class="far fa-long-arrow-right"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+    <?php
+}
 ?>
 
 <!-- Start main-content -->
@@ -338,131 +376,27 @@ $active_page = 'about';
 		<span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span>
 		</a>
 		<div class="row">
+			<?php if (isset($about_services[0])): ?>
 			<div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".3s">
-				<div class="service-block-two style-1">
-					<div class="head">
-						<div class="icon">
-							<i class="flaticon-tech flaticon-tech-interaction-1"></i>
-						</div>
-						<div class="num">01</div>
-					</div>
-					<div class="content">
-						<h3 class="title"><a href="<?= url('/services') ?>">Voice AI</a></h3>
-						<p class="text">
-							It is a long established fact that a reader will be distracted by the
-							readable content of a page when
-						</p>
-						<a href="<?= url('/services') ?>" class="theme-btn-main theme-btn-main2">
-							<span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
-							</span>
-							<span class="theme-btn">Read More</span>
-							<span class="theme-btn-arrow-right">
-								<i class="far fa-long-arrow-right"></i>
-							</span>
-						</a>
-					</div>
-				</div>
+				<?php about_service_card($about_services[0], 1, 'style-1'); ?>
 			</div>
+			<?php endif; ?>
+			<?php if (isset($about_services[1]) || isset($about_services[3])): ?>
 			<div class="col-xl-4 col-lg-6  col-md-6 wow fadeInUp" data-wow-delay=".5s">
 				<div class="items1">
-					<div class="service-block-two">
-						<div class="head">
-							<div class="icon">
-								<i class="flaticon-tech flaticon-tech-interaction-1"></i>
-							</div>
-							<div class="num">02</div>
-						</div>
-						<div class="content">
-							<h3 class="title"><a href="<?= url('/services') ?>">Text AI</a></h3>
-							<p class="text">
-								It is a long established fact that a reader will be distracted by the
-								readable content of a page when
-							</p>
-							<a href="<?= url('/services') ?>" class="theme-btn-main theme-btn-main2">
-								<span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
-								</span>
-								<span class="theme-btn">Read More</span>
-								<span class="theme-btn-arrow-right">
-									<i class="far fa-long-arrow-right"></i>
-								</span>
-							</a>
-						</div>
-					</div>
-					<div class="service-block-two">
-						<div class="head">
-							<div class="icon">
-								<i class="flaticon-tech flaticon-tech-interaction-1"></i>
-							</div>
-							<div class="num">04</div>
-						</div>
-						<div class="content">
-							<h3 class="title"><a href="<?= url('/services') ?>">Image / Document AI</a></h3>
-							<p class="text">
-								It is a long established fact that a reader will be distracted by the
-								readable content of a page when
-							</p>
-							<a href="<?= url('/services') ?>" class="theme-btn-main theme-btn-main2">
-								<span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
-								</span>
-								<span class="theme-btn">Read More</span>
-								<span class="theme-btn-arrow-right">
-									<i class="far fa-long-arrow-right"></i>
-								</span>
-							</a>
-						</div>
-					</div>
+					<?php if (isset($about_services[1])) about_service_card($about_services[1], 2); ?>
+					<?php if (isset($about_services[3])) about_service_card($about_services[3], 4); ?>
 				</div>
 			</div>
+			<?php endif; ?>
+			<?php if (isset($about_services[2]) || isset($about_services[4])): ?>
 			<div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".7s">
 				<div class="items2">
-					<div class="service-block-two">
-						<div class="head">
-							<div class="icon">
-								<i class="flaticon-tech flaticon-tech-interaction-1"></i>
-							</div>
-							<div class="num">03</div>
-						</div>
-						<div class="content">
-							<h3 class="title"><a href="<?= url('/services') ?>">Process Automation</a></h3>
-							<p class="text">
-								It is a long established fact that a reader will be distracted by the
-								readable content of a page when
-							</p>
-							<a href="<?= url('/services') ?>" class="theme-btn-main theme-btn-main2">
-								<span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
-								</span>
-								<span class="theme-btn">Read More</span>
-								<span class="theme-btn-arrow-right">
-									<i class="far fa-long-arrow-right"></i>
-								</span>
-							</a>
-						</div>
-					</div>
-					<div class="service-block-two">
-						<div class="head">
-							<div class="icon">
-								<i class="flaticon-tech flaticon-tech-interaction-1"></i>
-							</div>
-							<div class="num">05</div>
-						</div>
-						<div class="content">
-							<h3 class="title"><a href="<?= url('/services') ?>">Hire AI Engineers</a></h3>
-							<p class="text">
-								It is a long established fact that a reader will be distracted by the
-								readable content of a page when
-							</p>
-							<a href="<?= url('/services') ?>" class="theme-btn-main theme-btn-main2">
-								<span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i>
-								</span>
-								<span class="theme-btn">Read More</span>
-								<span class="theme-btn-arrow-right">
-									<i class="far fa-long-arrow-right"></i>
-								</span>
-							</a>
-						</div>
-					</div>
+					<?php if (isset($about_services[2])) about_service_card($about_services[2], 3); ?>
+					<?php if (isset($about_services[4])) about_service_card($about_services[4], 5); ?>
 				</div>
 			</div>
+			<?php endif; ?>
 		</div>
 	</div>
 </section>

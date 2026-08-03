@@ -101,12 +101,19 @@
  * $process_sub         string
  * $process_title_html  string (html allowed)
  * $process_text        string
- * $process_steps       array of ['title'=>'...','desc'=>'...']   (numbered 01, 02... automatically)
+ * $process_steps       array of ['title'=>'...','desc'=>'...','tags'=>['Discovery','Strategy']]
+ *                       (numbered 01, 02... automatically; tags optional per-step, hidden if empty)
  *
  * --- Mid-page CTA band ---
  * $cta_tag         string  e.g. "READY TO BUILD WITH AI?"
  * $cta_title_html  string  (html allowed)
  * $cta_text        string
+ *
+ * --- Final CTA band (bottom of page) ---
+ * $final_cta_title_html  string (html allowed)
+ * $final_cta_desc        string
+ * $final_cta_btn_text    string  button hidden entirely if blank
+ * $final_cta_btn_url     string  defaults to '/contact' if blank
  *
  * --- Case studies ---
  * $cs_sub         string
@@ -138,6 +145,7 @@
  * $blog_title_html  string (html allowed)
  * $blog_text        string
  * $blog_posts       array of ['image'=>'images/blog/blog-1.jpg','category'=>'Machine Learning','title'=>'...','desc'=>'...','link'=>'#']
+ *                   (title/desc are truncated to 80/120 chars server-side at render time, see truncate_text())
  *
  * --- FAQ ---
  * $faq_intro   string
@@ -163,7 +171,7 @@ $service_links ??= [
 <!-- Start main-content -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
     <div class="container">
-        <h1 style="color:#fff;font-size:36px;margin:25px 0 14px;line-height:1.2;"><?= e($page_title) ?></h1>
+        <h1 style="color:#fff;font-size:36px;margin:25px 0 14px;line-height:1.2;"><?= $service_title_html ?></h1>
         <p style="opacity:0.75;margin:0;font-size:14px;">
             <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
             <a href="<?= url('/services') ?>" style="color:#72aee6;">Services</a> &nbsp;/&nbsp;
@@ -511,6 +519,13 @@ $service_links ??= [
                                         <div class="process-content">
                                             <h3><?= e($step['title']) ?></h3>
                                             <p><?= e($step['desc']) ?></p>
+                                            <?php if (!empty($step['tags'])): ?>
+                                                <div class="tech-list">
+                                                    <?php foreach ($step['tags'] as $tag): ?>
+                                                        <span class="tech-item"><?= e($tag) ?></span>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -804,9 +819,9 @@ $service_links ??= [
                                                     alt="<?= attr($post['category']) ?>">
                                             </div>
                                             <div class="knowledge-content">
-                                                <span class="knowledge-category"><?= e($post['category']) ?></span>
-                                                <h4><a href="<?= $post['link'] ?? '#' ?>"><?= e($post['title']) ?></a></h4>
-                                                <p><?= e($post['desc']) ?></p>
+                                                <!-- <span class="knowledge-category"><?= e($post['category']) ?></span> -->
+                                                <h4><a href="<?= $post['link'] ?? '#' ?>"><?= e(truncate_text($post['title'], 80)) ?></a></h4>
+                                                <p><?= e(truncate_text($post['desc'], 120)) ?></p>
                                                 <a href="<?= $post['link'] ?? '#' ?>" class="knowledge-btn">Read More <i class="far fa-arrow-right"></i></a>
                                             </div>
                                         </article>
@@ -845,6 +860,33 @@ $service_links ??= [
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
+                        </div>
+                    </section>
+                    <?php endif; ?>
+
+                    <!-- Final CTA  -->
+                    <?php if (!empty($final_cta_title_html) || !empty($final_cta_desc) || !empty($final_cta_btn_text)): ?>
+                    <section class="cta-section">
+                        <div class="container">
+                            <?php if (!empty($final_cta_title_html)): ?>
+                                <h2 class="cta-title"><?= $final_cta_title_html /* trusted HTML */ ?></h2>
+                            <?php endif; ?>
+
+                            <?php if (!empty($final_cta_desc)): ?>
+                                <p class="cta-text"><?= e($final_cta_desc) ?></p>
+                            <?php endif; ?>
+
+                            <?php if (!empty($final_cta_btn_text)): ?>
+                                <a href="<?= attr($final_cta_btn_url !== '' ? $final_cta_btn_url : '/contact') ?>" class="cta-btn">
+                                    <?= e($final_cta_btn_text) ?>
+                                </a>
+                            <?php endif; ?>
+
+                            <p class="cta-contact">
+                                Or email us directly at
+                                <a href="mailto:contact@quantaltech.ai">contact@quantaltech.ai</a>.
+                                <a href="tel:+13158093225">+1 315 809 3225</a>
+                            </p>
                         </div>
                     </section>
                     <?php endif; ?>

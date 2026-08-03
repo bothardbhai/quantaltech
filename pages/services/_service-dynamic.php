@@ -177,6 +177,12 @@ $blog_posts = $pdo
 $faq_intro = $service['faq_intro'] ?? '';
 $faqs      = svc_json($service['faqs_json']);
 
+// --- Final CTA (bottom-of-page band) ---
+$final_cta_title_html = $service['final_cta_title_html'] ?? '';
+$final_cta_desc       = $service['final_cta_desc'] ?? '';
+$final_cta_btn_text   = $service['final_cta_btn_text'];
+$final_cta_btn_url    = $service['final_cta_btn_url'];
+
 // --- Sidebar service nav (all published services, not just this one) ---
 $service_links = [];
 if ($pdo) {

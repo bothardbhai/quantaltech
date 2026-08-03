@@ -99,6 +99,32 @@ function first_nonempty(string ...$candidates): string
 }
 
 /**
+ * Truncate a description/excerpt for card previews. Strips any HTML tags,
+ * decodes entities, collapses/trims whitespace, then cuts to $limit
+ * characters — appending "..." only when the source was actually longer.
+ * Prefers cutting at the last whole word rather than mid-word, as long as
+ * that doesn't throw away more than ~40% of the allowed length (falls back
+ * to a hard cut for a single very long word so the limit is still respected).
+ * Truncates the underlying string itself (not just the rendered HTML), so
+ * the full text never sits hidden in the page source; still run the result
+ * through e() at the call site same as any other plain-text field.
+ */
+function truncate_text(?string $text, int $limit = 85): string
+{
+    $text = trim(html_entity_decode(strip_tags((string) $text), ENT_QUOTES, 'UTF-8'));
+    $text = preg_replace('/\s+/', ' ', $text) ?? $text;
+    if (mb_strlen($text) <= $limit) {
+        return $text;
+    }
+    $truncated = mb_substr($text, 0, $limit);
+    $last_space = mb_strrpos($truncated, ' ');
+    if ($last_space !== false && $last_space >= $limit * 0.6) {
+        $truncated = mb_substr($truncated, 0, $last_space);
+    }
+    return rtrim($truncated) . '...';
+}
+
+/**
  * Sanitize admin-authored HTML meant to be rendered raw (not escaped).
  * Strips <script>/<style> blocks, on* event handler attributes, and
  * javascript: URLs. Shared by any admin field that stores trusted-but-should-

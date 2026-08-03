@@ -45,7 +45,7 @@ $dynamic_services = $pdo ? get_services($pdo, ['status' => 'published']) : [];
             </div>
             <div class="content">
               <h3 class="title"><a href="<?= url('/services/' . attr($svc['slug'])) ?>"><?= e($svc['name']) ?></a></h3>
-              <p class="text"><?= e($svc['excerpt']) ?></p>
+              <p class="text"><?= e(truncate_text($svc['excerpt'], 85)) ?></p>
               <a href="<?= url('/services/' . attr($svc['slug'])) ?>" class="theme-btn-main theme-btn-main2">
                 <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
                 <span class="theme-btn">Read More</span>
@@ -63,7 +63,7 @@ $dynamic_services = $pdo ? get_services($pdo, ['status' => 'published']) : [];
           </div>
           <div class="content">
             <h3 class="title"><a href="<?= url('/hire') ?>">Hire AI Engineers</a></h3>
-            <p class="text">Senior AI engineers ready to join your team in 24 hours. Production-first systems, transparent delivery.</p>
+            <p class="text"><?= e(truncate_text('Senior AI engineers ready to join your team in 24 hours. Production-first systems, transparent delivery.', 85)) ?></p>
             <a href="<?= url('/hire') ?>" class="theme-btn-main theme-btn-main2">
               <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
               <span class="theme-btn">Read More</span>

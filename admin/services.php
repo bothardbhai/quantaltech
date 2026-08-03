@@ -271,6 +271,7 @@ if ($action === 'new' || $action === 'edit') {
                 'cta_tag', 'cta_text', 'cs_sub', 'cs_text', 'tech_sub', 'tech_text',
                 'security_sub', 'security_text', 'related_sub', 'related_text', 'related_group_title',
                 'blog_sub', 'blog_text', 'faq_intro',
+                'final_cta_desc', 'final_cta_btn_text', 'final_cta_btn_url',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
                 'overview_html', 'features_html', 'use_cases_html', 'benefits_html',
                 'description',
@@ -282,6 +283,7 @@ if ($action === 'new' || $action === 'edit') {
                 'whatyouget_title_html', 'industries_title_html', 'framework_title_html', 'why_title_html',
                 'engagement_title_html', 'process_title_html', 'cta_title_html', 'cs_title_html',
                 'tech_title_html', 'security_title_html', 'related_title_html', 'blog_title_html',
+                'final_cta_title_html',
             ];
 
             $data = [
@@ -332,7 +334,8 @@ if ($action === 'new' || $action === 'edit') {
                 ['badge' => 'eng_badge', 'title' => 'eng_title', 'desc' => 'eng_desc', 'btn_text' => 'eng_btn_text'],
                 ['features' => 'eng_features'], ['featured' => 'eng_featured']));
             $data['process_steps_json'] = json_encode(svc_build_repeater($_POST,
-                ['title' => 'process_step_title', 'desc' => 'process_step_desc']));
+                ['title' => 'process_step_title', 'desc' => 'process_step_desc'],
+                ['tags' => 'process_step_tags']));
             $data['case_studies_json'] = json_encode(svc_build_repeater($_POST,
                 ['tag' => 'cs_tag', 'title' => 'cs_card_title', 'desc' => 'cs_card_desc', 'result' => 'cs_result']));
             $data['tech_categories_json'] = json_encode(svc_build_repeater($_POST,
@@ -384,6 +387,7 @@ if ($action === 'new' || $action === 'edit') {
         'security_sub' => '', 'security_title_html' => '', 'security_text' => '',
         'related_sub' => '', 'related_title_html' => '', 'related_text' => '', 'related_group_title' => '',
         'blog_sub' => '', 'blog_title_html' => '', 'blog_text' => '', 'faq_intro' => '',
+        'final_cta_title_html' => '', 'final_cta_desc' => '', 'final_cta_btn_text' => '', 'final_cta_btn_url' => '',
         'platforms_json' => null, 'overview_paragraphs_json' => null,
     ], (array) $service);
 
@@ -456,7 +460,7 @@ if ($action === 'new' || $action === 'edit') {
                     'impact' => 'Impact Stats', 'overview' => 'Overview', 'benefits' => 'Benefits',
                     'grid' => 'Services Grid', 'whatyouget' => 'What You Get', 'industries' => 'Industries',
                     'framework' => 'Framework', 'why' => 'Why Choose Us', 'engagement' => 'Engagement Models',
-                    'process' => 'Process Timeline', 'cta' => 'Mid CTA', 'cases' => 'Case Studies',
+                    'process' => 'Process Timeline', 'cta' => 'Mid CTA', 'final_cta' => 'Final CTA', 'cases' => 'Case Studies',
                     'tech' => 'Technology Stack', 'security' => 'Security', 'related' => 'Related Services',
                     'blog' => 'Knowledge Hub', 'faq' => 'FAQ', 'seo' => 'SEO', 'legacy' => 'Legacy Fields',
                 ];
@@ -740,9 +744,11 @@ if ($action === 'new' || $action === 'edit') {
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('process-steps', 'Steps', '+ Add step',
                             '<div class="form-row"><label>Title</label><input type="text" name="process_step_title[]"></div>' .
-                            '<div class="form-row" style="margin-bottom:0;"><label>Description</label><textarea name="process_step_desc[]" rows="2"></textarea></div>',
+                            '<div class="form-row"><label>Description</label><textarea name="process_step_desc[]" rows="2"></textarea></div>' .
+                            '<div class="form-row" style="margin-bottom:0;"><label>Process Tags <span class="text-muted">(one per line)</span></label><textarea name="process_step_tags[]" rows="3" placeholder="Discovery&#10;Strategy"></textarea></div>',
                             $repeater_data['process_steps'],
-                            ['input[name="process_step_title[]"]' => 'title', 'textarea[name="process_step_desc[]"]' => 'desc']
+                            ['input[name="process_step_title[]"]' => 'title', 'textarea[name="process_step_desc[]"]' => 'desc',
+                             'textarea[name="process_step_tags[]"]' => ['key' => 'tags', 'type' => 'list']]
                         ); ?>
                     </div></div>
                 </div>
@@ -763,6 +769,29 @@ if ($action === 'new' || $action === 'edit') {
                             <textarea id="cta_text" name="cta_text" rows="2"><?= e($f['cta_text']) ?></textarea>
                         </div>
                         <div class="help">Buttons stay fixed ("Schedule a Demo" / "View Case Studies") — not editable here.</div>
+                    </div></div>
+                </div>
+
+                <!-- ============ FINAL CTA ============ -->
+                <div class="section-tabs__panel" data-panel="final_cta">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <p class="text-muted" style="font-size:13px;margin-top:0;">Bottom-of-page CTA band. Leave any field blank to hide that element; the contact-info line beneath the button is shared site-wide and isn't editable here.</p>
+                        <div class="form-row">
+                            <label for="final_cta_title_html">Title <span class="text-muted">(HTML allowed)</span></label>
+                            <textarea id="final_cta_title_html" name="final_cta_title_html" rows="2" placeholder="Ready to Engineer Your AI System?"><?= e($f['final_cta_title_html']) ?></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label for="final_cta_desc">Description</label>
+                            <textarea id="final_cta_desc" name="final_cta_desc" rows="3"><?= e($f['final_cta_desc']) ?></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label for="final_cta_btn_text">Button Text</label>
+                            <input type="text" id="final_cta_btn_text" name="final_cta_btn_text" value="<?= attr($f['final_cta_btn_text']) ?>" placeholder="Book a Free Scoping Call">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="final_cta_btn_url">Button URL <span class="text-muted">(optional — defaults to /contact)</span></label>
+                            <input type="text" id="final_cta_btn_url" name="final_cta_btn_url" value="<?= attr($f['final_cta_btn_url']) ?>" placeholder="/contact">
+                        </div>
                     </div></div>
                 </div>
 

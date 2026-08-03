@@ -11,6 +11,29 @@
  */
 $active = $active_page ?? '';
 
+// Services dropdown is data-driven: every published Service Master entry
+// becomes a menu item automatically, in the same order as the Services
+// listing page (service_number). No hardcoded per-service links here — add
+// a service in the admin and it appears in this menu on the next request.
+// Defensive try/catch mirrors core/seo.php's pattern: nav-menu.php renders
+// on every single page, so a DB hiccup here must degrade to "no dropdown
+// items" rather than break the whole site's navigation.
+$service_menu_items = [];
+$pdo = function_exists('db') ? db() : null;
+if ($pdo) {
+    try {
+        foreach (get_services($pdo, ['status' => 'published']) as $svc) {
+            $service_menu_items[] = [
+                'label' => $svc['name'],
+                'href' => '/services/' . $svc['slug'],
+                'key' => 'services',
+            ];
+        }
+    } catch (\Throwable $e) {
+        $service_menu_items = [];
+    }
+}
+
 // Define the menu structure once. Each item: label, href, key (for active state),
 // and optionally children.
 //
@@ -31,14 +54,7 @@ $menu = [
         'label' => 'Services',
         'href' => '/services',
         'key' => 'services',
-        'children' => [
-            // ['label' => 'All Solutions',         'href' => '/services', 'key' => 'services'],
-            ['label' => 'Voice AI', 'href' => '/services/voice', 'key' => 'services'],
-            ['label' => 'Text AI', 'href' => '/services/text', 'key' => 'services'],
-            ['label' => 'Image / Document AI', 'href' => '/services/image', 'key' => 'services'],
-            ['label' => 'Process Automation', 'href' => '/services/process-auto', 'key' => 'services'],
-            // ['label' => 'Ai Engineering', 'href' => '/services/ai-engineering', 'key' => 'services'],
-        ],
+        'children' => $service_menu_items,
     ],
     [
         'label' => 'Resources',

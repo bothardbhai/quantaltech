@@ -26110,6 +26110,69 @@ AI Benefits
   }
 }
 
+.cta-section {
+  background: linear-gradient(90deg, #6d63ff 0%, #655cf6 50%, #5f59f3 100%);
+  padding: 100px 20px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.cta-section .container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.cta-title {
+  color: #fff;
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 30px;
+  letter-spacing: -1px;
+}
+
+.cta-text {
+  max-width: 720px;
+  margin: 0 auto 40px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 42px;
+  background: #fff;
+  color: #5f59f3;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 50px;
+  transition: 0.3s;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.cta-btn:hover {
+  transform: translateY(-3px);
+  background: #000000;
+}
+
+.cta-contact {
+  margin-top: 28px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 15px;
+}
+
+.cta-contact a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.cta-contact a:hover {
+  text-decoration: underline;
+}
+
 /* Blog Table of Content Css  */
 .blog-toc-card {
   background: #181616;
@@ -26498,7 +26561,9 @@ Top Header
   border: 2px solid rgba(255, 255, 255, 0.5);
   opacity: 0;
   transform: scale(0.85);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 }
 
 .video-thumbnail:hover .play-btn::after {
@@ -26520,13 +26585,17 @@ Top Header
   background: rgba(0, 0, 0, 0.85);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+  transition:
+    opacity 0.35s ease,
+    visibility 0s linear 0.35s;
 }
 
 .video-modal-overlay.is-open {
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.35s ease, visibility 0s linear 0s;
+  transition:
+    opacity 0.35s ease,
+    visibility 0s linear 0s;
 }
 
 .video-modal {
@@ -26536,10 +26605,14 @@ Top Header
   max-height: 80vh;
   background: #000;
   border-radius: 16px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
   transform: scale(0.92);
   opacity: 0;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.35s ease;
 }
 
 .video-modal-overlay.is-open .video-modal {
@@ -26582,7 +26655,9 @@ Top Header
   justify-content: center;
   cursor: pointer;
   backdrop-filter: blur(4px);
-  transition: background-color 0.25s ease, transform 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .video-modal__close:hover {
