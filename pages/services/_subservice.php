@@ -520,7 +520,7 @@ $service_links ??= [
                                             <h3><?= e($step['title']) ?></h3>
                                             <p><?= e($step['desc']) ?></p>
                                             <?php if (!empty($step['tags'])): ?>
-                                                <div class="tech-list">
+                                                <div class="tech-list mt-2">
                                                     <?php foreach ($step['tags'] as $tag): ?>
                                                         <span class="tech-item"><?= e($tag) ?></span>
                                                     <?php endforeach; ?>
