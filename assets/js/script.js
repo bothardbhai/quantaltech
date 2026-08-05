@@ -639,7 +639,7 @@ var THEMEMASCOT = {};
 			spaceBetween: 25,
 			speed: 2000,
 			loop: true,
-			centeredSlides: true,
+			centeredSlides: false,
 			autoplay: {
 				delay: 1000,
 				disableOnInteraction: false,
