@@ -11092,7 +11092,7 @@ Section Title
     display: none;
   }
 }
-.case-one .light-shape {
+/* .case-one .light-shape {
   position: absolute;
   top: -50%;
   left: -85%;
@@ -11108,17 +11108,17 @@ Section Title
   -webkit-filter: blur(127.5px);
   filter: blur(127.5px);
   z-index: -1;
-}
-@media (max-width: 1699.98px) {
+} */
+/* @media (max-width: 1699.98px) {
   .case-one .light-shape {
     left: -115%;
   }
-}
-@media (max-width: 1399.98px) {
+} */
+/* @media (max-width: 1399.98px) {
   .case-one .light-shape {
     display: none;
   }
-}
+} */
 .case-one .left-content {
   position: relative;
   z-index: 1;
@@ -21319,7 +21319,8 @@ Page Title
   margin-top: 60px;
   text-align: center;
   z-index: 1;
-  background-color: var(--theme-color1);
+  /* background-color: var(--theme-color1); */
+  background-color: #2fe7d9d6;
   border-radius: 15px;
   overflow: hidden;
 }
@@ -24346,6 +24347,33 @@ AI Benefits
   }
 }
 
+.what-you-get-slider {
+    overflow: hidden;
+    padding: 15px 5px 70px;
+}
+
+.what-you-get-slider .swiper-slide {
+    height: auto;
+}
+
+.what-you-get-slider .benefit-card {
+    height: 100%;
+}
+
+.what-you-get-slider .swiper-button-next,
+.what-you-get-slider .swiper-button-prev {
+    color: var(--theme-color1);
+}
+
+.what-you-get-slider .swiper-pagination-bullet {
+    background: rgba(255,255,255,.35);
+    opacity: 1;
+}
+
+.what-you-get-slider .swiper-pagination-bullet-active {
+    background: var(--theme-color1);
+}
+
 /*==================================
  Industries
 ==================================*/
@@ -24682,6 +24710,33 @@ AI Benefits
   h3 {
     font-size: 19px;
   }
+}
+
+.framework-slider {
+    overflow: hidden;
+    padding: 15px 5px 60px;
+}
+
+.framework-slider .swiper-slide {
+    height: auto;
+}
+
+.framework-slider .framework-card {
+    height: 100%;
+}
+
+.framework-slider .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background: rgba(255,255,255,.3);
+    opacity: 1;
+}
+
+.framework-slider .swiper-pagination-bullet-active {
+    width: 28px;
+    border-radius: 30px;
+    background: var(--theme-color1);
+    transition: all .3s ease;
 }
 
 /*=========================================
@@ -25743,6 +25798,33 @@ AI Benefits
   .security-card h4 {
     font-size: 20px;
   }
+}
+
+.security-slider {
+    overflow: hidden;
+    padding: 15px 5px 60px;
+}
+
+.security-slider .swiper-slide {
+    height: auto;
+}
+
+.security-slider .security-card {
+    height: 100%;
+}
+
+.security-slider .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background: rgba(255,255,255,.3);
+    opacity: 1;
+}
+
+.security-slider .swiper-pagination-bullet-active {
+    width: 28px;
+    border-radius: 30px;
+    background: var(--theme-color1);
+    transition: all .3s ease;
 }
 
 /*=========================================
@@ -27571,4 +27653,293 @@ h3 {
     width: 650px;    /* Adjust as needed */
     max-width: none;
     opacity: .45;    /* Optional */
+}
+
+/*=========================================
+    Service Detail Page — Premium Background
+    Motion Elements
+    - .object-shape-divider: zero-height decorative
+      divider placed between the "What We Build"
+      and "What You Get" sections (right edge)
+    - .why-quantal-section .about-vector: decorative
+      shape inside the "Why Quantal" section (left edge)
+    Both reuse the existing .tm-gsap-animate-circle
+    ScrollTrigger scrub rotation (see gsap-custom.js).
+    Visible from tablet up; hidden only on mobile to
+    avoid crowding small screens.
+=========================================*/
+html,
+body {
+    overflow-x: hidden;
+}
+
+.object-shape-divider {
+    position: relative;
+    height: 0;
+}
+
+.object-shape-divider .object-shape {
+    position: absolute;
+    top: -90px;
+    right: -70px;
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
+    transform-origin: center center;
+}
+
+.object-shape-divider .object-shape img {
+    display: block;
+    width: 220px;
+    max-width: none;
+    opacity: .5;
+}
+
+@media (max-width: 1599.98px) {
+    .object-shape-divider .object-shape img {
+        width: 190px;
+    }
+}
+
+@media (max-width: 1399.98px) {
+    .object-shape-divider .object-shape {
+        top: -70px;
+        right: -55px;
+    }
+    .object-shape-divider .object-shape img {
+        width: 160px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .object-shape-divider .object-shape {
+        top: -55px;
+        right: -35px;
+    }
+    .object-shape-divider .object-shape img {
+        width: 120px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .object-shape-divider .object-shape {
+        display: none;
+    }
+}
+
+.why-quantal-section .about-vector {
+    position: absolute;
+    top: 40px;
+    left: -90px;
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
+    transform-origin: center center;
+}
+
+.why-quantal-section .about-vector img {
+    display: block;
+    width: 300px;
+    max-width: none;
+    opacity: .55;
+}
+
+@media (max-width: 1599.98px) {
+    .why-quantal-section .about-vector img {
+        width: 260px;
+    }
+}
+
+@media (max-width: 1399.98px) {
+    .why-quantal-section .about-vector {
+        left: -70px;
+    }
+    .why-quantal-section .about-vector img {
+        width: 220px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .why-quantal-section .about-vector {
+        top: 20px;
+        left: -45px;
+    }
+    .why-quantal-section .about-vector img {
+        width: 160px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .why-quantal-section .about-vector {
+        display: none;
+    }
+}
+
+/*=========================================
+    Service Detail Page — Home-style Ambient
+    Glow Accents
+    Reuses the Home Page's blurred-ring glow
+    technique (see .multiple-section .light-shape)
+    as one reusable utility instead of a bespoke
+    rule per section — applied to the Hero,
+    What We Build, Why Quantal, Technologies,
+    Process, Industries, Case Studies, FAQ and
+    CTA sections.
+=========================================*/
+.news-banner,
+.industries-section,
+.process-accordion-section,
+.faq-section {
+    position: relative;
+}
+
+.decor-glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 90px solid var(--theme-color1);
+    filter: blur(125px);
+    -webkit-filter: blur(125px);
+    z-index: -1;
+    opacity: .5;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.decor-glow--left {
+    left: -5%;
+}
+
+.decor-glow--right {
+    right: -5%;
+}
+
+.decor-glow--top {
+    top: -8%;
+}
+
+.decor-glow--bottom {
+    bottom: -8%;
+}
+
+@media (max-width: 1199.98px) {
+    .decor-glow {
+        width: 150px;
+        height: 150px;
+        border-width: 65px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .decor-glow {
+        display: none;
+    }
+}
+
+/*=========================================
+    Service Detail Page — Section Separation
+    Reuses the Home Page's existing dark
+    section-tint utilities (.section-bg /
+    .section-bg-2 / .section-bg-3, defined
+    once already for the whole site) to give
+    each section its own dark shade instead of
+    one continuous black block, plus extra
+    top breathing room so the color change
+    reads as a clear section boundary.
+=========================================*/
+.services-grid-section.section-bg-3,
+.benefits-section.section-bg,
+.our-framework-section.section-bg-3,
+.why-quantal-section.section-bg,
+.process-accordion-section.section-bg-3,
+.mid-cta-section.section-bg,
+.tech-stack-section.section-bg-3,
+.security-compliance-section.section-bg,
+.knowledge-hub-section.section-bg-3,
+.faq-section.section-bg,
+.dark-bg {
+    padding-top: 80px;
+}
+
+@media (max-width: 991.98px) {
+    .services-grid-section.section-bg-3,
+    .benefits-section.section-bg,
+    .our-framework-section.section-bg-3,
+    .why-quantal-section.section-bg,
+    .process-accordion-section.section-bg-3,
+    .mid-cta-section.section-bg,
+    .tech-stack-section.section-bg-3,
+    .security-compliance-section.section-bg,
+    .knowledge-hub-section.section-bg-3,
+    .faq-section.section-bg {
+        padding-top: 55px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .services-grid-section.section-bg-3,
+    .benefits-section.section-bg,
+    .our-framework-section.section-bg-3,
+    .why-quantal-section.section-bg,
+    .process-accordion-section.section-bg-3,
+    .mid-cta-section.section-bg,
+    .tech-stack-section.section-bg-3,
+    .security-compliance-section.section-bg,
+    .knowledge-hub-section.section-bg-3,
+    .faq-section.section-bg {
+        padding-top: 35px;
+    }
+}
+
+/* "What We Build" — features line-shape + ellipse-shape (same assets/positioning as Home's .feature-section1) */
+.services-grid-section .line-shape {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.services-grid-section .line-shape img {
+    height: 100%;
+}
+
+.services-grid-section .ellipse-shape {
+    position: absolute;
+    bottom: -60%;
+    left: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* "Development Process" — skills line-shape + light-bg (same assets/positioning as Home's .skill-section1) */
+.process-accordion-section .line-shape {
+    position: absolute;
+    top: -36%;
+    left: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.process-accordion-section .light-bg {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    top: -36%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.process-accordion-section .light-bg img {
+    height: 100%;
+}
+
+/* "Industries" — skills object-shape (same asset/positioning as Home's .skill-section1 .object-shape) */
+.industries-section .object-shape {
+    position: absolute;
+    top: 100px;
+    right: -150px;
+    z-index: -1;
+    pointer-events: none;
 }

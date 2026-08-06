@@ -170,6 +170,7 @@ $service_links ??= [
 
 <!-- Start main-content -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
+    <div class="decor-glow decor-glow--right decor-glow--top" aria-hidden="true"></div>
     <div class="container">
         <h2 style="color:#fff;font-size:36px;margin:25px 0 14px;line-height:1.2;"><?= $crumb ?></h2>
         <p style="opacity:0.75;margin:0;font-size:14px;">
@@ -400,720 +401,1092 @@ $service_links ??= [
                 </div>
             </div>
 
-            <!-- Content -->
-            <div class="col">
-                <div class="services-details__content">
+        </div>
+    </div>
 
-                    <!-- What we build -->
-                    <?php if (!empty($grid_services)): ?>
-                        <section class="services-grid-section pb-100">
-                            <div class="ellipse-shape">
-                                <img src="<?= asset('images/home-1/about/about-vector.png') ?>" alt="img">
-                            </div>
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($grid_sub ?? '') ?></span>
-                                    <h2><?= $grid_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($grid_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($grid_services as $svc): ?>
-                                        <div class="col-lg-6 col-md-6 wow fadeInUp">
-                                            <div class="ml-service-card">
-                                                <div class="service-icon"><i class="<?= attr($svc['icon']) ?>"></i></div>
-                                                <h4><?= e($svc['title']) ?></h4>
-                                                <p><?= e($svc['desc']) ?></p>
-                                                <div class="tech-tags">
-                                                    <?php foreach ($svc['tags'] as $tag): ?>
-                                                        <span><?= e($tag) ?></span>
-                                                    <?php endforeach; ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
+    <!-- Full Section Content-->
+    <div class="col">
+        <div class="services-details__content full-section">
 
-                    <!-- What you get -->
-                    <?php if (!empty($whatyouget_cards)): ?>
-                        <section class="benefits-section pb-100">
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($whatyouget_sub ?? '') ?></span>
-                                    <h2><?= $whatyouget_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($whatyouget_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($whatyouget_cards as $i => $card): ?>
-                                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="<?= 0.2 + $i * 0.1 ?>s">
-                                            <div class="benefit-card">
-                                                <div class="benefit-number"><?= sprintf('%02d', $i + 1) ?></div>
-                                                <h4><?= e($card['title']) ?></h4>
-                                                <p><?= e($card['desc']) ?></p>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
+            <!-- What we build -->
+            <?php if (!empty($grid_services)): ?>
+                <section class="services-grid-section pb-100 section-bg-3">
+                    <div class="decor-glow decor-glow--left decor-glow--top" aria-hidden="true"></div>
+                    <div class="line-shape" aria-hidden="true">
+                        <img src="<?= asset('images/home-1/features/line-shape.png') ?>" alt="img">
+                    </div>
+                    <div class="ellipse-shape" aria-hidden="true">
+                        <img src="<?= asset('images/home-1/features/ellipse-bg.png') ?>" alt="img">
+                    </div>
 
-                    <!-- Industries -->
-                    <?php if (!empty($industries)): ?>
-                        <section class="industries-section pb-100">
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($industries_sub ?? '') ?></span>
-                                    <h2><?= $industries_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($industries_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($industries as $ind): ?>
-                                        <div class="col-lg-3 col-md-6">
-                                            <div class="industry-card">
-                                                <h4><?= e($ind['title']) ?></h4>
-                                                <ul>
-                                                    <?php foreach ($ind['items'] as $item): ?>
-                                                        <li><?= e($item) ?></li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Framework -->
-                    <?php if (!empty($framework_steps)): ?>
-                        <section class="our-framework-section pb-100">
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($framework_sub ?? '') ?></span>
-                                    <h2><?= $framework_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($framework_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($framework_steps as $step): ?>
-                                        <div class="col-lg-4 col-md-6">
-                                            <div class="framework-card">
-                                                <div class="framework-icon"><i class="<?= attr($step['icon']) ?>"></i></div>
-                                                <h4><?= e($step['title']) ?></h4>
-                                                <p><?= e($step['desc']) ?></p>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Why Quantal -->
-                    <?php if (!empty($why_cards)): ?>
-                        <section class="why-quantal-section pb-100">
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($why_sub ?? '') ?></span>
-                                    <h2><?= $why_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($why_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($why_cards as $i => $card): ?>
-                                        <div class="col-lg-4 col-md-6 wow fadeInUp">
-                                            <div class="why-card">
-                                                <div class="why-number"><?= sprintf('%02d', $i + 1) ?></div>
-                                                <h4><?= e($card['title']) ?></h4>
-                                                <p><?= e($card['desc']) ?></p>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Engagement models -->
-                    <?php if (!empty($engagement_models)): ?>
-                        <section class="engagement-section pb-100">
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($engagement_sub ?? '') ?></span>
-                                    <h2><?= $engagement_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($engagement_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($engagement_models as $i => $model): ?>
-                                        <div class="col-lg-4 col-md-4 wow fadeInUp" data-wow-delay="<?= 0.2 + $i * 0.2 ?>s">
-                                            <div class="engagement-card<?= !empty($model['featured']) ? ' featured' : '' ?>">
-                                                <div class="engagement-badge"><?= e($model['badge']) ?></div>
-                                                <h3><?= e($model['title']) ?></h3>
-                                                <p><?= e($model['desc']) ?></p>
-                                                <ul>
-                                                    <?php foreach ($model['features'] as $feat): ?>
-                                                        <li><?= e($feat) ?></li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                                <a href="<?= url('/contact') ?>" class="theme-btn btn-style-one">
-                                                    <span class="btn-title"><?= e($model['btn_text']) ?></span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Process Accordion -->
-                    <?php if (!empty($process_steps)): ?>
-                        <section class="process-accordion-section pb-100">
-                            <div class="container">
-
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($process_sub ?? '') ?></span>
-                                    <h2><?= $process_title_html ?? '' ?></h2>
-                                    <div class="text"><?= e($process_text ?? '') ?></div>
-                                </div>
-
-                                <div class="accordion process-accordion" id="processAccordion">
-
-                                    <?php foreach ($process_steps as $i => $step): ?>
-                                        <div class="accordion-item">
-
-                                            <div class="timeline-number">
-                                                <button class="accordion-button <?= $i ? 'collapsed' : '' ?>"
-                                                    data-bs-toggle="collapse" data-bs-target="#step<?= $i ?>">
-
-                                                    <span class="step-circle">
-                                                        <?= sprintf('%02d', $i + 1) ?>
-                                                    </span>
-
-                                                    <span class="step-heading">
-                                                        <?= e($step['title']) ?>
-                                                    </span>
-
-                                                </button>
-                                            </div>
-
-                                            <div id="step<?= $i ?>"
-                                                class="accordion-collapse collapse <?= $i == 0 ? 'show' : '' ?>"
-                                                data-bs-parent="#processAccordion">
-
-                                                <div class="accordion-body">
-
-                                                    <p><?= e($step['desc']) ?></p>
-
-                                                    <?php if (!empty($step['tags'])): ?>
-                                                        <div class="tech-list mt-4">
-                                                            <?php foreach ($step['tags'] as $tag): ?>
-                                                                <span class="tech-item"><?= e($tag) ?></span>
-                                                            <?php endforeach; ?>
-                                                        </div>
-                                                    <?php endif; ?>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                    <?php endforeach; ?>
-
-                                </div>
-
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Mid CTA -->
-                    <?php if (!empty($cta_tag) || !empty($cta_title_html) || !empty($cta_text)): ?>
-                        <section class="mid-cta-section pb-100">
-                            <div class="container">
-                                <div class="mid-cta-box">
-                                    <span class="service-tag"><?= e($cta_tag ?? '') ?></span>
-                                    <h2><?= $cta_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <p><?= e($cta_text ?? '') ?></p>
-                                    <div class="service-btns">
-                                        <hr>
-                                        <a href="<?= url('/contact') ?>" class="theme-btn btn-style-one me-3">
-                                            <span class="btn-title">Schedule a Demo</span>
-                                        </a>
-                                        <a href="<?= url('/case-studies') ?>" class="theme-btn btn-style-border">
-                                            <span class="btn-title">View Case Studies</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Case studies -->
-                    <?php if (!empty($case_studies)): ?>
-                        <section class="case-studies-section pb-100">
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($cs_sub ?? '') ?></span>
-                                    <h2><?= $cs_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($cs_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($case_studies as $i => $cs): ?>
-                                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="<?= 0.2 + $i * 0.1 ?>s">
-                                            <div class="case-study-card">
-                                                <!--<h6 class="service-tag mb-3"><?= e($cs['tag']) ?></h6>-->
-                                                <h4><?= e(truncate_text($cs['title'], 30)) ?></h4>
-                                                <p><?= e(truncate_text($cs['desc'], 120)) ?></p>
-                                                <!--<div class="case-study-box">-->
-                                                <!--    <p><?= e($cs['result']) ?></p>-->
-                                                <!--</div>-->
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Testimonials (shared, site-wide) -->
-                    <section class="testimonial-wrapper testimonial-one pb-100">
-                        <div class="auto-container">
-                            <div class="row g-sm-4">
-                                <div class="col-xl-12 col-lg-12">
-                                    <div class="slider-box">
-                                        <div class="section-title">
-                                            <div class="sub-title">
-                                                <svg width="14" height="15" viewBox="0 0 14 15" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
-                                                        fill="currentColor" />
-                                                </svg>
-                                                <span>Client Stories</span>
-                                            </div>
-                                            <h2 class="title split-text split-in-right">What clients say <span>about
-                                                    us.</span></h2>
-                                        </div>
-                                        <div class="swiper testimonial-slider">
-                                            <div class="swiper-wrapper">
-                                                <div class="swiper-slide">
-                                                    <div class="testimonial-block">
-                                                        <p class="text">&ldquo;Quantal AI and Team are EXPERTS at
-                                                            building ANY AI functionality you&rsquo;re seeking!
-                                                            We&rsquo;ve hired them for 2 projects already &mdash; each
-                                                            completed ON TIME and UNDER BUDGET. Highly
-                                                            Recommended!&rdquo;</p>
-                                                        <div class="infu">
-                                                            <div class="image"><img
-                                                                    src="<?= asset('images/quantal/clients/myhomecarebiz.jpg') ?>"
-                                                                    alt="Melissa C"></div>
-                                                            <div class="name-info">
-                                                                <h5 class="name">Melissa C</h5>
-                                                                <span>myhomecarebiz.com</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="swiper-slide">
-                                                    <div class="testimonial-block">
-                                                        <p class="text">&ldquo;Working with Quantal AI team has been an
-                                                            absolute pleasure. Their technical aptitude is outstanding
-                                                            &mdash; they&rsquo;re not only highly competent but also
-                                                            creative, thoughtful, and reliable. They built a complex
-                                                            integration for our wine business connecting PhotoRoom,
-                                                            Google Cloud, AWS, and Shopify, and it works
-                                                            beautifully.&rdquo;</p>
-                                                        <div class="infu">
-                                                            <div class="image"><img
-                                                                    src="<?= asset('images/quantal/clients/osteopathic_healing_hands.png') ?>"
-                                                                    alt="David F"></div>
-                                                            <div class="name-info">
-                                                                <h5 class="name">David F</h5><span>Osteopathic Healing
-                                                                    Hands</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="swiper-slide">
-                                                    <div class="testimonial-block">
-                                                        <p class="text">&ldquo;It was a pleasure working with Quantal AI
-                                                            team. Communication was smooth, deadlines were respected,
-                                                            and the overall collaboration was professional and
-                                                            efficient. I would definitely consider working together
-                                                            again in the future. Recommended!&rdquo;</p>
-                                                        <div class="infu">
-                                                            <div class="image"><img
-                                                                    src="<?= asset('images/quantal/clients/elunic.jpg') ?>"
-                                                                    alt="Ivana M"></div>
-                                                            <div class="name-info">
-                                                                <h5 class="name">Ivana M</h5><span>Elunic AG</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="array-button">
-                                            <button class="array-prev"><i class="fas fa-long-arrow-left"></i></button>
-                                            <button class="array-next"><i class="fas fa-long-arrow-right"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="container">
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($grid_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $grid_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($grid_text ?? '') ?>
                             </div>
                         </div>
-                    </section>
-
-                    <!-- Tech stack -->
-                    <?php if (!empty($tech_categories)): ?>
-                        <section class="tech-stack-section pb-100">
-                            <div class="container">
-                                <div class="sec-title">
-                                    <span class="sub-title"><?= e($tech_sub ?? '') ?></span>
-                                    <h2><?= $tech_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($tech_text ?? '') ?></div>
+                        <div class="row g-4">
+                            <?php foreach ($grid_services as $svc): ?>
+                                <div class="col-lg-6 col-md-6 wow fadeInUp">
+                                    <div class="ml-service-card">
+                                        <div class="service-icon"><i class="<?= attr($svc['icon']) ?>"></i></div>
+                                        <h4>
+                                            <?= e($svc['title']) ?>
+                                        </h4>
+                                        <p>
+                                            <?= e($svc['desc']) ?>
+                                        </p>
+                                        <div class="tech-tags">
+                                            <?php foreach ($svc['tags'] as $tag): ?>
+                                                <span>
+                                                    <?= e($tag) ?>
+                                                </span>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="tech-stack-wrapper row g-4">
-                                    <?php foreach ($tech_categories as $cat): ?>
-                                        <div class="col-lg-4 col-md-6 mb-4 d-flex wow fadeInUp">
-                                            <div class="tech-category">
-                                                <span class="tech-category-title"><?= e($cat['title']) ?></span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
 
-                                                <div class="tech-list">
-                                                    <?php foreach ($cat['items'] as $item): ?>
-                                                        <span class="tech-item"><?= e($item) ?></span>
+            <!-- Decorative object-shape (background only, sits between "What We Build" and "What You Get") -->
+            <!-- <div class="object-shape-divider">
+                <div class="object-shape tm-gsap-animate-circle">
+                    <img src="<?= asset('images/home-1/hero/object-shape.png') ?>" alt="img">
+                </div>
+            </div> -->
+
+            <!-- What you get -->
+            <?php if (!empty($whatyouget_cards)): ?>
+                <section class="benefits-section pb-100 section-bg">
+                    <div class="container">
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($whatyouget_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $whatyouget_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($whatyouget_text ?? '') ?>
+                            </div>
+                        </div>
+                        <div class="swiper what-you-get-slider">
+                            <div class="swiper-wrapper">
+
+                                <?php foreach ($whatyouget_cards as $i => $card): ?>
+                                    <div class="swiper-slide">
+                                        <div class="benefit-card">
+                                            <div class="benefit-number">
+                                                <?= sprintf('%02d', $i + 1) ?>
+                                            </div>
+
+                                            <h4><?= e($card['title']) ?></h4>
+
+                                            <p><?= e($card['desc']) ?></p>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+
+                            </div>
+
+                            <!-- Navigation -->
+                            <!-- <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div> -->
+
+                            <!-- Pagination -->
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Industries -->
+            <?php if (!empty($industries)): ?>
+                <section class="industries-section pb-100 dark-bg">
+                    <div class="decor-glow decor-glow--left decor-glow--top" aria-hidden="true"></div>
+                    <div class="object-shape tm-gsap-animate-circle d-none d-xl-block" aria-hidden="true">
+                        <img src="<?= asset('images/home-1/skills/object-shape.png') ?>" alt="img">
+                    </div>
+                    <div class="container">
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($industries_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $industries_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($industries_text ?? '') ?>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <?php foreach ($industries as $ind): ?>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="industry-card">
+                                        <h4>
+                                            <?= e($ind['title']) ?>
+                                        </h4>
+                                        <ul>
+                                            <?php foreach ($ind['items'] as $item): ?>
+                                                <li>
+                                                    <?= e($item) ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Framework -->
+            <?php if (!empty($framework_steps)): ?>
+                <section class="our-framework-section pb-100 section-bg-3">
+                    <div class="container">
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($framework_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $framework_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($framework_text ?? '') ?>
+                            </div>
+                        </div>
+                        <div class="swiper framework-slider">
+                            <div class="swiper-wrapper">
+
+                                <?php foreach ($framework_steps as $step): ?>
+                                    <div class="swiper-slide">
+                                        <div class="framework-card">
+                                            <div class="framework-icon">
+                                                <i class="<?= attr($step['icon']) ?>"></i>
+                                            </div>
+
+                                            <h4><?= e($step['title']) ?></h4>
+
+                                            <p><?= e($step['desc']) ?></p>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+
+                            </div>
+
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Why Quantal -->
+            <?php if (!empty($why_cards)): ?>
+                <section class="why-quantal-section pb-100 section-bg">
+                    <div class="about-vector tm-gsap-animate-circle">
+                        <img src="<?= asset('images/home-1/about/about-vector.png') ?>" alt="img">
+                    </div>
+                    <div class="decor-glow decor-glow--right decor-glow--bottom" aria-hidden="true"></div>
+                    <div class="container">
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($why_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $why_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($why_text ?? '') ?>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <?php foreach ($why_cards as $i => $card): ?>
+                                <div class="col-lg-4 col-md-6 wow fadeInUp">
+                                    <div class="why-card">
+                                        <div class="why-number">
+                                            <?= sprintf('%02d', $i + 1) ?>
+                                        </div>
+                                        <h4>
+                                            <?= e($card['title']) ?>
+                                        </h4>
+                                        <p>
+                                            <?= e($card['desc']) ?>
+                                        </p>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Engagement models -->
+            <?php if (!empty($engagement_models)): ?>
+                <section class="engagement-section pb-100 dark-bg">
+                    <div class="container">
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($engagement_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $engagement_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($engagement_text ?? '') ?>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <?php foreach ($engagement_models as $i => $model): ?>
+                                <div class="col-lg-4 col-md-4 wow fadeInUp" data-wow-delay="<?= 0.2 + $i * 0.2 ?>s">
+                                    <div class="engagement-card<?= !empty($model['featured']) ? ' featured' : '' ?>">
+                                        <div class="engagement-badge">
+                                            <?= e($model['badge']) ?>
+                                        </div>
+                                        <h3>
+                                            <?= e($model['title']) ?>
+                                        </h3>
+                                        <p>
+                                            <?= e($model['desc']) ?>
+                                        </p>
+                                        <ul>
+                                            <?php foreach ($model['features'] as $feat): ?>
+                                                <li>
+                                                    <?= e($feat) ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                        <a href="<?= url('/contact') ?>" class="theme-btn btn-style-one">
+                                            <span class="btn-title">
+                                                <?= e($model['btn_text']) ?>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Process Accordion -->
+            <?php if (!empty($process_steps)): ?>
+                <section class="process-accordion-section pb-100 section-bg-3">
+                    <div class="decor-glow decor-glow--right decor-glow--top" aria-hidden="true"></div>
+                    <div class="line-shape d-none d-xl-block" aria-hidden="true">
+                        <img src="<?= asset('images/home-1/skills/line-shape.png') ?>" alt="img">
+                    </div>
+                    <div class="light-bg d-none d-xl-block" aria-hidden="true">
+                        <img src="<?= asset('images/home-1/skills/light-bg.png') ?>" alt="img">
+                    </div>
+                    <div class="container">
+
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($process_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $process_title_html ?? '' ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($process_text ?? '') ?>
+                            </div>
+                        </div>
+
+                        <div class="accordion process-accordion" id="processAccordion">
+
+                            <?php foreach ($process_steps as $i => $step): ?>
+                                <div class="accordion-item">
+
+                                    <div class="timeline-number">
+                                        <button class="accordion-button <?= $i ? 'collapsed' : '' ?>" data-bs-toggle="collapse"
+                                            data-bs-target="#step<?= $i ?>">
+
+                                            <span class="step-circle">
+                                                <?= sprintf('%02d', $i + 1) ?>
+                                            </span>
+
+                                            <span class="step-heading">
+                                                <?= e($step['title']) ?>
+                                            </span>
+
+                                        </button>
+                                    </div>
+
+                                    <div id="step<?= $i ?>" class="accordion-collapse collapse <?= $i == 0 ? 'show' : '' ?>"
+                                        data-bs-parent="#processAccordion">
+
+                                        <div class="accordion-body">
+
+                                            <p>
+                                                <?= e($step['desc']) ?>
+                                            </p>
+
+                                            <?php if (!empty($step['tags'])): ?>
+                                                <div class="tech-list mt-4">
+                                                    <?php foreach ($step['tags'] as $tag): ?>
+                                                        <span class="tech-item">
+                                                            <?= e($tag) ?>
+                                                        </span>
                                                     <?php endforeach; ?>
                                                 </div>
+                                            <?php endif; ?>
 
-                                            </div>
                                         </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
 
-                    <!-- Contact form (shared, site-wide) -->
-                    <section class="contact-details pb-50">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="section-title mb-30">
+                                    </div>
+
+                                </div>
+                            <?php endforeach; ?>
+
+                        </div>
+
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Mid CTA -->
+            <?php if (!empty($cta_tag) || !empty($cta_title_html) || !empty($cta_text)): ?>
+                <section class="mid-cta-section pb-100 section-bg">
+                    <div class="decor-glow decor-glow--left decor-glow--top" aria-hidden="true"></div>
+                    <div class="decor-glow decor-glow--right decor-glow--bottom" aria-hidden="true"></div>
+                    <div class="container">
+                        <div class="mid-cta-box">
+                            <span class="service-tag">
+                                <?= e($cta_tag ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $cta_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <p>
+                                <?= e($cta_text ?? '') ?>
+                            </p>
+                            <div class="service-btns">
+                                <hr>
+                                <a href="<?= url('/contact') ?>" class="theme-btn btn-style-one me-3">
+                                    <span class="btn-title">Schedule a Demo</span>
+                                </a>
+                                <a href="<?= url('/case-studies') ?>" class="theme-btn btn-style-border">
+                                    <span class="btn-title">View Case Studies</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Case studies -->
+            <?php if (!empty($case_studies)): ?>
+                <section class="case-wrapper case-one section-padding section-bg-2">
+
+                    <div class="shape">
+                        <img src="<?= asset('images/home-1/case/shape-01.webp') ?>" alt="Case Studies"
+                            class="shape-1 tm-gsap-animate-circle">
+
+                        <div class="light-shape"></div>
+                    </div>
+
+                    <div class="auto-container">
+
+                        <div class="row g-4">
+
+                            <!-- Left Side -->
+                            <div class="col-xxl-5 col-lg-6">
+
+                                <div class="left-content">
+
+                                    <div class="section-title pb-3 pb-xl-5">
+
                                         <div class="sub-title">
-                                            <svg width="14" height="15" viewBox="0 0 14 15" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
+                                            <svg width="14" height="15" viewBox="0 0 14 15" fill="none">
                                                 <path
                                                     d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                                     fill="currentColor" />
                                             </svg>
-                                            <span>Get in Touch</span>
+
+                                            <span><?= e($cs_sub ?? '') ?></span>
+
                                         </div>
-                                        <h2 class="title split-text split-in-right">Talk to an AI Expert</h2>
+
+                                        <h2 class="title split-text split-in-right">
+                                            <?= $cs_title_html ?? '' ?>
+                                        </h2>
+
+                                        <div class="text mt-3">
+                                            <?= e($cs_text ?? '') ?>
+                                        </div>
+
                                     </div>
-                                    <div id="contact-msg" class="contact-msg" style="display:none;"></div>
-                                    <form id="contact_form" name="contact_form" action="<?= url('/contact-submit') ?>"
-                                        method="post">
-                                        <?= csrf_field() ?>
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <div class="mb-3"><input name="form_name" class="form-control"
-                                                        type="text" placeholder="Enter Name" required></div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="mb-3"><input name="form_phone" class="form-control"
-                                                        type="text" placeholder="Enter Phone"></div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="mb-3"><input name="form_email"
-                                                        class="form-control required email" type="email"
-                                                        placeholder="Enter Email" required></div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="mb-3"><input name="form_subject"
-                                                        class="form-control required" type="text"
-                                                        placeholder="Enter Subject" required></div>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <textarea name="form_message" class="form-control required" rows="7"
-                                                placeholder="Enter Message" required></textarea>
-                                        </div>
-                                        <div class="mb-5 theme-btn-main">
-                                            <input name="form_botcheck" type="hidden" value="">
-                                            <button type="submit" id="contact-submit-btn"
-                                                class="theme-btn btn-style-one transform"><span class="btn-title">Send
-                                                    message</span></button>
-                                            <button type="reset" class="theme-btn btn-style-one transform"><span
-                                                    class="btn-title">Reset</span></button>
-                                        </div>
-                                    </form>
-                                    <script>
-                                        (function () {
-                                            var form = document.getElementById('contact_form');
-                                            var msgEl = document.getElementById('contact-msg');
-                                            var btn = document.getElementById('contact-submit-btn');
-                                            if (!form) return;
 
-                                            form.addEventListener('submit', function (e) {
-                                                e.preventDefault();
-                                                var origLabel = btn.querySelector('.btn-title').textContent;
-                                                btn.disabled = true;
-                                                btn.querySelector('.btn-title').textContent = 'Sending…';
+                                    <a href="<?= url('/contact') ?>" class="theme-btn-main">
 
-                                                fetch(form.action, {
-                                                    method: 'POST',
-                                                    body: new FormData(form),
-                                                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                                                })
-                                                    .then(function (r) { return r.json(); })
-                                                    .then(function (data) {
-                                                        msgEl.textContent = data.message;
-                                                        msgEl.className = 'contact-msg ' + (data.success ? 'contact-msg--ok' : 'contact-msg--err');
-                                                        msgEl.style.display = 'block';
-                                                        if (data.success) { form.reset(); }
-                                                    })
-                                                    .catch(function () {
-                                                        msgEl.textContent = 'Something went wrong. Please try again.';
-                                                        msgEl.className = 'contact-msg contact-msg--err';
-                                                        msgEl.style.display = 'block';
-                                                    })
-                                                    .finally(function () {
-                                                        btn.disabled = false;
-                                                        btn.querySelector('.btn-title').textContent = origLabel;
-                                                        msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                                                    });
-                                            });
-                                        })();
-                                    </script>
+                                        <span class="theme-btn-arrow-left">
+                                            <i class="far fa-long-arrow-right"></i>
+                                        </span>
+
+                                        <span class="theme-btn">
+                                            View All Case Studies
+                                        </span>
+
+                                        <span class="theme-btn-arrow-right">
+                                            <i class="far fa-long-arrow-right"></i>
+                                        </span>
+
+                                    </a>
+
+                                    <!-- <h2 class="title-shadow titlt-bottom-top d-none d-xl-block">
+                                        Case Studies
+                                    </h2> -->
+
+                                </div>
+
+                            </div>
+
+                            <!-- Right Side -->
+                            <div class="col-xxl-7">
+
+                                <div class="row design-choose-item-wrap">
+
+                                    <?php foreach ($case_studies as $i => $cs): ?>
+
+                                        <div class="col-xl-6 col-lg-6 col-md-6">
+
+                                            <div class="case-block <?= ($i % 2) ? 'style-2' : '' ?>">
+
+                                                <div class="content">
+
+                                                    <div class="title-area">
+
+                                                        <h4 class="title">
+                                                            <?= e(truncate_text($cs['title'], 30)) ?>
+                                                        </h4>
+
+                                                        <p class="text">
+                                                            <?= e(truncate_text($cs['desc'], 90)) ?>
+                                                        </p>
+
+                                                    </div>
+
+                                                    <a href="<?= url('/contact') ?>" class="arrow-icon">
+                                                        <i class="far fa-long-arrow-right"></i>
+                                                    </a>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    <?php endforeach; ?>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+            <?php endif; ?>
+
+            <section class="team-wrapper team-one  section-bg-2 pb-70">
+                <img src="<?= asset('images/home-1/team/shape-04.webp') ?>" alt=""
+                    class="shape-4 tm-gsap-animate-circle">
+                <div class="inner section-bg section-padding">
+                    <div class="shape">
+                        <img src="<?= asset('images/home-1/team/shape-01.webp') ?>" alt=""
+                            class="shape-1 tm-gsap-animate-circle">
+                        <img src="<?= asset('images/home-1/team/shape-02.webp') ?>" alt="" class="shape-2">
+                        <img src="<?= asset('images/home-1/team/shape-03.webp') ?>" alt="" class="shape-3">
+                    </div>
+                    <div class="auto-container">
+                        <div class="section-title text-center">
+                            <div class="sub-title">
+                                <svg width="14" height="15" viewBox="0 0 14 15" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
+                                        fill="currentColor" />
+                                </svg>
+                                <span>Leadership Team</span>
+                            </div>
+                            <h2 class="title split-text split-in-right">
+                                Meet Our <br>
+                                <span>Founders</span>
+                            </h2>
+                        </div>
+                        <div class="row team-item-wrapper">
+                            <div class="col-xl-2 col-0 wow fadeInUp" data-wow-delay=".3s"></div>
+                            <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".3s">
+                                <div class="team-block team-item">
+                                    <div class="content">
+                                        <div class="title-area">
+                                            <h4 class="title"><a href="<?= url('/about') ?>">Shailesh Jain</a></h4>
+                                            <p class="text">Co-Founder &middot; CMU Alumni</p>
+                                        </div>
+                                        <a href="<?= url('/about') ?>" class="arrow-icon">
+                                            <i class="far fa-long-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                    <div class="image-wrap">
+                                        <img class="image-shape"
+                                            src="<?= asset('images/home-1/team/image-shape.webp') ?>" alt="">
+                                        <div class="image">
+                                            <img src="<?= asset('images/quantal/founders/shailesh-jain.png') ?>"
+                                                alt="Shailesh Jain">
+                                        </div>
+                                    </div>
+                                    <div class="social-icon">
+                                        <a href="https://www.linkedin.com/in/shaileshkumarjain/" target="_blank"
+                                            rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".5s">
+                                <div class="team-block team-item">
+                                    <div class="content">
+                                        <div class="title-area">
+                                            <h4 class="title"><a href="<?= url('/about') ?>">Nirav Shah</a></h4>
+                                            <p class="text">Co-Founder &middot; Columbia, Ex UBS</p>
+                                        </div>
+                                        <a href="<?= url('/about') ?>" class="arrow-icon">
+                                            <i class="far fa-long-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                    <div class="image-wrap">
+                                        <img class="image-shape"
+                                            src="<?= asset('images/home-1/team/image-shape.png') ?>" alt="">
+                                        <div class="image">
+                                            <img src="<?= asset('images/quantal/founders/nirav-shah.png') ?>"
+                                                alt="Nirav Shah">
+                                        </div>
+                                    </div>
+                                    <div class="social-icon">
+                                        <a href="https://www.linkedin.com/in/theniravshah/" target="_blank"
+                                            rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".7s">
+                    <div class="team-block team-item">
+                    <div class="content">
+                        <div class="title-area">
+                        <h4 class="title"><a href="<?= url('/hire') ?>">Senior AI Engineers</a></h4>
+                        <p class="text">Hire with Us</p>
+                        </div>
+                        <a href="<?= url('/hire') ?>" class="arrow-icon">
+                        <i class="far fa-long-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="image-wrap">
+                        <img class="image-shape" src="<?= asset('images/home-1/team/image-shape.png') ?>" alt="">
+                        <div class="image">
+                        <img src="<?= asset('images/home-1/team/team-03.png') ?>" alt="">
+                        </div>
+                    </div>
+                    <div class="social-icon">
+                        <a href="<?= url('/hire') ?>"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    </div>
+                    </div>
+                </div> -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials (shared, site-wide) -->
+            <section class="testimonial-wrapper testimonial-one pb-100">
+                <div class="auto-container">
+                    <div class="row g-sm-4">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="slider-box">
+                                <div class="section-title">
+                                    <div class="sub-title">
+                                        <svg width="14" height="15" viewBox="0 0 14 15" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
+                                                fill="currentColor" />
+                                        </svg>
+                                        <span>Client Stories</span>
+                                    </div>
+                                    <h2 class="title split-text split-in-right">What clients say <span>about
+                                            us.</span></h2>
+                                </div>
+                                <div class="swiper testimonial-slider">
+                                    <div class="swiper-wrapper">
+                                        <div class="swiper-slide">
+                                            <div class="testimonial-block">
+                                                <p class="text">&ldquo;Quantal AI and Team are EXPERTS at
+                                                    building ANY AI functionality you&rsquo;re seeking!
+                                                    We&rsquo;ve hired them for 2 projects already &mdash; each
+                                                    completed ON TIME and UNDER BUDGET. Highly
+                                                    Recommended!&rdquo;</p>
+                                                <div class="infu">
+                                                    <div class="image"><img
+                                                            src="<?= asset('images/quantal/clients/myhomecarebiz.jpg') ?>"
+                                                            alt="Melissa C"></div>
+                                                    <div class="name-info">
+                                                        <h5 class="name">Melissa C</h5>
+                                                        <span>myhomecarebiz.com</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="swiper-slide">
+                                            <div class="testimonial-block">
+                                                <p class="text">&ldquo;Working with Quantal AI team has been an
+                                                    absolute pleasure. Their technical aptitude is outstanding
+                                                    &mdash; they&rsquo;re not only highly competent but also
+                                                    creative, thoughtful, and reliable. They built a complex
+                                                    integration for our wine business connecting PhotoRoom,
+                                                    Google Cloud, AWS, and Shopify, and it works
+                                                    beautifully.&rdquo;</p>
+                                                <div class="infu">
+                                                    <div class="image"><img
+                                                            src="<?= asset('images/quantal/clients/osteopathic_healing_hands.png') ?>"
+                                                            alt="David F"></div>
+                                                    <div class="name-info">
+                                                        <h5 class="name">David F</h5><span>Osteopathic Healing
+                                                            Hands</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="swiper-slide">
+                                            <div class="testimonial-block">
+                                                <p class="text">&ldquo;It was a pleasure working with Quantal AI
+                                                    team. Communication was smooth, deadlines were respected,
+                                                    and the overall collaboration was professional and
+                                                    efficient. I would definitely consider working together
+                                                    again in the future. Recommended!&rdquo;</p>
+                                                <div class="infu">
+                                                    <div class="image"><img
+                                                            src="<?= asset('images/quantal/clients/elunic.jpg') ?>"
+                                                            alt="Ivana M"></div>
+                                                    <div class="name-info">
+                                                        <h5 class="name">Ivana M</h5><span>Elunic AG</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="array-button">
+                                    <button class="array-prev"><i class="fas fa-long-arrow-left"></i></button>
+                                    <button class="array-next"><i class="fas fa-long-arrow-right"></i></button>
                                 </div>
                             </div>
                         </div>
-                    </section>
-
-                    <!-- Security & compliance -->
-                    <?php if (!empty($security_cards)): ?>
-                        <section class="security-compliance-section pb-120">
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($security_sub ?? '') ?></span>
-                                    <h2><?= $security_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($security_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($security_cards as $i => $card): ?>
-                                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="<?= 0.2 + $i * 0.1 ?>s">
-                                            <div class="security-card">
-                                                <div class="security-number"><?= sprintf('%02d', $i + 1) ?></div>
-                                                <h4><?= e($card['title']) ?></h4>
-                                                <p><?= e($card['desc']) ?></p>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Related services -->
-                    <?php if (!empty($related_items)): ?>
-                        <section class="related-services-section pb-100">
-                            <div class="container">
-
-                                <div class="sec-title">
-                                    <span class="sub-title"><?= e($related_sub ?? '') ?></span>
-                                    <h2><?= $related_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($related_text ?? '') ?></div>
-                                </div>
-
-                                <div class="swiper service-slide">
-                                    <div class="swiper-wrapper">
-
-                                        <?php foreach ($related_items as $item): ?>
-
-                                            <?php
-                                            $svc_url = !empty($item['slug']) ? url('/services/' . $item['slug']) : '#';
-                                            $svc_image = !empty($item['featured_image'])
-                                                ? media_url($item['featured_image'])
-                                                : asset('images/quantal/services/image_ai.png');
-                                            ?>
-
-                                            <div class="swiper-slide">
-                                                <div class="service-block">
-
-                                                    <div class="image">
-                                                        <img src="<?= attr($svc_image) ?>"
-                                                            alt="<?= attr($item['label'] ?? $item['title']) ?>">
-                                                    </div>
-
-                                                    <div class="content">
-
-                                                        <span class="tag">
-                                                            <?= e($item['label'] ?? '') ?>
-                                                        </span>
-
-                                                        <h4 class="title">
-                                                            <a href="<?= attr($svc_url) ?>">
-                                                                <?= e($item['title'] ?? $item['label']) ?>
-                                                            </a>
-                                                        </h4>
-
-                                                        <?php if (!empty($item['excerpt'])): ?>
-                                                            <p class="text">
-                                                                <?= e(truncate_text($item['excerpt'], 85)) ?>
-                                                            </p>
-                                                        <?php endif; ?>
-
-                                                        <a href="<?= attr($svc_url) ?>" class="theme-btn-main theme-btn-main2">
-                                                            <span class="theme-btn-arrow-left">
-                                                                <i class="far fa-long-arrow-right"></i>
-                                                            </span>
-
-                                                            <span class="theme-btn">
-                                                                Read More
-                                                            </span>
-
-                                                            <span class="theme-btn-arrow-right">
-                                                                <i class="far fa-long-arrow-right"></i>
-                                                            </span>
-                                                        </a>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                        <?php endforeach; ?>
-
-                                    </div>
-
-                                    <div class="swiper-dot color-style-two border-style center">
-                                        <div class="dot"></div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Knowledge hub -->
-                    <?php if (!empty($blog_posts)): ?>
-                        <section class="knowledge-hub-section pb-100">
-                            <div class="container">
-                                <div class="sec-title text-center mb-70">
-                                    <span class="sub-title"><?= e($blog_sub ?? '') ?></span>
-                                    <h2><?= $blog_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($blog_text ?? '') ?></div>
-                                </div>
-                                <div class="row g-4">
-                                    <?php foreach ($blog_posts as $i => $post): ?>
-                                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="<?= 0.2 + $i * 0.2 ?>s">
-                                            <article class="knowledge-card">
-                                                <div class="knowledge-image">
-                                                    <img src="<?= preg_match('/^https?:\/\//', $post['image'])
-                                                        ? e($post['image'])
-                                                        : url($post['image']) ?>" alt="<?= attr($post['category']) ?>">
-                                                </div>
-                                                <div class="knowledge-content">
-                                                    <!-- <span class="knowledge-category"><?= e($post['category']) ?></span> -->
-                                                    <h4><a
-                                                            href="<?= $post['link'] ?? '#' ?>"><?= e(truncate_text($post['title'], 80)) ?></a>
-                                                    </h4>
-                                                    <p><?= e(truncate_text($post['desc'], 120)) ?></p>
-                                                    <a href="<?= $post['link'] ?? '#' ?>" class="knowledge-btn">Read More <i
-                                                            class="far fa-arrow-right"></i></a>
-                                                </div>
-                                            </article>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                                <div class="text-center mt-70">
-                                    <a href="<?= url('/blog') ?>" class="theme-btn btn-style-one">
-                                        <span class="btn-title">View All Articles</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- FAQ -->
-                    <?php if (!empty($faqs)): ?>
-                        <section class="pb-100">
-                            <div class="faq-content">
-                                <h3 class="mb-3">Frequently Asked Questions</h3>
-                                <p class="text"><?= e($faq_intro ?? '') ?></p>
-                                <ul class="accordion-box wow fadeInUp p-0 mt-40" data-wow-delay=".3s">
-                                    <?php foreach ($faqs as $i => $faq):
-                                        $is_active = $i === 1;  // mimic theme's pre-opened second item
-                                        $faq_q = $faq['question'] ?? ($faq[0] ?? '');
-                                        $faq_a = $faq['answer'] ?? ($faq[1] ?? ''); ?>
-                                        <li class="accordion block<?= $is_active ? ' active-block' : '' ?>">
-                                            <div class="acc-btn<?= $is_active ? ' active' : '' ?>"><?= e($faq_q) ?>
-                                                <div class="icon fa fa-plus"></div>
-                                            </div>
-                                            <div class="acc-content<?= $is_active ? ' current' : '' ?>">
-                                                <div class="content">
-                                                    <div class="text"><?= e($faq_a) ?></div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
-                    <!-- Final CTA  -->
-                    <?php if (!empty($final_cta_title_html) || !empty($final_cta_desc) || !empty($final_cta_btn_text)): ?>
-                        <section class="mid-cta-section pb-100">
-                            <div class="container">
-                                <div class="mid-cta-box">
-
-                                    <?php if (!empty($final_cta_title_html)): ?>
-                                        <h2>
-                                            <?= $final_cta_title_html /* trusted HTML */ ?>
-                                        </h2>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($final_cta_desc)): ?>
-                                        <p>
-                                            <?= e($final_cta_desc) ?>
-                                        </p>
-                                    <?php endif; ?>
-
-                                    <div class="service-btns">
-                                        <hr>
-
-                                        <?php if (!empty($final_cta_btn_text)): ?>
-                                            <a href="<?= url($final_cta_btn_url ?: '/case-studies') ?>"
-                                                class="theme-btn btn-style-border">
-                                                <span class="btn-title">
-                                                    <?= e($final_cta_btn_text) ?>
-                                                </span>
-                                            </a>
-                                        <?php endif; ?>
-                                        <br>
-
-
-                                    </div>
-                                    <p class="cta-contact mt-4 mb-0">
-                                        Or email us directly at
-                                        <a href="mailto:contact@quantaltech.ai">contact@quantaltech.ai</a>
-                                        or call
-                                        <a href="tel:+13158093225">+1 315 809 3225</a>.
-                                    </p>
-
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-
+                    </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- Tech stack -->
+            <?php if (!empty($tech_categories)): ?>
+                <section class="tech-stack-section pb-100 section-bg-3">
+                    <div class="decor-glow decor-glow--left decor-glow--bottom" aria-hidden="true"></div>
+                    <div class="container">
+                        <div class="sec-title">
+                            <span class="sub-title">
+                                <?= e($tech_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $tech_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($tech_text ?? '') ?>
+                            </div>
+                        </div>
+                        <div class="tech-stack-wrapper row g-4">
+                            <?php foreach ($tech_categories as $cat): ?>
+                                <div class="col-lg-4 col-md-6 mb-4 d-flex wow fadeInUp">
+                                    <div class="tech-category">
+                                        <span class="tech-category-title">
+                                            <?= e($cat['title']) ?>
+                                        </span>
+
+                                        <div class="tech-list">
+                                            <?php foreach ($cat['items'] as $item): ?>
+                                                <span class="tech-item">
+                                                    <?= e($item) ?>
+                                                </span>
+                                            <?php endforeach; ?>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Contact form (shared, site-wide) -->
+            <section class="contact-details pb-50 dark-bg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="section-title mb-30">
+                                <div class="sub-title">
+                                    <svg width="14" height="15" viewBox="0 0 14 15" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
+                                            fill="currentColor" />
+                                    </svg>
+                                    <span>Get in Touch</span>
+                                </div>
+                                <h2 class="title split-text split-in-right">Talk to an AI Expert</h2>
+                            </div>
+                            <div id="contact-msg" class="contact-msg" style="display:none;"></div>
+                            <form id="contact_form" name="contact_form" action="<?= url('/contact-submit') ?>"
+                                method="post">
+                                <?= csrf_field() ?>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="mb-3"><input name="form_name" class="form-control" type="text"
+                                                placeholder="Enter Name" required></div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="mb-3"><input name="form_phone" class="form-control" type="text"
+                                                placeholder="Enter Phone"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="mb-3"><input name="form_email" class="form-control required email"
+                                                type="email" placeholder="Enter Email" required></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="mb-3"><input name="form_subject" class="form-control required"
+                                                type="text" placeholder="Enter Subject" required></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <textarea name="form_message" class="form-control required" rows="7"
+                                        placeholder="Enter Message" required></textarea>
+                                </div>
+                                <div class="mb-5 theme-btn-main">
+                                    <input name="form_botcheck" type="hidden" value="">
+                                    <button type="submit" id="contact-submit-btn"
+                                        class="theme-btn btn-style-one transform"><span class="btn-title">Send
+                                            message</span></button>
+                                    <button type="reset" class="theme-btn btn-style-one transform"><span
+                                            class="btn-title">Reset</span></button>
+                                </div>
+                            </form>
+                            <script>
+                                (function () {
+                                    var form = document.getElementById('contact_form');
+                                    var msgEl = document.getElementById('contact-msg');
+                                    var btn = document.getElementById('contact-submit-btn');
+                                    if (!form) return;
+
+                                    form.addEventListener('submit', function (e) {
+                                        e.preventDefault();
+                                        var origLabel = btn.querySelector('.btn-title').textContent;
+                                        btn.disabled = true;
+                                        btn.querySelector('.btn-title').textContent = 'Sending…';
+
+                                        fetch(form.action, {
+                                            method: 'POST',
+                                            body: new FormData(form),
+                                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                        })
+                                            .then(function (r) { return r.json(); })
+                                            .then(function (data) {
+                                                msgEl.textContent = data.message;
+                                                msgEl.className = 'contact-msg ' + (data.success ? 'contact-msg--ok' : 'contact-msg--err');
+                                                msgEl.style.display = 'block';
+                                                if (data.success) { form.reset(); }
+                                            })
+                                            .catch(function () {
+                                                msgEl.textContent = 'Something went wrong. Please try again.';
+                                                msgEl.className = 'contact-msg contact-msg--err';
+                                                msgEl.style.display = 'block';
+                                            })
+                                            .finally(function () {
+                                                btn.disabled = false;
+                                                btn.querySelector('.btn-title').textContent = origLabel;
+                                                msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                            });
+                                    });
+                                })();
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security & compliance -->
+            <?php if (!empty($security_cards)): ?>
+                <section class="security-compliance-section pb-120 section-bg">
+                    <div class="container">
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($security_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $security_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($security_text ?? '') ?>
+                            </div>
+                        </div>
+                        <div class="swiper security-slider">
+                            <div class="swiper-wrapper">
+
+                                <?php foreach ($security_cards as $i => $card): ?>
+                                    <div class="swiper-slide">
+                                        <div class="security-card">
+                                            <div class="security-number">
+                                                <?= sprintf('%02d', $i + 1) ?>
+                                            </div>
+
+                                            <h4><?= e($card['title']) ?></h4>
+
+                                            <p><?= e($card['desc']) ?></p>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+
+                            </div>
+
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Related services -->
+            <?php if (!empty($related_items)): ?>
+                <section class="related-services-section pb-100">
+                    <div class="container">
+
+                        <div class="sec-title">
+                            <span class="sub-title">
+                                <?= e($related_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $related_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($related_text ?? '') ?>
+                            </div>
+                        </div>
+
+                        <div class="swiper service-slide">
+                            <div class="swiper-wrapper">
+
+                                <?php foreach ($related_items as $item): ?>
+
+                                    <?php
+                                    $svc_url = !empty($item['slug']) ? url('/services/' . $item['slug']) : '#';
+                                    $svc_image = !empty($item['featured_image'])
+                                        ? media_url($item['featured_image'])
+                                        : asset('images/quantal/services/image_ai.png');
+                                    ?>
+
+                                    <div class="swiper-slide">
+                                        <div class="service-block">
+
+                                            <div class="image">
+                                                <img src="<?= attr($svc_image) ?>"
+                                                    alt="<?= attr($item['label'] ?? $item['title']) ?>">
+                                            </div>
+
+                                            <div class="content">
+
+                                                <span class="tag">
+                                                    <?= e($item['label'] ?? '') ?>
+                                                </span>
+
+                                                <h4 class="title">
+                                                    <a href="<?= attr($svc_url) ?>">
+                                                        <?= e($item['title'] ?? $item['label']) ?>
+                                                    </a>
+                                                </h4>
+
+                                                <?php if (!empty($item['excerpt'])): ?>
+                                                    <p class="text">
+                                                        <?= e(truncate_text($item['excerpt'], 85)) ?>
+                                                    </p>
+                                                <?php endif; ?>
+
+                                                <a href="<?= attr($svc_url) ?>" class="theme-btn-main theme-btn-main2">
+                                                    <span class="theme-btn-arrow-left">
+                                                        <i class="far fa-long-arrow-right"></i>
+                                                    </span>
+
+                                                    <span class="theme-btn">
+                                                        Read More
+                                                    </span>
+
+                                                    <span class="theme-btn-arrow-right">
+                                                        <i class="far fa-long-arrow-right"></i>
+                                                    </span>
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                <?php endforeach; ?>
+
+                            </div>
+
+                            <div class="swiper-dot color-style-two border-style center">
+                                <div class="dot"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Knowledge hub -->
+            <?php if (!empty($blog_posts)): ?>
+                <section class="knowledge-hub-section pb-100 section-bg-3">
+                    <div class="container">
+                        <div class="sec-title text-center mb-70">
+                            <span class="sub-title">
+                                <?= e($blog_sub ?? '') ?>
+                            </span>
+                            <h2>
+                                <?= $blog_title_html ?? '' /* trusted HTML */ ?>
+                            </h2>
+                            <div class="text">
+                                <?= e($blog_text ?? '') ?>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <?php foreach ($blog_posts as $i => $post): ?>
+                                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="<?= 0.2 + $i * 0.2 ?>s">
+                                    <article class="knowledge-card">
+                                        <div class="knowledge-image">
+                                            <img src="<?= preg_match('/^https?:\/\//', $post['image'])
+                                                ? e($post['image'])
+                                                : url($post['image']) ?>" alt="<?= attr($post['category']) ?>">
+                                        </div>
+                                        <div class="knowledge-content">
+                                            <!-- <span class="knowledge-category"><?= e($post['category']) ?></span> -->
+                                            <h4><a href="<?= $post['link'] ?? '#' ?>">
+                                                    <?= e(truncate_text($post['title'], 80)) ?>
+                                                </a>
+                                            </h4>
+                                            <p>
+                                                <?= e(truncate_text($post['desc'], 120)) ?>
+                                            </p>
+                                            <a href="<?= $post['link'] ?? '#' ?>" class="knowledge-btn">Read More <i
+                                                    class="far fa-arrow-right"></i></a>
+                                        </div>
+                                    </article>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="text-center mt-70">
+                            <a href="<?= url('/blog') ?>" class="theme-btn btn-style-one">
+                                <span class="btn-title">View All Articles</span>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- FAQ -->
+            <?php if (!empty($faqs)): ?>
+                <section class="pb-100 faq-section">
+
+                    <div class="container faq-content pt-70">
+                        <h3 class="mb-3">Frequently Asked Questions</h3>
+                        <p class="text">
+                            <?= e($faq_intro ?? '') ?>
+                        </p>
+                        <ul class="accordion-box wow fadeInUp p-0 mt-40" data-wow-delay=".3s">
+                            <?php foreach ($faqs as $i => $faq):
+                                $is_active = $i === 1;  // mimic theme's pre-opened second item
+                                $faq_q = $faq['question'] ?? ($faq[0] ?? '');
+                                $faq_a = $faq['answer'] ?? ($faq[1] ?? ''); ?>
+                                <li class="accordion block<?= $is_active ? ' active-block' : '' ?>">
+                                    <div class="acc-btn<?= $is_active ? ' active' : '' ?>">
+                                        <?= e($faq_q) ?>
+                                        <div class="icon fa fa-plus"></div>
+                                    </div>
+                                    <div class="acc-content<?= $is_active ? ' current' : '' ?>">
+                                        <div class="content">
+                                            <div class="text">
+                                                <?= e($faq_a) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <!-- Final CTA  -->
+            <?php if (!empty($final_cta_title_html) || !empty($final_cta_desc) || !empty($final_cta_btn_text)): ?>
+                <section class="mid-cta-section pb-100">
+                    <div class="decor-glow decor-glow--left decor-glow--top" aria-hidden="true"></div>
+                    <div class="decor-glow decor-glow--right decor-glow--bottom" aria-hidden="true"></div>
+                    <div class="container">
+                        <div class="mid-cta-box">
+
+                            <?php if (!empty($final_cta_title_html)): ?>
+                                <h2>
+                                    <?= $final_cta_title_html /* trusted HTML */ ?>
+                                </h2>
+                            <?php endif; ?>
+
+                            <?php if (!empty($final_cta_desc)): ?>
+                                <p>
+                                    <?= e($final_cta_desc) ?>
+                                </p>
+                            <?php endif; ?>
+
+                            <div class="service-btns">
+                                <hr>
+
+                                <?php if (!empty($final_cta_btn_text)): ?>
+                                    <a href="<?= url($final_cta_btn_url ?: '/case-studies') ?>"
+                                        class="theme-btn btn-style-border">
+                                        <span class="btn-title">
+                                            <?= e($final_cta_btn_text) ?>
+                                        </span>
+                                    </a>
+                                <?php endif; ?>
+                                <br>
+
+
+                            </div>
+                            <p class="cta-contact mt-4 mb-0">
+                                Or email us directly at
+                                <a href="mailto:contact@quantaltech.ai">contact@quantaltech.ai</a>
+                                or call
+                                <a href="tel:+13158093225">+1 315 809 3225</a>.
+                            </p>
+
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
 
         </div>
     </div>

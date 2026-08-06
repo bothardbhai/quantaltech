@@ -1132,6 +1132,107 @@ var THEMEMASCOT = {};
 
 	})();
 
+	new Swiper(".what-you-get-slider", {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    loop: true,
+    speed: 800,
+
+    autoplay: {
+        delay: 3500,
+        disableOnInteraction: false,
+    },
+
+    pagination: {
+        el: ".what-you-get-slider .swiper-pagination",
+        clickable: true,
+    },
+
+    navigation: {
+        nextEl: ".what-you-get-slider .swiper-button-next",
+        prevEl: ".what-you-get-slider .swiper-button-prev",
+    },
+
+    breakpoints: {
+        576: {
+            slidesPerView: 1,
+        },
+        768: {
+            slidesPerView: 2,
+        },
+        992: {
+            slidesPerView: 3,
+        },
+        1200: {
+            slidesPerView: 3,
+        }
+    }
+});
+
+new Swiper(".framework-slider", {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    loop: true,
+    speed: 800,
+
+    autoplay: {
+        delay: 3500,
+        disableOnInteraction: false,
+    },
+
+    pagination: {
+        el: ".framework-slider .swiper-pagination",
+        clickable: true,
+    },
+
+    breakpoints: {
+        576: {
+            slidesPerView: 1,
+        },
+        768: {
+            slidesPerView: 2,
+        },
+        992: {
+            slidesPerView: 3,
+        },
+        1200: {
+            slidesPerView: 3,
+        }
+    }
+});
+
+new Swiper(".security-slider", {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    loop: true,
+    speed: 800,
+
+    autoplay: {
+        delay: 3500,
+        disableOnInteraction: false,
+    },
+
+    pagination: {
+        el: ".security-slider .swiper-pagination",
+        clickable: true,
+    },
+
+    breakpoints: {
+        576: {
+            slidesPerView: 1,
+        },
+        768: {
+            slidesPerView: 2,
+        },
+        992: {
+            slidesPerView: 3,
+        },
+        1200: {
+            slidesPerView: 3,
+        }
+    }
+});
+
 	
 
 
