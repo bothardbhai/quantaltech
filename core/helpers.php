@@ -65,6 +65,44 @@ function jsonld(mixed $data): string
 }
 
 /**
+ * Output one or more JSON-LD script blocks from a services.schema_json-style
+ * column. Understands two shapes so old and new data both render correctly:
+ *   - New: a JSON array of {label, code} blocks (admin's "Add Another
+ *     Schema" repeater) — each block's code is rendered as its own
+ *     <script type="application/ld+json"> tag via jsonld().
+ *   - Legacy: the whole string is one raw JSON-LD object (or already-invalid
+ *     text) — passed straight to jsonld() as a single block, same as before
+ *     this existed.
+ */
+function jsonld_multi(string $raw): string
+{
+    if ($raw === '') {
+        return '';
+    }
+    $decoded = json_decode($raw, true);
+    if (is_array($decoded) && array_is_list($decoded)) {
+        $looksLikeSchemaBlocks = true;
+        foreach ($decoded as $item) {
+            if (!is_array($item) || !array_key_exists('code', $item)) {
+                $looksLikeSchemaBlocks = false;
+                break;
+            }
+        }
+        if ($looksLikeSchemaBlocks) {
+            $out = '';
+            foreach ($decoded as $block) {
+                $code = $block['code'] ?? '';
+                if (is_string($code) && $code !== '') {
+                    $out .= jsonld($code);
+                }
+            }
+            return $out;
+        }
+    }
+    return jsonld($raw);
+}
+
+/**
  * Resolve a stored upload/media path (from the `media` table, or
  * posts.featured_image / og_image, etc.) into a URL the browser can load.
  *

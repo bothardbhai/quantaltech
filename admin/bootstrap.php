@@ -29,6 +29,7 @@ require CORE_DIR    . '/content-helpers.php';
 require CORE_DIR    . '/router.php';
 require CORE_DIR    . '/auth.php';
 require CORE_DIR    . '/csrf.php';
+require __DIR__     . '/helpers.php';
 
 auth_session_start();
 

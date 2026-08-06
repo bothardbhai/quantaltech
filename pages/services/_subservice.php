@@ -862,6 +862,21 @@ $service_links ??= [
 
                                             <div class="case-block <?= ($i % 2) ? 'style-2' : '' ?>">
 
+                                                <?php
+                                                $cs_image = !empty($cs['image'])
+                                                    ? media_url($cs['image'])
+                                                    : asset('images/quantal/case-studies/recruitment.png');
+                                                $cs_alt = !empty($cs['title']) ? $cs['title'] : 'Case study';
+                                                ?>
+                                                <div class="image not-hide-cursor" data-cursor="View<br>Case">
+                                                    <a href="<?= url('/contact') ?>" class="cursor-hide tp--hover-img"
+                                                        data-displacement="<?= attr($cs_image) ?>"
+                                                        data-intensity="0.6" data-speedin="1" data-speedout="1">
+                                                        <img src="<?= attr($cs_image) ?>"
+                                                            alt="<?= attr($cs_alt) ?>">
+                                                    </a>
+                                                </div>
+
                                                 <div class="content">
 
                                                     <div class="title-area">

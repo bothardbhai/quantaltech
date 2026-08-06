@@ -48,58 +48,6 @@ function svc_unique_slug(PDO $pdo, string $base, ?int $excl = null): string
 }
 
 /**
- * "One item per line" textarea -> array of strings. Same convention this
- * admin already used for the old Key Features textarea, reused everywhere
- * a section just needs a flat list (platforms, tag lists, bullet points).
- */
-function svc_lines_to_array(string $raw): array
-{
-    return array_values(array_filter(array_map('trim', explode("\n", $raw))));
-}
-
-/**
- * Build a JSON-ready array of rows from parallel POST arrays — one shared
- * builder for every object-repeater section instead of hand-rolling the
- * same loop ~15 times. $fields maps output key => POST field name (plain
- * text/textarea inputs); $listFields maps output key => POST field name for
- * a "one per line" textarea (converted to an array of strings);
- * $boolFields maps output key => POST field name for a checkbox. Row count
- * is taken from the first $fields entry. Rows where every $fields/$listFields
- * value is blank are dropped (a checkbox alone never keeps an otherwise-
- * empty row).
- */
-function svc_build_repeater(array $post, array $fields, array $listFields = [], array $boolFields = []): array
-{
-    $firstKey = array_key_first($fields);
-    $count = ($firstKey !== null && isset($post[$fields[$firstKey]]) && is_array($post[$fields[$firstKey]]))
-        ? count($post[$fields[$firstKey]])
-        : 0;
-
-    $rows = [];
-    for ($i = 0; $i < $count; $i++) {
-        $row = [];
-        $hasContent = false;
-        foreach ($fields as $outKey => $postName) {
-            $val = trim((string) ($post[$postName][$i] ?? ''));
-            $row[$outKey] = $val;
-            if ($val !== '') { $hasContent = true; }
-        }
-        foreach ($listFields as $outKey => $postName) {
-            $items = svc_lines_to_array((string) ($post[$postName][$i] ?? ''));
-            $row[$outKey] = $items;
-            if (!empty($items)) { $hasContent = true; }
-        }
-        foreach ($boolFields as $outKey => $postName) {
-            $row[$outKey] = isset($post[$postName][$i]) && $post[$postName][$i] !== '';
-        }
-        if ($hasContent) {
-            $rows[] = $row;
-        }
-    }
-    return $rows;
-}
-
-/**
  * Normalize the overview feature cards (features_json) for the edit form:
  * legacy rows may still hold a flat string array from before this column
  * was repurposed for {icon,title,description} cards.
@@ -115,13 +63,6 @@ function svc_normalize_features(?string $raw): array
         }
         return ['icon' => '', 'title' => (string) $item, 'description' => ''];
     }, $decoded);
-}
-
-function svc_json_decode(?string $raw): array
-{
-    if (!$raw) { return []; }
-    $decoded = json_decode($raw, true);
-    return is_array($decoded) ? $decoded : [];
 }
 
 // ============ Standard "sub / title / text + repeater" sections ============
@@ -144,54 +85,6 @@ function svc_section_header(string $prefix, array $f, string $titlePlaceholder =
         <label for="<?= $prefix ?>_text">Intro Text</label>
         <textarea id="<?= $prefix ?>_text" name="<?= $prefix ?>_text" rows="2"><?= e($f[$prefix . '_text']) ?></textarea>
     </div>
-    <?php
-}
-
-/**
- * Echo the shared repeater scaffold: an empty rows container, an "add"
- * button, a <template> holding one row's markup, and a JSON script tag with
- * the existing data — all consumed by repeater.js's
- * initRepeater()/populateRepeaterRow() on the JS side.
- */
-function svc_repeater_field(string $id, string $title, string $addLabel, string $rowHtml, array $existingData, array $fieldMap): void
-{
-    ?>
-    <div class="repeater-row__title" style="margin-bottom:10px;"><?= e($title) ?></div>
-    <div id="<?= $id ?>-rows"></div>
-    <div id="<?= $id ?>-empty" class="text-muted" style="font-size:13px;">No rows yet.</div>
-    <button type="button" id="<?= $id ?>-add" class="admin-btn admin-btn--ghost admin-btn--small mt-2">
-        <?= e($addLabel) ?>
-    </button>
-    <template id="<?= $id ?>-template">
-        <div class="repeater-row">
-            <div class="repeater-row__head">
-                <span class="repeater-row__title">Item</span>
-                <div class="repeater-row__actions">
-                    <button type="button" data-repeater-action="up" title="Move up">&uarr;</button>
-                    <button type="button" data-repeater-action="down" title="Move down">&darr;</button>
-                    <button type="button" data-repeater-action="remove" title="Remove">&times;</button>
-                </div>
-            </div>
-            <?= $rowHtml ?>
-        </div>
-    </template>
-    <script type="application/json" id="<?= $id ?>-data"><?= json_encode($existingData) ?></script>
-    <script>
-    (function () {
-        var container = document.getElementById('<?= $id ?>-rows');
-        var data = JSON.parse(document.getElementById('<?= $id ?>-data').textContent || '[]');
-        var repeater = initRepeater({
-            container: container,
-            emptyEl: document.getElementById('<?= $id ?>-empty'),
-            addBtn: document.getElementById('<?= $id ?>-add'),
-            template: document.getElementById('<?= $id ?>-template'),
-            onAdd: function (row, rowData) {
-                populateRepeaterRow(row, rowData, <?= json_encode($fieldMap) ?>);
-            }
-        });
-        data.forEach(function (item) { repeater.addRow(item); });
-    })();
-    </script>
     <?php
 }
 
@@ -229,7 +122,6 @@ if ($action === 'new' || $action === 'edit') {
         $name    = trim((string) ($_POST['name'] ?? ''));
         $title   = trim((string) ($_POST['title'] ?? ''));
         $excerpt = trim((string) ($_POST['excerpt'] ?? ''));
-        $schema_json = trim((string) ($_POST['schema_json'] ?? ''));
         $service_number_raw = (string) ($_POST['service_number'] ?? '1');
 
         $errors = [];
@@ -239,10 +131,29 @@ if ($action === 'new' || $action === 'edit') {
         if (!ctype_digit($service_number_raw) && !is_numeric($service_number_raw)) {
             $errors[] = 'Display Order must be a number.';
         }
-        if ($schema_json !== '') {
-            json_decode($schema_json);
+
+        // Multiple JSON-LD schema blocks — stored as one JSON array
+        // [{label, code}, ...] in the schema_json column (same column,
+        // richer contents; jsonld_multi() on the frontend understands both
+        // this shape and the old single-raw-string shape it replaces).
+        $schema_blocks = svc_build_repeater($_POST, ['label' => 'schema_label', 'code' => 'schema_code']);
+        foreach ($schema_blocks as $idx => $block) {
+            if ($block['code'] === '') { continue; }
+            json_decode($block['code']);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                $errors[] = 'JSON-LD schema is invalid: ' . json_last_error_msg();
+                $errors[] = 'JSON-LD schema #' . ($idx + 1) . ($block['label'] !== '' ? " ({$block['label']})" : '')
+                    . ' is invalid: ' . json_last_error_msg();
+            }
+        }
+        $schema_json = json_encode($schema_blocks, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        // Case study images are stored as plain paths (same convention as
+        // Featured Image / blog featured_image) — just check the extension.
+        foreach (($_POST['cs_image'] ?? []) as $cs_img) {
+            $cs_img = trim((string) $cs_img);
+            if ($cs_img !== '' && !preg_match('/\.(png|jpe?g|gif|webp|svg)$/i', $cs_img)) {
+                $errors[] = 'Case study image must be a .png, .jpg, .gif, .webp, or .svg file.';
+                break;
             }
         }
 
@@ -337,7 +248,7 @@ if ($action === 'new' || $action === 'edit') {
                 ['title' => 'process_step_title', 'desc' => 'process_step_desc'],
                 ['tags' => 'process_step_tags']));
             $data['case_studies_json'] = json_encode(svc_build_repeater($_POST,
-                ['tag' => 'cs_tag', 'title' => 'cs_card_title', 'desc' => 'cs_card_desc', 'result' => 'cs_result']));
+                ['tag' => 'cs_tag', 'title' => 'cs_card_title', 'desc' => 'cs_card_desc', 'result' => 'cs_result', 'image' => 'cs_image']));
             $data['tech_categories_json'] = json_encode(svc_build_repeater($_POST,
                 ['title' => 'tech_cat_title'], ['items' => 'tech_cat_items']));
             $data['security_cards_json'] = json_encode(svc_build_repeater($_POST,
@@ -409,6 +320,7 @@ if ($action === 'new' || $action === 'edit') {
         'tech_categories' => svc_json_decode($service['tech_categories_json'] ?? null),
         'security_cards' => svc_json_decode($service['security_cards_json'] ?? null),
         'faqs' => svc_json_decode($service['faqs_json'] ?? null),
+        'json_ld_schemas' => svc_normalize_schemas($service['schema_json'] ?? null),
     ];
     $selected_related_ids = array_map('intval', svc_json_decode($service['related_service_ids_json'] ?? null));
     $selected_blog_ids = array_map('intval', svc_json_decode($service['blog_post_ids_json'] ?? null));
@@ -803,10 +715,14 @@ if ($action === 'new' || $action === 'edit') {
                             '<div class="form-row"><label>Tag</label><input type="text" name="cs_tag[]" placeholder="Business Impact"></div>' .
                             '<div class="form-row"><label>Title</label><input type="text" name="cs_card_title[]"></div>' .
                             '<div class="form-row"><label>Description</label><textarea name="cs_card_desc[]" rows="2"></textarea></div>' .
-                            '<div class="form-row" style="margin-bottom:0;"><label>Result</label><textarea name="cs_result[]" rows="2"></textarea></div>',
+                            '<div class="form-row"><label>Result</label><textarea name="cs_result[]" rows="2"></textarea></div>' .
+                            '<div class="form-row" style="margin-bottom:0;"><label>Case Study Image</label>' .
+                            '<input type="text" name="cs_image[]" placeholder="/uploads/service/...">' .
+                            '<div class="help">Copy a path from the <a href="' . ADMIN_URL . '/media.php" target="_blank" rel="noopener">Media Library</a>, or paste any URL. Falls back to a default image if left blank.</div></div>',
                             $repeater_data['case_studies'],
                             ['input[name="cs_tag[]"]' => 'tag', 'input[name="cs_card_title[]"]' => 'title',
-                             'textarea[name="cs_card_desc[]"]' => 'desc', 'textarea[name="cs_result[]"]' => 'result']
+                             'textarea[name="cs_card_desc[]"]' => 'desc', 'textarea[name="cs_result[]"]' => 'result',
+                             'input[name="cs_image[]"]' => 'image']
                         ); ?>
                     </div></div>
                 </div>
@@ -932,13 +848,22 @@ if ($action === 'new' || $action === 'edit') {
                                 <option value="noindex,nofollow"     <?= $f['robots'] === 'noindex,nofollow'     ? 'selected' : '' ?>>noindex, nofollow</option>
                             </select>
                         </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <div class="form-row">
-                            <label for="schema_json">
-                                JSON-LD Schema
-                                <a href="#" id="gen-service-schema" class="admin-btn admin-btn--ghost admin-btn--small" style="float:right;">Generate Service schema</a>
+                            <label>
+                                JSON-LD Schemas <span class="text-muted">(WebPage, Breadcrumb, FAQ, Organization, Service, Product, Article, or any custom schema — add as many as you need)</span>
+                                <a href="#" id="gen-service-schema" class="admin-btn admin-btn--ghost admin-btn--small" style="float:right;">+ Generate Service schema</a>
                             </label>
-                            <textarea id="schema_json" name="schema_json" rows="6" class="json-textarea"><?= e($f['schema_json']) ?></textarea>
                         </div>
+                        <?php svc_repeater_field('schemas', 'JSON-LD Schemas', '+ Add Another Schema',
+                            '<div class="form-row"><label>Schema Name / Label <span class="text-muted">(optional)</span></label>' .
+                            '<input type="text" name="schema_label[]" placeholder="e.g. FAQ Schema, Breadcrumb Schema, Organization Schema"></div>' .
+                            '<div class="form-row" style="margin-bottom:0;"><label>JSON-LD Code</label>' .
+                            '<textarea name="schema_code[]" rows="6" class="json-textarea" placeholder="{&quot;@context&quot;:&quot;https://schema.org&quot;, ...}"></textarea></div>',
+                            $repeater_data['json_ld_schemas'],
+                            ['input[name="schema_label[]"]' => 'label', 'textarea[name="schema_code[]"]' => 'code']
+                        ); ?>
                     </div></div>
                 </div>
 
@@ -1029,7 +954,10 @@ if ($action === 'new' || $action === 'edit') {
                     'url': SITE + '/services/' + slug,
                     'provider': { '@type': 'Organization', 'name': <?= json_encode(SITE_NAME) ?> }
                 };
-                document.getElementById('schema_json').value = JSON.stringify(data, null, 2);
+                var repeater = window.svcRepeaters && window.svcRepeaters['schemas'];
+                if (repeater) {
+                    repeater.addRow({ label: 'Service Schema', code: JSON.stringify(data, null, 2) });
+                }
             });
         }
     })();

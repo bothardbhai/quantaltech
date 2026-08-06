@@ -99,7 +99,7 @@ if ($_og_image !== '' && !preg_match('#^https?://#', $_og_image) && defined('SIT
 <?php
 // Per-page JSON-LD schema (admin-controlled)
 if ($_schema_json !== '') {
-    echo jsonld($_schema_json) . "\n";
+    echo jsonld_multi($_schema_json) . "\n";
 }
 // Site-wide Organization schema (admin-controlled, from settings)
 if (!empty($site_defaults['organization'])) {

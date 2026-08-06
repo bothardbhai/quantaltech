@@ -151,7 +151,13 @@ $related_text         = $service['related_text'] ?? '';
 $related_group_title  = $service['related_group_title'];
 $related_items = $pdo
     ? array_map(
-        static fn(array $s) => ['label' => $s['name'], 'slug' => $s['slug']],
+        static fn(array $s) => [
+            'label' => $s['name'],
+            'title' => $s['title'],
+            'slug' => $s['slug'],
+            'excerpt' => $s['excerpt'],
+            'featured_image' => $s['featured_image'],
+        ],
         get_services_by_ids($pdo, svc_json($service['related_service_ids_json']))
     )
     : [];

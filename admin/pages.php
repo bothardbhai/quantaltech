@@ -34,19 +34,29 @@ if ($action === 'edit') {
         $keywords    = trim((string) ($_POST['meta_keywords'] ?? ''));
         $og_image    = trim((string) ($_POST['og_image'] ?? ''));
         $canonical   = trim((string) ($_POST['canonical'] ?? ''));
-        $schema      = trim((string) ($_POST['schema_json'] ?? ''));
         $is_pub      = isset($_POST['is_published']) ? 1 : 0;
         $notes       = trim((string) ($_POST['notes'] ?? ''));
 
-        // Validate JSON-LD if provided
-        if ($schema !== '') {
-            json_decode($schema);
+        // Multiple JSON-LD schema blocks — stored as one JSON array
+        // [{type, label, code}, ...] in the schema_json column (same column
+        // that used to hold a single raw JSON-LD string; jsonld_multi() on
+        // the frontend understands both shapes).
+        $schema_blocks = svc_build_repeater($_POST, ['type' => 'schema_type', 'label' => 'schema_label', 'code' => 'schema_code']);
+        $schema_errors = [];
+        foreach ($schema_blocks as $idx => $block) {
+            if ($block['code'] === '') { continue; }
+            json_decode($block['code']);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                flash('error', 'JSON-LD schema is not valid JSON: ' . json_last_error_msg());
-                header('Location: ' . ADMIN_URL . '/pages.php?action=edit&path=' . urlencode($path));
-                exit;
+                $schema_errors[] = 'JSON-LD schema #' . ($idx + 1) . ($block['label'] !== '' ? " ({$block['label']})" : '')
+                    . ' is invalid: ' . json_last_error_msg();
             }
         }
+        if ($schema_errors) {
+            foreach ($schema_errors as $err) { flash('error', $err); }
+            header('Location: ' . ADMIN_URL . '/pages.php?action=edit&path=' . urlencode($path));
+            exit;
+        }
+        $schema = json_encode($schema_blocks, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         // Upsert
         $stmt = $pdo->prepare(
@@ -91,6 +101,9 @@ if ($action === 'edit') {
     $admin_active     = 'pages';
     require __DIR__ . '/_header.php';
     ?>
+
+    <script src="<?= ADMIN_URL ?>/assets/js/repeater.js"></script>
+
     <div class="admin-page-header">
         <div>
             <h1>Edit Page SEO</h1>
@@ -145,19 +158,40 @@ if ($action === 'edit') {
             </div>
         </div>
 
+        <?php
+        $schema_types = [
+            'WebPage', 'BreadcrumbList', 'FAQPage', 'Organization', 'LocalBusiness',
+            'Product', 'Service', 'Article', 'BlogPosting', 'Person', 'Event',
+            'VideoObject', 'SoftwareApplication', 'HowTo', 'Review', 'Rating', 'Custom',
+        ];
+        $schema_type_options = implode('', array_map(
+            static fn($t) => '<option value="' . attr($t) . '">' . e($t) . '</option>',
+            $schema_types
+        ));
+        ?>
         <div class="admin-card">
-            <div class="admin-card__head">
-                Structured data (JSON-LD)
-                <span style="font-weight:normal;font-size:12px;">
-                    <a href="#" id="gen-webpage" class="admin-btn admin-btn--ghost admin-btn--small">Generate WebPage</a>
-                    <a href="#" id="gen-breadcrumb" class="admin-btn admin-btn--ghost admin-btn--small">Generate BreadcrumbList</a>
-                </span>
-            </div>
+            <div class="admin-card__head">Structured data (JSON-LD)</div>
             <div class="admin-card__body">
-                <div class="form-row">
-                    <textarea id="schema_json" name="schema_json" rows="10" class="json-textarea" placeholder='{"@context": "https://schema.org", "@type": "WebPage", "name": "..."}'><?= e($page['schema_json']) ?></textarea>
-                    <div class="help">Valid JSON only. Validated server-side. Leave empty to omit.</div>
-                </div>
+                <p class="help" style="margin-top:0;">
+                    Add as many schema blocks as this page needs. Each renders as its own
+                    <code>&lt;script type="application/ld+json"&gt;</code> tag, in this order.
+                </p>
+                <?php svc_repeater_field(
+                    'schemas', 'JSON-LD Schemas', '+ Add Another Schema',
+                    '<div class="form-row"><label>Schema Type</label>'
+                        . '<select name="schema_type[]" class="schema-type-select">' . $schema_type_options . '</select></div>'
+                        . '<div class="form-row"><label>Schema Name / Label <span class="text-muted">(optional)</span></label>'
+                        . '<input type="text" name="schema_label[]" placeholder="e.g. Homepage FAQ"></div>'
+                        . '<div class="form-row" style="margin-bottom:0;"><label>JSON-LD Code'
+                        . '<button type="button" class="admin-btn admin-btn--ghost admin-btn--small schema-generate-btn" style="float:right;">Generate</button>'
+                        . '</label><textarea name="schema_code[]" rows="8" class="json-textarea" placeholder=\'{"@context": "https://schema.org", "@type": "WebPage", "name": "..."}\'></textarea></div>',
+                    svc_normalize_schemas($page['schema_json'] ?? null),
+                    [
+                        'select[name="schema_type[]"]' => 'type',
+                        'input[name="schema_label[]"]' => 'label',
+                        'textarea[name="schema_code[]"]' => 'code',
+                    ]
+                ); ?>
             </div>
         </div>
 
@@ -191,48 +225,107 @@ if ($action === 'edit') {
         const path  = <?= json_encode($path) ?>;
         const title = document.getElementById('title');
         const desc  = document.getElementById('meta_description');
-        const ta    = document.getElementById('schema_json');
         const SITE  = <?= json_encode(defined('SITE_URL') ? SITE_URL : '') ?>;
+        const SITE_NAME = <?= json_encode(defined('SITE_NAME') ? SITE_NAME : '') ?>;
         const fullUrl = (SITE || '') + path;
 
-        document.getElementById('gen-webpage').addEventListener('click', function(e) {
-            e.preventDefault();
-            const data = {
-                '@context':    'https://schema.org',
-                '@type':       'WebPage',
-                'name':        title.value || '',
-                'description': desc.value || '',
-                'url':         fullUrl
-            };
-            ta.value = JSON.stringify(data, null, 2);
-        });
-
-        document.getElementById('gen-breadcrumb').addEventListener('click', function(e) {
-            e.preventDefault();
-            const segments = path.split('/').filter(Boolean);
-            const list = [{
-                '@type': 'ListItem',
-                'position': 1,
-                'name': 'Home',
-                'item': SITE || '/'
-            }];
-            let acc = '';
-            segments.forEach((seg, i) => {
-                acc += '/' + seg;
-                list.push({
-                    '@type':    'ListItem',
-                    'position': i + 2,
-                    'name':     seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' '),
-                    'item':     (SITE || '') + acc
+        // One generator per dropdown option — each returns a plain object,
+        // stringified into that row's own JSON-LD textarea. Add more here as
+        // new schema types are needed; the dropdown/textarea markup doesn't
+        // need to change.
+        const SCHEMA_GENERATORS = {
+            WebPage: () => ({
+                '@context': 'https://schema.org', '@type': 'WebPage',
+                'name': title.value || '', 'description': desc.value || '', 'url': fullUrl
+            }),
+            BreadcrumbList: () => {
+                const segments = path.split('/').filter(Boolean);
+                const list = [{ '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': SITE || '/' }];
+                let acc = '';
+                segments.forEach((seg, i) => {
+                    acc += '/' + seg;
+                    list.push({
+                        '@type': 'ListItem', 'position': i + 2,
+                        'name': seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' '),
+                        'item': (SITE || '') + acc
+                    });
                 });
+                return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': list };
+            },
+            FAQPage: () => ({
+                '@context': 'https://schema.org', '@type': 'FAQPage',
+                'mainEntity': [{ '@type': 'Question', 'name': '', 'acceptedAnswer': { '@type': 'Answer', 'text': '' } }]
+            }),
+            Organization: () => ({
+                '@context': 'https://schema.org', '@type': 'Organization', 'name': SITE_NAME || '', 'url': SITE || ''
+            }),
+            LocalBusiness: () => ({
+                '@context': 'https://schema.org', '@type': 'LocalBusiness', 'name': SITE_NAME || '', 'url': SITE || '',
+                'address': { '@type': 'PostalAddress', 'streetAddress': '', 'addressLocality': '', 'addressCountry': '' }
+            }),
+            Product: () => ({
+                '@context': 'https://schema.org', '@type': 'Product', 'name': title.value || '', 'description': desc.value || '',
+                'image': '', 'offers': { '@type': 'Offer', 'price': '', 'priceCurrency': 'USD', 'availability': 'https://schema.org/InStock' }
+            }),
+            Service: () => ({
+                '@context': 'https://schema.org', '@type': 'Service', 'name': title.value || '', 'description': desc.value || '',
+                'provider': { '@type': 'Organization', 'name': SITE_NAME || '' }, 'url': fullUrl
+            }),
+            Article: () => ({
+                '@context': 'https://schema.org', '@type': 'Article', 'headline': title.value || '',
+                'description': desc.value || '', 'author': { '@type': 'Organization', 'name': SITE_NAME || '' }
+            }),
+            BlogPosting: () => ({
+                '@context': 'https://schema.org', '@type': 'BlogPosting', 'headline': title.value || '',
+                'description': desc.value || '', 'author': { '@type': 'Organization', 'name': SITE_NAME || '' }
+            }),
+            Person: () => ({ '@context': 'https://schema.org', '@type': 'Person', 'name': '', 'jobTitle': '', 'url': '' }),
+            Event: () => ({
+                '@context': 'https://schema.org', '@type': 'Event', 'name': '', 'startDate': '', 'endDate': '',
+                'location': { '@type': 'Place', 'name': '', 'address': '' }
+            }),
+            VideoObject: () => ({
+                '@context': 'https://schema.org', '@type': 'VideoObject', 'name': title.value || '',
+                'description': desc.value || '', 'thumbnailUrl': '', 'uploadDate': ''
+            }),
+            SoftwareApplication: () => ({
+                '@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': title.value || '',
+                'applicationCategory': '', 'operatingSystem': '',
+                'offers': { '@type': 'Offer', 'price': '', 'priceCurrency': 'USD' }
+            }),
+            HowTo: () => ({
+                '@context': 'https://schema.org', '@type': 'HowTo', 'name': title.value || '',
+                'step': [{ '@type': 'HowToStep', 'name': '', 'text': '' }]
+            }),
+            Review: () => ({
+                '@context': 'https://schema.org', '@type': 'Review',
+                'reviewRating': { '@type': 'Rating', 'ratingValue': '', 'bestRating': '5' },
+                'author': { '@type': 'Person', 'name': '' }, 'itemReviewed': { '@type': 'Thing', 'name': title.value || '' }
+            }),
+            Rating: () => ({
+                '@context': 'https://schema.org', '@type': 'AggregateRating', 'ratingValue': '', 'reviewCount': '', 'bestRating': '5'
+            }),
+            Custom: () => ({ '@context': 'https://schema.org', '@type': '' })
+        };
+
+        // Event-delegated: the repeater clones new rows from a <template>,
+        // so listeners must live on the container, not the (not-yet-existing) button.
+        const rowsContainer = document.getElementById('schemas-rows');
+        if (rowsContainer) {
+            rowsContainer.addEventListener('click', function (e) {
+                const btn = e.target.closest('.schema-generate-btn');
+                if (!btn) return;
+                e.preventDefault();
+                const row = btn.closest('.repeater-row');
+                if (!row) return;
+                const typeSelect = row.querySelector('select[name="schema_type[]"]');
+                const codeField  = row.querySelector('textarea[name="schema_code[]"]');
+                const generator  = typeSelect && SCHEMA_GENERATORS[typeSelect.value];
+                if (generator && codeField) {
+                    codeField.value = JSON.stringify(generator(), null, 2);
+                }
             });
-            const data = {
-                '@context':        'https://schema.org',
-                '@type':           'BreadcrumbList',
-                'itemListElement': list
-            };
-            ta.value = JSON.stringify(data, null, 2);
-        });
+        }
     })();
     </script>
 

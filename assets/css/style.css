@@ -10000,13 +10000,13 @@ Section Title
   padding: 10px 0 30px;
   border-bottom: 1px solid var(--border-color1-rgba);
   margin-bottom: 40px;
-  font-size: 30px;
-  max-width: 260px;
+  font-size: 24px;
+  /* max-width: 260px; */
   line-height: 134%;
 }
 @media (max-width: 575.98px) {
   .service-block .content .title {
-    font-size: 25px;
+    font-size: 24px;
   }
 }
 .service-block .content .title a {
