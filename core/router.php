@@ -213,6 +213,27 @@ function router_resolve(string $path): array
         }
     }
 
+    // Hire Master fallback — mirrors the Service Master fallback above.
+    // Only reached when no literal /pages/hire-ai-engineers/{slug}.php file
+    // exists for this path, so /hire-ai-engineers itself (no slug) keeps
+    // resolving to the hand-authored hub file via the generic file-path
+    // routing further up.
+    if (str_starts_with($path, '/hire-ai-engineers/')) {
+        $slug = trim(substr($path, strlen('/hire-ai-engineers/')), '/');
+        if ($slug !== '' && preg_match('/^[a-z0-9\-]+$/', $slug)) {
+            $template = PAGES_DIR . '/hire/_hire-dynamic.php';
+            if (is_file($template) && router_hire_page_exists($slug)) {
+                $GLOBALS['hire_slug'] = $slug;
+                return [
+                    'template'       => $template,
+                    'canonical_path' => '/hire-ai-engineers/' . $slug,
+                    'active_page'    => 'hire',
+                    'status'         => 200,
+                ];
+            }
+        }
+    }
+
     return router_404();
 }
 
@@ -229,6 +250,25 @@ function router_service_exists(string $slug): bool
     }
     try {
         $stmt = $pdo->prepare("SELECT id FROM services WHERE slug = :slug AND status = 'published' LIMIT 1");
+        $stmt->execute([':slug' => $slug]);
+        return (bool) $stmt->fetch();
+    } catch (PDOException $e) {
+        return false;
+    }
+}
+
+/**
+ * Check whether a published hire page row exists for this slug (mirrors
+ * router_service_exists()).
+ */
+function router_hire_page_exists(string $slug): bool
+{
+    $pdo = function_exists('db') ? db() : null;
+    if (!$pdo) {
+        return false;
+    }
+    try {
+        $stmt = $pdo->prepare("SELECT id FROM hire_pages WHERE slug = :slug AND status = 'published' LIMIT 1");
         $stmt->execute([':slug' => $slug]);
         return (bool) $stmt->fetch();
     } catch (PDOException $e) {

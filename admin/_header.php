@@ -31,8 +31,10 @@ $user             = auth_user();
             <a href="<?= ADMIN_URL ?>/pages.php"          class="<?= $admin_active === 'pages'         ? 'is-active' : '' ?>" data-icon="📄">Pages &amp; SEO</a>
             <a href="<?= ADMIN_URL ?>/blog.php"           class="<?= $admin_active === 'blog'          ? 'is-active' : '' ?>" data-icon="📝">Blog</a>
             <a href="<?= ADMIN_URL ?>/services.php"       class="<?= $admin_active === 'services'      ? 'is-active' : '' ?>" data-icon="⚡">Services</a>
+            <a href="<?= ADMIN_URL ?>/hire.php"           class="<?= $admin_active === 'hire'          ? 'is-active' : '' ?>" data-icon="🧑‍💻">Hire Master</a>
             <a href="<?= ADMIN_URL ?>/webinars.php"       class="<?= $admin_active === 'webinars'      ? 'is-active' : '' ?>" data-icon="🎓">Webinars</a>
             <a href="<?= ADMIN_URL ?>/success-stories.php" class="<?= $admin_active === 'success-stories' ? 'is-active' : '' ?>" data-icon="🏆">Success Stories</a>
+            <a href="<?= ADMIN_URL ?>/success-story-categories.php" class="<?= $admin_active === 'success-story-categories' ? 'is-active' : '' ?>" data-icon="🏷️">Story Categories</a>
             <a href="<?= ADMIN_URL ?>/newsletter.php"     class="<?= $admin_active === 'newsletter'     ? 'is-active' : '' ?>" data-icon="📧">Newsletter</a>
             <a href="<?= ADMIN_URL ?>/media.php"          class="<?= $admin_active === 'media'         ? 'is-active' : '' ?>" data-icon="🖼️">Media</a>
             <a href="<?= ADMIN_URL ?>/setup.php"          class="<?= $admin_active === 'setup'         ? 'is-active' : '' ?>" data-icon="🔧">Database Setup</a>

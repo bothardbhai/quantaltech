@@ -18,10 +18,11 @@ $user = auth_user();
 
 // Upload categories: each maps to its own storage folder (see media_category_dirs()).
 const MEDIA_CATEGORY_LABELS = [
-    'blog'    => 'Blog',
-    'page'    => 'Page',
-    'service' => 'Service',
-    'media'   => 'Media',
+    'blog'          => 'Blog',
+    'page'          => 'Page',
+    'service'       => 'Service',
+    'media'         => 'Media',
+    'success-story' => 'Success Story',
 ];
 
 /**
@@ -34,10 +35,11 @@ function media_category_dirs(string $category): array
 {
     $ym = date('Y/m');
     return match ($category) {
-        'blog'    => ['/uploads/blog/' . $ym, UPLOADS_DIR . '/blog/' . $ym],
-        'page'    => ['/uploads/page', UPLOADS_DIR . '/page'],
-        'service' => ['/uploads/service', UPLOADS_DIR . '/service'],
-        default   => ['/uploads/media/' . $ym, UPLOADS_DIR . '/media/' . $ym],
+        'blog'          => ['/uploads/blog/' . $ym, UPLOADS_DIR . '/blog/' . $ym],
+        'page'          => ['/uploads/page', UPLOADS_DIR . '/page'],
+        'service'       => ['/uploads/service', UPLOADS_DIR . '/service'],
+        'success-story' => ['/uploads/success-story', UPLOADS_DIR . '/success-story'],
+        default         => ['/uploads/media/' . $ym, UPLOADS_DIR . '/media/' . $ym],
     };
 }
 

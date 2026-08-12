@@ -63,7 +63,7 @@ $menu = [
         'key' => 'resources',
         'children' => [
             ['label' => 'Blogs', 'href' => '/blog', 'key' => 'blog'],
-            // ['label' => 'Success Stories', 'href' => '/success-stories', 'key' => 'resources'],
+            ['label' => 'Success Stories', 'href' => '/success-stories', 'key' => 'resources'],
             // ['label' => 'Podcasts', 'href' => '/podcast', 'key' => 'resources'],
             // ['label' => 'Terms of Service', 'href' => '/terms-of-service', 'key' => 'terms'],
             // ['label' => 'Refund & Cancellation Policy', 'href' => '/refund-policy', 'key' => 'refund'],
@@ -107,7 +107,7 @@ function render_nav_item(array $item, string $active): void
         <?php else: ?>
             <a><?= e($item['label']) ?></a>
         <?php endif; ?>
-                
+
         <?php if ($has_kids): ?>
             <ul>
                 <?php foreach ($item['children'] as $child): ?>
@@ -115,12 +115,12 @@ function render_nav_item(array $item, string $active): void
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
-    </li>
-    <?php
+        </li>
+        <?php
 }
 ?>
-<ul class="navigation">
-<?php foreach ($menu as $item): ?>
-    <?php render_nav_item($item, $active); ?>
-<?php endforeach; ?>
-</ul>
+    <ul class="navigation">
+        <?php foreach ($menu as $item): ?>
+            <?php render_nav_item($item, $active); ?>
+        <?php endforeach; ?>
+    </ul>

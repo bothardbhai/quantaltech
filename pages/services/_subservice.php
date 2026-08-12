@@ -169,7 +169,7 @@ $service_links ??= [
 ?>
 
 <!-- Start main-content -->
-<section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
+<!-- <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
     <div class="decor-glow decor-glow--right decor-glow--top" aria-hidden="true"></div>
     <div class="container">
         <h2 style="color:#fff;font-size:36px;margin:25px 0 14px;line-height:1.2;"><?= $crumb ?></h2>
@@ -179,11 +179,11 @@ $service_links ??= [
             <span><?= e($crumb) ?></span>
         </p>
     </div>
-</section>
+</section> -->
 <!-- end main-content -->
 
 <!-- Start Services Details -->
-<section class="services-details pt-70 pb-100">
+<section class="services-details pt-150 pb-100">
     <div class="container">
         <div class="row">
 
@@ -192,6 +192,13 @@ $service_links ??= [
                 <div class="services-details__content">
 
                     <?php if (!empty($service_tag) || !empty($service_title_html) || !empty($service_desc)): ?>
+                        <p style="opacity:0.75;margin:0 0 20px 0;font-size:14px; ">
+                            <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
+                            <a href="<?= url('/services') ?>" style="color:#72aee6;">Services</a> &nbsp;/&nbsp;
+                            <span>
+                                <?= e($crumb) ?>
+                            </span>
+                        </p>
                         <span class="service-tag"><?= e($service_tag ?? '') ?></span>
 
                         <h1 class="service-title mt-4"><?= $service_title_html ?? '' /* trusted HTML */ ?></h1>
@@ -376,9 +383,9 @@ $service_links ??= [
                         </div>
 
                         <div class="service-details-help">
-                            <div class="help-shape-1"></div>
-                            <div class="help-shape-2"></div>
-                            <h2 class="help-title">Talk to <br> us about <br> your project</h2>
+                            <!-- <div class="help-shape-1"></div>
+                            <div class="help-shape-2"></div> -->
+                            <h2 class="help-title">Talk to us about your project</h2>
                             <div class="help-icon">
                                 <span class="lnr-icon-phone-handset"></span>
                             </div>
@@ -870,10 +877,9 @@ $service_links ??= [
                                                 ?>
                                                 <div class="image not-hide-cursor" data-cursor="View<br>Case">
                                                     <a href="<?= url('/contact') ?>" class="cursor-hide tp--hover-img"
-                                                        data-displacement="<?= attr($cs_image) ?>"
-                                                        data-intensity="0.6" data-speedin="1" data-speedout="1">
-                                                        <img src="<?= attr($cs_image) ?>"
-                                                            alt="<?= attr($cs_alt) ?>">
+                                                        data-displacement="<?= attr($cs_image) ?>" data-intensity="0.6"
+                                                        data-speedin="1" data-speedout="1">
+                                                        <img src="<?= attr($cs_image) ?>" alt="<?= attr($cs_alt) ?>">
                                                     </a>
                                                 </div>
 

@@ -159,10 +159,69 @@ function get_success_stories(\PDO $pdo, array $filters = []): array
         $where[] = "status = 'published' AND published_at IS NOT NULL";
     }
 
+    if (!empty($filters['category_id'])) {
+        $where[] = "category_id = ?";
+        $params[] = (int) $filters['category_id'];
+    }
+
+    if (!empty($filters['exclude_id'])) {
+        $where[] = "id != ?";
+        $params[] = (int) $filters['exclude_id'];
+    }
+
     $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
     $order = $filters['order'] ?? 'published_at DESC, id DESC';
 
     $sql = "SELECT * FROM success_stories $where_clause ORDER BY $order";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt->fetchAll() ?: [];
+}
+
+/**
+ * Get published success stories by ID, preserving the order of $ids
+ * (mirrors get_hire_pages_by_ids()).
+ */
+function get_success_stories_by_ids(\PDO $pdo, array $ids): array
+{
+    $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+    if (empty($ids)) {
+        return [];
+    }
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare("SELECT * FROM success_stories WHERE id IN ($placeholders) AND status = 'published'");
+    $stmt->execute($ids);
+
+    $by_id = [];
+    foreach ($stmt->fetchAll() ?: [] as $row) {
+        $by_id[(int) $row['id']] = $row;
+    }
+    $ordered = [];
+    foreach ($ids as $id) {
+        if (isset($by_id[$id])) {
+            $ordered[] = $by_id[$id];
+        }
+    }
+    return $ordered;
+}
+
+/**
+ * Get success story categories (the filter/taxonomy master for the
+ * /success-stories listing page and the admin category picker).
+ */
+function get_success_story_categories(\PDO $pdo, array $filters = []): array
+{
+    $where = [];
+    $params = [];
+
+    if (!empty($filters['status'])) {
+        $where[] = "status = ?";
+        $params[] = $filters['status'];
+    }
+
+    $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+    $sql = "SELECT * FROM success_story_categories $where_clause ORDER BY sort_order ASC, name ASC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 
@@ -415,6 +474,145 @@ function get_blog_posts_by_ids(\PDO $pdo, array $ids): array
          FROM posts p
          WHERE p.id IN ($placeholders) AND p.status = 'published'"
     );
+    $stmt->execute($ids);
+
+    $by_id = [];
+    foreach ($stmt->fetchAll() ?: [] as $row) {
+        $by_id[(int) $row['id']] = $row;
+    }
+    $ordered = [];
+    foreach ($ids as $id) {
+        if (isset($by_id[$id])) {
+            $ordered[] = $by_id[$id];
+        }
+    }
+    return $ordered;
+}
+
+/**
+ * Get all hire pages (Hire Master — mirrors get_services())
+ */
+function get_hire_pages(\PDO $pdo, array $filters = []): array
+{
+    $where = [];
+    $params = [];
+
+    if (!empty($filters['status'])) {
+        $where[] = "status = ?";
+        $params[] = $filters['status'];
+    }
+
+    if (isset($filters['display_on_hub']) && $filters['display_on_hub']) {
+        $where[] = "display_on_hub = 1";
+    }
+
+    $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+    $order = 'sort_order ASC';
+
+    $sql = "SELECT * FROM hire_pages $where_clause ORDER BY $order";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt->fetchAll() ?: [];
+}
+
+/**
+ * Get single hire page by ID or slug (mirrors get_service())
+ */
+function get_hire_page(\PDO $pdo, int|string $identifier): ?array
+{
+    $field = is_numeric($identifier) ? 'id' : 'slug';
+    $stmt = $pdo->prepare("SELECT * FROM hire_pages WHERE $field = ? LIMIT 1");
+    $stmt->execute([$identifier]);
+    $result = $stmt->fetch();
+
+    return $result ?: null;
+}
+
+/**
+ * Create or update a hire page (mirrors save_service())
+ */
+function save_hire_page(\PDO $pdo, array $data): array
+{
+    $id = $data['id'] ?? null;
+    $now = date('Y-m-d H:i:s');
+
+    // Validate required fields
+    $required = ['slug', 'name', 'title', 'excerpt'];
+    foreach ($required as $field) {
+        if (empty($data[$field])) {
+            return ['success' => false, 'error' => "Missing required field: $field"];
+        }
+    }
+
+    try {
+        if ($id) {
+            // Update
+            $updates = [];
+            $params = [];
+            foreach ($data as $key => $value) {
+                if ($key !== 'id' && $key !== 'created_at') {
+                    $updates[] = "$key = ?";
+                    $params[] = $value;
+                }
+            }
+            $updates[] = "updated_at = ?";
+            $params[] = $now;
+            $params[] = $id;
+
+            $sql = "UPDATE hire_pages SET " . implode(', ', $updates) . " WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+
+            return ['success' => true, 'id' => $id, 'message' => 'Hire page updated'];
+        } else {
+            // Create
+            $data['created_at'] = $now;
+            $data['updated_at'] = $now;
+
+            $cols = array_keys($data);
+            $placeholders = array_fill(0, count($cols), '?');
+
+            $sql = "INSERT INTO hire_pages (" . implode(', ', $cols) . ") VALUES (" . implode(', ', $placeholders) . ")";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(array_values($data));
+
+            $new_id = (int) $pdo->lastInsertId();
+            return ['success' => true, 'id' => $new_id, 'message' => 'Hire page created'];
+        }
+    } catch (PDOException $e) {
+        error_log('Save hire page error: ' . $e->getMessage());
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
+
+/**
+ * Delete a hire page (mirrors delete_service())
+ */
+function delete_hire_page(\PDO $pdo, int $id): array
+{
+    try {
+        $stmt = $pdo->prepare("DELETE FROM hire_pages WHERE id = ?");
+        $stmt->execute([$id]);
+
+        return ['success' => true, 'message' => 'Hire page deleted'];
+    } catch (PDOException $e) {
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
+
+/**
+ * Fetch published hire pages by ID, in the caller-specified order. Used to
+ * resolve a hire page's Related Hire Pages picker (mirrors get_services_by_ids()).
+ */
+function get_hire_pages_by_ids(\PDO $pdo, array $ids): array
+{
+    $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+    if (empty($ids)) {
+        return [];
+    }
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare("SELECT * FROM hire_pages WHERE id IN ($placeholders) AND status = 'published'");
     $stmt->execute($ids);
 
     $by_id = [];
