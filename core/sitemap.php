@@ -1,8 +1,9 @@
 <?php
 /**
  * Sitemap — single source of truth for /sitemap.xml (public) and
- * Admin > Sitemap > Regenerate (manual refresh). Both entry points call the
- * exact same functions here; there is no separate admin-side generator.
+ * Admin > Sitemap > Regenerate (manual refresh). Both entry points call
+ * sitemap_generate() and nothing else; there is no separate admin-side
+ * generator.
  *
  * Design:
  *   - Always generated live from the DB + on-disk pages, on every request.
@@ -15,6 +16,21 @@
  *     admin/pages.php), and each content table's own `status`/`robots`/
  *     `canonical` columns for Services/Hire/Success Stories (admin/services.php
  *     etc.). No second/parallel SEO system is introduced.
+ *
+ * Two kinds of URLs, collected separately (sitemap_generate()'s `sources`
+ * breakdown keeps them visibly distinct), then merged into one deduplicated
+ * map:
+ *   - STATIC / CMS pages: every real, resolvable file under /pages (via the
+ *     router's own router_discover_pages()/router_resolve()), annotated
+ *     with — not replaced by — the `pages` table's SEO metadata when a row
+ *     exists for that exact path. A `pages` row is metadata for a page that
+ *     already exists on disk; it is never itself an extra URL source (a
+ *     `pages` row with no matching on-disk route cannot be a real, live
+ *     URL, so it is correctly never sitemapped).
+ *   - DYNAMIC detail pages: one row per published record in each content
+ *     master (posts, services, hire_pages, success_stories), mapped to that
+ *     master's actual frontend route as implemented in core/router.php —
+ *     never assumed.
  */
 
 declare(strict_types=1);
@@ -30,41 +46,44 @@ declare(strict_types=1);
 const SITEMAP_UTILITY_PATHS = ['/404', '/contact-submit', '/search', '/thank-you', '/newsletter'];
 
 /**
- * Build the full set of indexable URLs for the site.
- *
- * @return array<string, ?string> Map of absolute URL => lastmod (DB datetime
- *                                 string or null), already de-duplicated by
- *                                 URL and sorted for stable output.
+ * Turn a path or already-absolute URL into a final absolute sitemap <loc>.
  */
-function sitemap_collect_urls(): array
+function sitemap_absolute_url(string $loc_or_path): string
 {
-    $pdo  = db();
     $base = defined('SITE_URL') && SITE_URL ? rtrim(SITE_URL, '/') : (defined('BASE_URL') ? rtrim(BASE_URL, '/') : '');
+    $loc = preg_match('#^https?://#i', $loc_or_path) ? $loc_or_path : $base . '/' . ltrim($loc_or_path, '/');
+    if ($loc !== $base . '/' && str_ends_with($loc, '/')) {
+        $loc = rtrim($loc, '/');
+    }
+    return $loc;
+}
 
-    /** @var array<string, ?string> $urls loc => lastmod */
-    $urls = [];
+/**
+ * STATIC / CMS pages — every on-disk page template that actually resolves
+ * to a live 200 response, cross-referenced against the `pages` table
+ * (Pages & SEO) for is_published / canonical / updated_at. This is the
+ * ONLY place static pages come from; the `pages` table never adds URLs of
+ * its own beyond what's really routable, since a metadata row for a
+ * path with no matching template can't be a real page.
+ *
+ * @return array{items: array<string, ?string>, on_disk: int, pages_table_total: int, pages_table_published: int}
+ */
+function sitemap_source_static_pages(): array
+{
+    $pdo = db();
 
-    $add = static function (string $loc_or_path, ?string $lastmod = null) use (&$urls, $base): void {
-        $loc = preg_match('#^https?://#i', $loc_or_path)
-            ? $loc_or_path
-            : $base . '/' . ltrim($loc_or_path, '/');
-        // Root path shouldn't end with a stray trailing slash beyond the domain.
-        if ($loc !== $base . '/' && str_ends_with($loc, '/')) {
-            $loc = rtrim($loc, '/');
-        }
-        $urls[$loc] = $lastmod; // keyed by URL => automatic de-duplication
-    };
-
-    // -------------------------------------------------------------------
-    // 1) Static, file-based pages (router_discover_pages() is the same
-    //    "what pages exist" logic admin/pages.php already uses).
-    // -------------------------------------------------------------------
     $seo_rows = [];
+    $pages_table_total = 0;
+    $pages_table_published = 0;
     if ($pdo) {
         try {
             $stmt = $pdo->query('SELECT path, is_published, canonical, updated_at FROM pages');
             foreach ($stmt as $row) {
                 $seo_rows[$row['path']] = $row;
+                $pages_table_total++;
+                if ($row['is_published']) {
+                    $pages_table_published++;
+                }
             }
         } catch (PDOException $e) {
             // `pages` table not migrated yet — every static page falls back
@@ -72,7 +91,10 @@ function sitemap_collect_urls(): array
         }
     }
 
-    foreach (router_discover_pages() as $path) {
+    $on_disk = router_discover_pages();
+    $items = [];
+
+    foreach ($on_disk as $path) {
         // Confirm the path is genuinely live under the site's real routing
         // rules (catches stray/renamed files that no longer resolve, e.g. a
         // filename router_resolve()'s own validation would 404 on).
@@ -91,34 +113,59 @@ function sitemap_collect_urls(): array
         }
 
         $loc = ($row['canonical'] ?? '') !== '' ? $row['canonical'] : $path;
-        $add($loc, $row['updated_at'] ?? null);
+        $items[sitemap_absolute_url($loc)] = $row['updated_at'] ?? null;
     }
 
+    return [
+        'items'                  => $items,
+        'on_disk'                => count($on_disk),
+        'pages_table_total'      => $pages_table_total,
+        'pages_table_published'  => $pages_table_published,
+    ];
+}
+
+/**
+ * Blog — /blog/{slug} for every published post (mirrors
+ * pages/blog/single.php's own published + published_at gate). Does NOT
+ * touch post_categories/post_tags/post_faqs/categories/tags — those are
+ * relationship/taxonomy tables with no public detail URL of their own.
+ *
+ * @return array<string, ?string> loc => lastmod
+ */
+function sitemap_source_posts(): array
+{
+    $pdo = db();
+    $items = [];
     if (!$pdo) {
-        ksort($urls);
-        return $urls;
+        return $items;
     }
-
-    // -------------------------------------------------------------------
-    // 2) Blog posts — /blog/{slug} (mirrors pages/blog/single.php's own
-    //    published + published_at gate).
-    // -------------------------------------------------------------------
     try {
         $stmt = $pdo->query(
             "SELECT slug, updated_at FROM posts
              WHERE status = 'published' AND (published_at IS NULL OR published_at <= NOW())"
         );
         foreach ($stmt as $r) {
-            $add('/blog/' . $r['slug'], $r['updated_at']);
+            $items[sitemap_absolute_url('/blog/' . $r['slug'])] = $r['updated_at'];
         }
     } catch (PDOException $e) {
         // posts table missing — skip
     }
+    return $items;
+}
 
-    // -------------------------------------------------------------------
-    // 3) Services — /services/{slug} (Service Master; mirrors
-    //    router_service_exists()'s status='published' gate).
-    // -------------------------------------------------------------------
+/**
+ * Services (Service Master) — /services/{slug} for every published,
+ * non-noindex row (mirrors router_service_exists()'s own gate).
+ *
+ * @return array<string, ?string> loc => lastmod
+ */
+function sitemap_source_services(): array
+{
+    $pdo = db();
+    $items = [];
+    if (!$pdo) {
+        return $items;
+    }
     try {
         $stmt = $pdo->query("SELECT slug, robots, canonical, updated_at FROM services WHERE status = 'published'");
         foreach ($stmt as $r) {
@@ -126,16 +173,27 @@ function sitemap_collect_urls(): array
                 continue;
             }
             $loc = ($r['canonical'] ?? '') !== '' ? $r['canonical'] : '/services/' . $r['slug'];
-            $add($loc, $r['updated_at']);
+            $items[sitemap_absolute_url($loc)] = $r['updated_at'];
         }
     } catch (PDOException $e) {
         // services table missing — skip
     }
+    return $items;
+}
 
-    // -------------------------------------------------------------------
-    // 4) Hire Master — /hire-ai-engineers/{slug} (mirrors
-    //    router_hire_page_exists()'s status='published' gate).
-    // -------------------------------------------------------------------
+/**
+ * Hire Master — /hire-ai-engineers/{slug} for every published, non-noindex
+ * row (mirrors router_hire_page_exists()'s own gate).
+ *
+ * @return array<string, ?string> loc => lastmod
+ */
+function sitemap_source_hire_pages(): array
+{
+    $pdo = db();
+    $items = [];
+    if (!$pdo) {
+        return $items;
+    }
     try {
         $stmt = $pdo->query("SELECT slug, robots, canonical, updated_at FROM hire_pages WHERE status = 'published'");
         foreach ($stmt as $r) {
@@ -143,16 +201,29 @@ function sitemap_collect_urls(): array
                 continue;
             }
             $loc = ($r['canonical'] ?? '') !== '' ? $r['canonical'] : '/hire-ai-engineers/' . $r['slug'];
-            $add($loc, $r['updated_at']);
+            $items[sitemap_absolute_url($loc)] = $r['updated_at'];
         }
     } catch (PDOException $e) {
         // hire_pages table missing — skip
     }
+    return $items;
+}
 
-    // -------------------------------------------------------------------
-    // 5) Success Stories — /success-stories/{slug} (the hub page itself,
-    //    /success-stories, is a static page already covered in step 1).
-    // -------------------------------------------------------------------
+/**
+ * Success Stories — /success-stories/{slug} for every published,
+ * non-noindex row. The /success-stories hub itself is a static page,
+ * handled by sitemap_source_static_pages(). Does NOT touch
+ * success_story_categories — a filter taxonomy, not a public detail page.
+ *
+ * @return array<string, ?string> loc => lastmod
+ */
+function sitemap_source_success_stories(): array
+{
+    $pdo = db();
+    $items = [];
+    if (!$pdo) {
+        return $items;
+    }
     try {
         $stmt = $pdo->query("SELECT slug, robots, canonical, updated_at FROM success_stories WHERE status = 'published'");
         foreach ($stmt as $r) {
@@ -160,28 +231,94 @@ function sitemap_collect_urls(): array
                 continue;
             }
             $loc = ($r['canonical'] ?? '') !== '' ? $r['canonical'] : '/success-stories/' . $r['slug'];
-            $add($loc, $r['updated_at']);
+            $items[sitemap_absolute_url($loc)] = $r['updated_at'];
         }
     } catch (PDOException $e) {
         // success_stories table missing — skip
     }
-
-    // -------------------------------------------------------------------
-    // 6) Webinars / Podcast — pages/podcast/index.php (the only live URL,
-    //    already included in step 1) currently renders a placeholder with
-    //    its DB query disabled, so there are no public per-webinar detail
-    //    URLs to add yet. Wire in a `SELECT slug, updated_at FROM webinars
-    //    WHERE status = 'published'` loop here (mirroring Services/Hire
-    //    above) once /podcast/{slug} detail pages actually ship.
-    // -------------------------------------------------------------------
-
-    ksort($urls);
-    return $urls;
+    return $items;
 }
 
 /**
- * Render a URL map (as returned by sitemap_collect_urls()) into a sitemap
- * XML document string.
+ * Webinars / Podcast — pages/podcast/index.php (the static listing page,
+ * already included via sitemap_source_static_pages()) currently renders a
+ * placeholder with its DB query disabled ("if (false && $pdo)" in that
+ * file), so there is no live /podcast/{slug} (or /webinar/{slug}) detail
+ * template for core/router.php to route to. Per the "don't create URLs for
+ * records with no public frontend page" rule, this intentionally returns
+ * no items — wire in a `SELECT slug, updated_at FROM webinars WHERE
+ * status = 'published'` loop here (mirroring the sources above) the day a
+ * real detail route ships.
+ *
+ * @return array<string, ?string> loc => lastmod
+ */
+function sitemap_source_webinars(): array
+{
+    return [];
+}
+
+/**
+ * Build the complete sitemap: collects every source above, merges them
+ * into one de-duplicated URL map (keyed by final absolute URL — the same
+ * URL from two sources, e.g. a canonical override pointing at another
+ * entry, collapses automatically), and reports a per-source diagnostic
+ * breakdown so it's possible to see exactly how many URLs each content
+ * type contributed. The diagnostics are for Admin/dev visibility only —
+ * sitemap_render_xml() never emits them into the public XML.
+ *
+ * @return array{
+ *   urls: array<string, ?string>,
+ *   sources: array<string, int>,
+ *   raw_total: int,
+ *   final_total: int
+ * }
+ */
+function sitemap_generate(): array
+{
+    $static = sitemap_source_static_pages();
+
+    $dynamic_sources = [
+        'blog_posts'      => sitemap_source_posts(),
+        'services'        => sitemap_source_services(),
+        'hire_pages'      => sitemap_source_hire_pages(),
+        'success_stories' => sitemap_source_success_stories(),
+        'webinars'        => sitemap_source_webinars(),
+    ];
+
+    $urls = $static['items'];
+    $raw_total = count($static['items']);
+
+    foreach ($dynamic_sources as $items) {
+        $raw_total += count($items);
+        $urls += $items; // union; first-seen lastmod wins on a rare loc collision
+    }
+
+    ksort($urls);
+
+    $sources = [
+        'static_pages_on_disk'       => $static['on_disk'],
+        'static_pages_included'      => count($static['items']),
+        'pages_table_total'          => $static['pages_table_total'],
+        'pages_table_published'      => $static['pages_table_published'],
+        'blog_posts'                 => count($dynamic_sources['blog_posts']),
+        'services'                   => count($dynamic_sources['services']),
+        'hire_pages'                 => count($dynamic_sources['hire_pages']),
+        'success_stories'            => count($dynamic_sources['success_stories']),
+        'webinars'                   => count($dynamic_sources['webinars']),
+    ];
+
+    return [
+        'urls'        => $urls,
+        'sources'     => $sources,
+        'raw_total'   => $raw_total,
+        'final_total' => count($urls),
+    ];
+}
+
+/**
+ * Render a URL map (loc => lastmod) into a sitemap XML document string.
+ * Takes only the plain URL map — never the diagnostics — so there is no
+ * path by which internal counts could leak into the public sitemap.xml.
  *
  * @param array<string, ?string> $urls loc => lastmod (DB datetime or null)
  */
@@ -227,7 +364,7 @@ function sitemap_serve(): void
     header('Content-Type: application/xml; charset=UTF-8');
 
     try {
-        echo sitemap_render_xml(sitemap_collect_urls());
+        echo sitemap_render_xml(sitemap_generate()['urls']);
     } catch (Throwable $e) {
         error_log('Sitemap generation failed: ' . $e->getMessage());
         http_response_code(500);

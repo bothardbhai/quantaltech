@@ -16,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify_or_die();
 
     try {
-        $urls = sitemap_collect_urls();
-        sitemap_record_generation(count($urls));
-        flash('success', 'Sitemap regenerated successfully. ' . count($urls) . ' URL(s) found.');
+        $result = sitemap_generate();
+        sitemap_record_generation($result['final_total']);
+        flash('success', 'Sitemap regenerated successfully. ' . $result['final_total'] . ' URL(s) found.');
     } catch (Throwable $e) {
         error_log('Sitemap regenerate action failed: ' . $e->getMessage());
         flash('error', 'Could not regenerate the sitemap. Check the server error log for details.');
@@ -29,14 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Live status for the view — always freshly computed, same as /sitemap.xml.
-$url_count = 0;
+$sitemap_result = ['urls' => [], 'sources' => [], 'raw_total' => 0, 'final_total' => 0];
 $generate_error = null;
 try {
-    $url_count = count(sitemap_collect_urls());
+    $sitemap_result = sitemap_generate();
 } catch (Throwable $e) {
     error_log('Sitemap status load failed: ' . $e->getMessage());
     $generate_error = 'Could not load sitemap status. Check the server error log for details.';
 }
+$url_count = $sitemap_result['final_total'];
+$sources   = $sitemap_result['sources'];
 
 $last_generated_at = null;
 if ($pdo) {
@@ -97,6 +99,37 @@ require __DIR__ . '/_header.php';
         </div>
     </div>
 </div>
+
+<?php if (!$generate_error): ?>
+<div class="admin-card">
+    <div class="admin-card__head">Source breakdown</div>
+    <div class="admin-card__body">
+        <p class="help">How many URLs each content source contributed to the sitemap above — useful for confirming nothing was missed. This breakdown is admin-only; it is never exposed in the public <code>/sitemap.xml</code>.</p>
+        <table class="admin-table">
+            <thead>
+                <tr><th>Source</th><th>URLs included</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Static pages (on disk, resolvable)</td><td><?= (int) $sources['static_pages_on_disk'] ?> discovered &rarr; <?= (int) $sources['static_pages_included'] ?> included</td></tr>
+                <tr><td class="text-muted" style="padding-left:28px;">&#8627; with SEO metadata (Pages &amp; SEO)</td><td class="text-muted"><?= (int) $sources['pages_table_published'] ?> published / <?= (int) $sources['pages_table_total'] ?> total rows</td></tr>
+                <tr><td>Blog posts</td><td><?= (int) $sources['blog_posts'] ?></td></tr>
+                <tr><td>Services</td><td><?= (int) $sources['services'] ?></td></tr>
+                <tr><td>Hire pages</td><td><?= (int) $sources['hire_pages'] ?></td></tr>
+                <tr><td>Success stories</td><td><?= (int) $sources['success_stories'] ?></td></tr>
+                <tr><td>Webinars / Podcast <span class="text-muted">(no public detail route yet)</span></td><td><?= (int) $sources['webinars'] ?></td></tr>
+                <tr>
+                    <td><strong>Total before duplicate removal</strong></td>
+                    <td><strong><?= (int) $sitemap_result['raw_total'] ?></strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Total final URLs</strong></td>
+                    <td><strong><?= (int) $sitemap_result['final_total'] ?></strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>
 
 <script>
 document.getElementById('sitemap-regenerate-form').addEventListener('submit', function () {
