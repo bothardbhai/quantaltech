@@ -37,6 +37,7 @@ $user             = auth_user();
             <a href="<?= ADMIN_URL ?>/success-story-categories.php" class="<?= $admin_active === 'success-story-categories' ? 'is-active' : '' ?>" data-icon="🏷️">Story Categories</a>
             <a href="<?= ADMIN_URL ?>/newsletter.php"     class="<?= $admin_active === 'newsletter'     ? 'is-active' : '' ?>" data-icon="📧">Newsletter</a>
             <a href="<?= ADMIN_URL ?>/media.php"          class="<?= $admin_active === 'media'         ? 'is-active' : '' ?>" data-icon="🖼️">Media</a>
+            <a href="<?= ADMIN_URL ?>/sitemap.php"        class="<?= $admin_active === 'sitemap'       ? 'is-active' : '' ?>" data-icon="🗺️">Sitemap</a>
             <a href="<?= ADMIN_URL ?>/setup.php"          class="<?= $admin_active === 'setup'         ? 'is-active' : '' ?>" data-icon="🔧">Database Setup</a>
             <a href="<?= ADMIN_URL ?>/settings.php"       class="<?= $admin_active === 'settings'      ? 'is-active' : '' ?>" data-icon="⚙️">Settings</a>
         </nav>

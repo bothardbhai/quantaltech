@@ -56,6 +56,7 @@ require CORE_DIR . '/csrf.php';
 require CORE_DIR . '/mailer.php';
 require CORE_DIR . '/seo.php';
 require CORE_DIR . '/router.php';
+require CORE_DIR . '/sitemap.php';
 
 // Start session before any output so csrf_field() works in footer.php
 // (footer is rendered after header has already sent output — session_start()
@@ -66,6 +67,13 @@ auth_session_start();
 // Resolve the request
 // ---------------------------------------------------------------------------
 $request_path = router_normalize_path($_SERVER['REQUEST_URI'] ?? '/');
+
+// /sitemap.xml is served directly here — XML output, no HTML header/footer.
+if ($request_path === '/sitemap.xml') {
+    sitemap_serve();
+    exit;
+}
+
 $resolved = router_resolve($request_path);
 
 // ---------------------------------------------------------------------------
