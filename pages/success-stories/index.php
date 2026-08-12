@@ -58,7 +58,7 @@ if (!empty($ss_featured_rows)) {
 // --- Recent Projects grid ---------------------------------------------------
 $ss_projects = [];
 if ($pdo) {
-    foreach (get_success_stories($pdo, ['status' => 'published', 'order' => 'sort_order ASC, published_at DESC']) as $ss_story) {
+    foreach (get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']) as $ss_story) {
         $ss_cid = (int) ($ss_story['category_id'] ?? 0);
         $ss_projects[] = [
             'title'    => $ss_story['title'],
@@ -121,10 +121,7 @@ if ($pdo) {
 
             <div class="ss-hero-right">
                 <div class="ss-hero-visual">
-                    <span class="ss-visual-dot" aria-hidden="true"></span>
-                    <div class="ss-visual-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
+                    <img src="<?= asset('images/quantal/success-stories/success-stories-main.webp') ?>" alt="Success Stories">
                 </div>
             </div>
 

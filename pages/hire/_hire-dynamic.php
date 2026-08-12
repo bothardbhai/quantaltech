@@ -86,7 +86,25 @@ $cta_text       = $hire_page['cta_text'] ?? '';
 $cs_sub        = $hire_page['cs_sub'];
 $cs_title_html = $hire_page['cs_title_html'] ?? '';
 $cs_text       = $hire_page['cs_text'] ?? '';
-$case_studies  = hire_json($hire_page['case_studies_json']);
+
+// Case studies / Success Stories — no longer manually picked per hire page;
+// always the 4 most recently published Success Stories (see
+// admin/success-stories.php, the single source of truth for these).
+$case_studies = [];
+if ($pdo) {
+    $cs_category_map = [];
+    foreach (get_success_story_categories($pdo, []) as $cs_cat) {
+        $cs_category_map[(int) $cs_cat['id']] = $cs_cat['name'];
+    }
+    foreach (array_slice(get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']), 0, 4) as $cs_story) {
+        $case_studies[] = [
+            'title'    => $cs_story['title'],
+            'category' => $cs_category_map[(int) ($cs_story['category_id'] ?? 0)] ?? '',
+            'image'    => $cs_story['featured_image'],
+            'url'      => url('/success-stories/' . $cs_story['slug']),
+        ];
+    }
+}
 
 // --- Related hire pages + related services (stored as IDs; resolve here) ---
 $related_sub        = $hire_page['related_sub'];

@@ -115,11 +115,13 @@
  * $final_cta_btn_text    string  button hidden entirely if blank
  * $final_cta_btn_url     string  defaults to '/contact' if blank
  *
- * --- Case studies ---
+ * --- Case studies / Success Stories (always the latest 4 published
+ *     Success Stories — see Success Stories Master, not manually picked
+ *     per service) ---
  * $cs_sub         string
  * $cs_title_html  string (html allowed)
  * $cs_text        string
- * $case_studies   array of ['tag'=>'Business Impact','title'=>'...','desc'=>'...','result'=>'Reduced unplanned downtime by 35%...']
+ * $case_studies   array of ['title'=>'...','category'=>'...','image'=>'...','url'=>'...']
  *
  * --- Tech stack ---
  * $tech_sub         string
@@ -808,54 +810,28 @@ $service_links ??= [
 
                             <!-- Left Side -->
                             <div class="col-xxl-5 col-lg-6">
-
                                 <div class="left-content">
-
                                     <div class="section-title pb-3 pb-xl-5">
-
                                         <div class="sub-title">
-                                            <svg width="14" height="15" viewBox="0 0 14 15" fill="none">
+                                            <svg width="14" height="15" viewBox="0 0 14 15" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
                                                 <path
                                                     d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                                     fill="currentColor" />
                                             </svg>
-
-                                            <span><?= e($cs_sub ?? '') ?></span>
-
+                                            <span>Featured Projects</span>
                                         </div>
-
-                                        <h2 class="title split-text split-in-right">
-                                            <?= $cs_title_html ?? '' ?>
-                                        </h2>
-
-                                        <div class="text mt-3">
-                                            <?= e($cs_text ?? '') ?>
-                                        </div>
-
+                                        <h2 class="title split-text split-in-right">Success Stories That <span> Transform
+                                                Businesses</span></h2>
                                     </div>
-
-                                    <a href="<?= url('/contact') ?>" class="theme-btn-main">
-
-                                        <span class="theme-btn-arrow-left">
-                                            <i class="far fa-long-arrow-right"></i>
-                                        </span>
-
-                                        <span class="theme-btn">
-                                            View All Case Studies
-                                        </span>
-
-                                        <span class="theme-btn-arrow-right">
-                                            <i class="far fa-long-arrow-right"></i>
-                                        </span>
-
+                                    <a class="theme-btn-main mb-5 mb-xl-0 wow fadeInUp" data-wow-delay=".3s"
+                                        href="<?= url('/success-stories') ?>">
+                                        <span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i> </span>
+                                        <span class="theme-btn ">View All Case Studies</span>
+                                        <span class="theme-btn-arrow-right"> <i class="far fa-long-arrow-right"></i> </span>
                                     </a>
-
-                                    <!-- <h2 class="title-shadow titlt-bottom-top d-none d-xl-block">
-                                        Case Studies
-                                    </h2> -->
-
+                                    <!-- <h2 class="title-shadow titlt-bottom-top d-none d-xl-block">case studies</h2> -->
                                 </div>
-
                             </div>
 
                             <!-- Right Side -->
@@ -873,10 +849,11 @@ $service_links ??= [
                                                 $cs_image = !empty($cs['image'])
                                                     ? media_url($cs['image'])
                                                     : asset('images/quantal/case-studies/recruitment.png');
-                                                $cs_alt = !empty($cs['title']) ? $cs['title'] : 'Case study';
+                                                $cs_alt = !empty($cs['title']) ? $cs['title'] : 'Success story';
+                                                $cs_url = !empty($cs['url']) ? $cs['url'] : url('/success-stories');
                                                 ?>
                                                 <div class="image not-hide-cursor" data-cursor="View<br>Case">
-                                                    <a href="<?= url('/contact') ?>" class="cursor-hide tp--hover-img"
+                                                    <a href="<?= attr($cs_url) ?>" class="cursor-hide tp--hover-img"
                                                         data-displacement="<?= attr($cs_image) ?>" data-intensity="0.6"
                                                         data-speedin="1" data-speedout="1">
                                                         <img src="<?= attr($cs_image) ?>" alt="<?= attr($cs_alt) ?>">
@@ -888,16 +865,17 @@ $service_links ??= [
                                                     <div class="title-area">
 
                                                         <h4 class="title">
-                                                            <?= e(truncate_text($cs['title'], 30)) ?>
+                                                            <a
+                                                                href="<?= attr($cs_url) ?>"><?= e(truncate_text($cs['title'], 30)) ?></a>
                                                         </h4>
 
                                                         <p class="text">
-                                                            <?= e(truncate_text($cs['desc'], 90)) ?>
+                                                            <?= e($cs['category'] ?? '') ?>
                                                         </p>
 
                                                     </div>
 
-                                                    <a href="<?= url('/contact') ?>" class="arrow-icon">
+                                                    <a href="<?= attr($cs_url) ?>" class="arrow-icon">
                                                         <i class="far fa-long-arrow-right"></i>
                                                     </a>
 

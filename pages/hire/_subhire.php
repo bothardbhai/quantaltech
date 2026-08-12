@@ -17,7 +17,7 @@
  *   $why_sub, $why_title_html*, $why_text, $why_cards[{title,desc}]
  *   $industries_sub, $industries_title_html*, $industries_text, $industries[{icon,title,desc}]
  *   $cta_tag, $cta_title_html*, $cta_text                          - mid-page CTA band
- *   $cs_sub, $cs_title_html*, $cs_text, $case_studies[{title,desc,image}]
+ *   $cs_sub, $cs_title_html*, $cs_text, $case_studies[{title,category,image,url}] - always the latest 4 published Success Stories, not manually picked
  *   $related_sub, $related_title_html*, $related_text, $related_items[{label,title,slug,excerpt,featured_image}]
  *   $blog_sub, $blog_title_html*, $blog_text, $blog_posts[{image,category,title,desc,link}]
  *   $faq_intro, $faqs[{question,answer}]
@@ -709,10 +709,11 @@
 										$cs_image = !empty($cs['image'])
 											? media_url($cs['image'])
 											: asset('images/quantal/case-studies/recruitment.png');
-										$cs_alt = !empty($cs['title']) ? $cs['title'] : 'Case study';
+										$cs_alt = !empty($cs['title']) ? $cs['title'] : 'Success story';
+										$cs_url = !empty($cs['url']) ? $cs['url'] : url('/success-stories');
 										?>
 										<div class="image not-hide-cursor" data-cursor="View<br>Case">
-											<a href="<?= url('/contact') ?>" class="cursor-hide tp--hover-img"
+											<a href="<?= attr($cs_url) ?>" class="cursor-hide tp--hover-img"
 												data-displacement="<?= attr($cs_image) ?>" data-intensity="0.6" data-speedin="1"
 												data-speedout="1">
 												<img src="<?= attr($cs_image) ?>" alt="<?= attr($cs_alt) ?>">
@@ -724,16 +725,16 @@
 											<div class="title-area">
 
 												<h4 class="title">
-													<?= e(truncate_text($cs['title'] ?? '', 30)) ?>
+													<a href="<?= attr($cs_url) ?>"><?= e(truncate_text($cs['title'] ?? '', 30)) ?></a>
 												</h4>
 
 												<p class="text">
-													<?= e(truncate_text($cs['desc'] ?? '', 90)) ?>
+													<?= e($cs['category'] ?? '') ?>
 												</p>
 
 											</div>
 
-											<a href="<?= url('/contact') ?>" class="arrow-icon">
+											<a href="<?= attr($cs_url) ?>" class="arrow-icon">
 												<i class="far fa-long-arrow-right"></i>
 											</a>
 

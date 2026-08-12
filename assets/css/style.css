@@ -11237,6 +11237,7 @@ Section Title
   font-weight: 500;
   -webkit-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
+  font-size: 19px;
 }
 .case-block .content .title a {
   background-position: 0 95%;
@@ -28154,6 +28155,12 @@ body {
     background: var(--theme-color1);
     box-shadow: 0 0 16px 4px rgba(47, 231, 217, .5);
 }
+.success-stories-page .ss-hero-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
 
 @media (max-width: 991px) {
     .success-stories-page .ss-hero {
@@ -28519,6 +28526,31 @@ body {
    Still used inside the "Our Workflow" accordion (Phase 2's research-summary
    example) — the Challenge/Solution sections themselves now use the
    standard .section-title header + plain paragraph pattern instead. */
+
+.challenge .wow ul {
+    margin: 0 0 20px;
+    padding-left: 25px;
+}
+
+.challenge .wow ul li {
+    list-style-type: disc;
+    margin: 0 0 8px;
+    padding: 0;
+    line-height: 1.9;
+}
+
+.solution .wow ul {
+    margin: 0 0 20px;
+    padding-left: 25px;
+}
+
+.solution .wow ul li {
+    list-style-type: disc;
+    margin: 0 0 8px;
+    padding: 0;
+    line-height: 1.9;
+}
+
 .success-story-detail-page .ssd-highlight-card {
     height: 100%;
     background: #111315;
@@ -28780,8 +28812,10 @@ body {
 }
 .success-story-detail-page .ssd-tech-purpose {
     flex: 1 1 40%;
-    color: #a9a9a9;
-    font-size: 15px;
+    gap: 14px;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
     text-align: right;
 }
 @media (max-width: 767px) {
@@ -28812,7 +28846,7 @@ body {
    Success Stories index page's Recent Projects grid) ---------- */
 .success-story-detail-page .ssd-related-grid {
     display: flex;
-    justify-content: center;
+    justify-content: start;
 }
 .success-story-detail-page .ssd-related-grid .case-block {
     width: 100%;

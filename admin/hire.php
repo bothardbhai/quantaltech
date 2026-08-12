@@ -122,15 +122,6 @@ if ($action === 'new' || $action === 'edit') {
         }
         $schema_json = json_encode($schema_blocks, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        // Case study images are stored as plain paths — just check the extension.
-        foreach (($_POST['cs_image'] ?? []) as $cs_img) {
-            $cs_img = trim((string) $cs_img);
-            if ($cs_img !== '' && !preg_match('/\.(png|jpe?g|gif|webp|svg)$/i', $cs_img)) {
-                $errors[] = 'Case study image must be a .png, .jpg, .gif, .webp, or .svg file.';
-                break;
-            }
-        }
-
         if ($errors) {
             foreach ($errors as $e) { flash('error', $e); }
             $hire_page = array_merge((array) $hire_page, $_POST, ['id' => $hire_page['id'] ?? null]);
@@ -203,8 +194,6 @@ if ($action === 'new' || $action === 'edit') {
                 ['title' => 'why_card_title', 'desc' => 'why_card_desc']));
             $data['industries_json'] = json_encode(svc_build_repeater($_POST,
                 ['icon' => 'industry_icon', 'title' => 'industry_title', 'desc' => 'industry_desc']));
-            $data['case_studies_json'] = json_encode(svc_build_repeater($_POST,
-                ['title' => 'cs_card_title', 'desc' => 'cs_card_desc', 'image' => 'cs_image']));
             $data['faqs_json'] = json_encode(svc_build_repeater($_POST,
                 ['question' => 'faq_question', 'answer' => 'faq_answer']));
 
@@ -256,7 +245,6 @@ if ($action === 'new' || $action === 'edit') {
         'engagement_models' => svc_json_decode($hire_page['engagement_models_json'] ?? null),
         'why_cards' => svc_json_decode($hire_page['why_cards_json'] ?? null),
         'industries' => svc_json_decode($hire_page['industries_json'] ?? null),
-        'case_studies' => svc_json_decode($hire_page['case_studies_json'] ?? null),
         'faqs' => svc_json_decode($hire_page['faqs_json'] ?? null),
         'json_ld_schemas' => svc_normalize_schemas($hire_page['schema_json'] ?? null),
     ];
@@ -307,7 +295,7 @@ if ($action === 'new' || $action === 'edit') {
                     'core' => 'Core', 'hero' => 'Hero', 'impact' => 'Impact Stats',
                     'expertise' => 'Expertise', 'build' => 'What They Build',
                     'engagement' => 'Engagement Models', 'why' => 'Why Hire', 'industries' => 'Industries',
-                    'cta' => 'Mid CTA', 'final_cta' => 'Final CTA', 'cases' => 'Case Studies',
+                    'cta' => 'Mid CTA', 'final_cta' => 'Final CTA', 'cases' => 'Success Stories',
                     'related' => 'Related', 'blog' => 'Knowledge Hub', 'faq' => 'FAQ', 'seo' => 'SEO',
                 ];
                 foreach ($tabs as $key => $label): ?>
@@ -545,19 +533,15 @@ if ($action === 'new' || $action === 'edit') {
                     </div></div>
                 </div>
 
-                <!-- ============ CASE STUDIES ============ -->
+                <!-- ============ SUCCESS STORIES ============ -->
                 <div class="section-tabs__panel" data-panel="cases">
                     <div class="admin-card"><div class="admin-card__body"><?php hire_section_header('cs', $f, 'AI Teams That <span>Delivered</span>'); ?></div></div>
                     <div class="admin-card"><div class="admin-card__body">
-                        <?php svc_repeater_field('case-studies', 'Case Studies', '+ Add case study',
-                            '<div class="form-row"><label>Title</label><input type="text" name="cs_card_title[]"></div>' .
-                            '<div class="form-row"><label>Description</label><textarea name="cs_card_desc[]" rows="2"></textarea></div>' .
-                            '<div class="form-row" style="margin-bottom:0;"><label>Case Study Image</label>' .
-                            '<input type="text" name="cs_image[]" placeholder="/uploads/hire/...">' .
-                            '<div class="help">Copy a path from the <a href="' . ADMIN_URL . '/media.php" target="_blank" rel="noopener">Media Library</a>, or paste any URL. Falls back to a default image if left blank.</div></div>',
-                            $repeater_data['case_studies'],
-                            ['input[name="cs_card_title[]"]' => 'title', 'textarea[name="cs_card_desc[]"]' => 'desc', 'input[name="cs_image[]"]' => 'image']
-                        ); ?>
+                        <p class="text-muted" style="font-size:13px;margin:0;">
+                            This section now shows the 4 most recently published entries from the
+                            <a href="<?= ADMIN_URL ?>/success-stories.php" target="_blank" rel="noopener">Success Stories</a> master automatically —
+                            manually picking individual case studies here has been removed. Add or edit Success Stories there to control what appears.
+                        </p>
                     </div></div>
                 </div>
 

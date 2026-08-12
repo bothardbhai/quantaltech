@@ -34,6 +34,11 @@ The migrations are organized by creation date and purpose:
 6. **2026-08-12-002-extend-success-stories-table.sql**
    - Extends `success_stories` with the same section-based shape as `services`/`hire_pages`: category, breadcrumb, sort order, and one repeater/triplet per detail-page section (Objectives, Architecture, Workflow, Results, Deliverables, Technology Stack, Why Choose, Client Responsibilities, Future Enhancements, Related Stories, Final CTA) plus `canonical`/`robots` for SEO parity
    - **2026-08-12-003-add-success-story-media-category.sql** adds a `success-story` value to `media.category` alongside it
+   - `related_story_ids_json`/`related_count` are no longer read or written by admin/success-stories.php — "More Success Stories" now always shows the 4 most recent published stories excluding the current one. The columns were left in place (not dropped) in case any row already has data in them.
+
+7. **2026-08-12-004-add-success-story-why-final-content.sql**
+   - Adds `why_final_html` to `success_stories` — one optional closing paragraph rendered after all "Why Choose Our Solution" cards, no box/card, plain content
+   - `workflow_json` rows gained an optional `items` key (bullet points shown under a step's description) — no migration needed since it's a JSON column; existing rows without `items` keep working unchanged
 
 ## Running Migrations
 
@@ -154,6 +159,7 @@ Stores AI service offering details.
 | features_json | JSON | Array of feature objects |
 | status | ENUM | draft, published, archived |
 | display_on_home | TINYINT(1) | Show on homepage |
+| case_studies_json | JSON | **Deprecated** — no longer read or written by admin/services.php. The Service Detail page's "Case Studies" section now always shows the latest 4 published Success Stories (see `success_stories`), the single source of truth. Column left in place, not dropped, so any previously entered data isn't lost. |
 
 ### hire_pages
 
@@ -167,7 +173,8 @@ Stores Hire Master role pages (the Service Master's counterpart for `/hire-ai-en
 | title | VARCHAR(255) | Display title |
 | excerpt | TEXT | Short description (hub card + SEO fallback) |
 | sort_order | INT UNSIGNED | Display order on the `/hire-ai-engineers` hub |
-| hero_features_json, impact_stats_json, expertise_cards_json, build_cards_json, engagement_models_json, why_cards_json, industries_json, case_studies_json, faqs_json | JSON | One repeater column per page section |
+| hero_features_json, impact_stats_json, expertise_cards_json, build_cards_json, engagement_models_json, why_cards_json, industries_json, faqs_json | JSON | One repeater column per page section |
+| case_studies_json | JSON | **Deprecated** — no longer read or written by admin/hire.php. The Hire Detail page's "Case Studies" section now always shows the latest 4 published Success Stories (see `success_stories`), the single source of truth. Column left in place, not dropped. |
 | related_hire_ids_json | JSON | int[] of other `hire_pages.id` |
 | related_service_ids_json | JSON | int[] of `services.id` |
 | blog_post_ids_json | JSON | int[] of `posts.id` |

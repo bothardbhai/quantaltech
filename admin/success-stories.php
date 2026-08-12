@@ -137,7 +137,7 @@ if ($action === 'new' || $action === 'edit') {
                 'featured_image', 'featured_alt',
             ];
             // Rich-content fields (CKEditor) — sanitized, not escaped.
-            $html_fields = ['body_html', 'challenge_html', 'solution_html'];
+            $html_fields = ['body_html', 'challenge_html', 'solution_html', 'why_final_html'];
 
             $cols = [
                 'slug'          => $slug,
@@ -168,7 +168,7 @@ if ($action === 'new' || $action === 'edit') {
                 ['icon' => 'arch_icon', 'title' => 'arch_title', 'subtitle' => 'arch_subtitle'],
                 ['items' => 'arch_items'], ['active' => 'arch_active']));
             $cols['workflow_json'] = json_encode(svc_build_repeater($_POST,
-                ['title' => 'wf_title', 'desc' => 'wf_desc'], [], ['active' => 'wf_active']));
+                ['title' => 'wf_title', 'desc' => 'wf_desc'], ['items' => 'wf_items'], ['active' => 'wf_active']));
             $cols['results_json'] = json_encode(svc_build_repeater($_POST,
                 ['title' => 'res_title', 'desc' => 'res_desc'], [], ['active' => 'res_active']));
             $cols['deliverables_json'] = json_encode(svc_build_repeater($_POST,
@@ -181,10 +181,6 @@ if ($action === 'new' || $action === 'edit') {
                 ['text' => 'resp_text'], [], ['active' => 'resp_active']));
             $cols['future_json'] = json_encode(svc_build_repeater($_POST,
                 ['text' => 'future_text_item'], [], ['active' => 'future_active']));
-
-            // Related stories: manual picks (IDs) + auto-fill count
-            $cols['related_story_ids_json'] = json_encode(array_values(array_filter(array_map('intval', $_POST['related_story_ids'] ?? []))));
-            $cols['related_count'] = max(0, (int) ($_POST['related_count'] ?? 3));
 
             $bind = [];
             foreach ($cols as $k => $v) $bind[":$k"] = $v;
@@ -218,7 +214,7 @@ if ($action === 'new' || $action === 'edit') {
         'id' => null, 'slug' => '', 'title' => '', 'excerpt' => '', 'body_html' => '',
         'company_name' => '', 'company_website' => '', 'company_logo' => '',
         'industry' => '', 'company_size' => '', 'category_id' => null, 'sort_order' => 1,
-        'challenge_html' => '', 'solution_html' => '', 'results_html' => '',
+        'challenge_html' => '', 'solution_html' => '', 'results_html' => '', 'why_final_html' => '',
         'featured_image' => '', 'featured_alt' => '',
         'client_name' => '', 'client_title' => '', 'client_image' => '',
         'meta_title' => '', 'meta_description' => '', 'meta_keywords' => '',
@@ -231,7 +227,6 @@ if ($action === 'new' || $action === 'edit') {
         'responsibilities_sub' => '', 'responsibilities_title' => '', 'responsibilities_text' => '',
         'future_sub' => '', 'future_title' => '', 'future_text' => '',
         'final_cta_sub' => '', 'final_cta_title' => '', 'final_cta_desc' => '',
-        'related_count' => 3,
     ], (array) $story);
 
     // JSON-backed data for the JS repeaters (edit mode) — empty arrays for "new"
@@ -247,23 +242,19 @@ if ($action === 'new' || $action === 'edit') {
         'future'         => svc_json_decode($story['future_json'] ?? null),
         'json_ld_schemas' => svc_normalize_schemas($story['schema_json'] ?? null),
     ];
-    // Repeater items store `items` (architecture bullet lists) as arrays;
-    // svc_repeater_field's JS hydration expects strings for textarea fields,
-    // so join them back into "one per line" for the edit-mode template.
-    foreach ($repeater_data['architecture'] as &$arch_row) {
-        if (isset($arch_row['items']) && is_array($arch_row['items'])) {
-            $arch_row['items'] = implode("\n", $arch_row['items']);
+    // Repeater items store `items` (architecture/workflow bullet lists) as
+    // arrays; svc_repeater_field's JS hydration expects strings for textarea
+    // fields, so join them back into "one per line" for the edit-mode template.
+    foreach (['architecture', 'workflow'] as $items_repeater) {
+        foreach ($repeater_data[$items_repeater] as &$items_row) {
+            if (isset($items_row['items']) && is_array($items_row['items'])) {
+                $items_row['items'] = implode("\n", $items_row['items']);
+            }
         }
+        unset($items_row);
     }
-    unset($arch_row);
-
-    $selected_related_ids = array_map('intval', svc_json_decode($story['related_story_ids_json'] ?? null));
 
     $categories = get_success_story_categories($pdo, []);
-    $other_stories = array_filter(
-        get_success_stories($pdo, ['status' => 'published']),
-        static fn($s) => (int) $s['id'] !== (int) ($f['id'] ?? 0)
-    );
 
     $admin_page_title = $story ? 'Edit Success Story' : 'New Success Story';
     $admin_active     = 'success-stories';
@@ -302,7 +293,7 @@ if ($action === 'new' || $action === 'edit') {
                     'results' => 'Results & Impact', 'deliverables' => 'What We Delivered',
                     'tech' => 'Tech Stack', 'why' => 'Why Choose',
                     'responsibilities' => 'Client Responsibilities', 'future' => 'Future Enhancements',
-                    'related' => 'Related Stories', 'final_cta' => 'Final CTA', 'seo' => 'SEO',
+                    'final_cta' => 'Final CTA', 'seo' => 'SEO',
                 ];
                 foreach ($tabs as $key => $label): ?>
                     <button type="button" data-tab="<?= $key ?>"><?= e($label) ?></button>
@@ -537,9 +528,11 @@ if ($action === 'new' || $action === 'edit') {
                         <?php svc_repeater_field('workflow', 'Workflow Steps', '+ Add step',
                             '<div class="form-row"><label>Title</label><input type="text" name="wf_title[]"></div>' .
                             '<div class="form-row"><label>Description</label><textarea name="wf_desc[]" rows="3"></textarea></div>' .
+                            '<div class="form-row"><label>Highlighted Points <span class="text-muted">(optional — one per line)</span></label><textarea name="wf_items[]" rows="3" placeholder="Prospect identification&#10;Company research"></textarea></div>' .
                             '<div class="form-row" style="margin-bottom:0;"><label><input type="checkbox" class="active-checkbox" name="wf_active[]" value="1" checked> Active</label></div>',
                             $repeater_data['workflow'],
                             ['input[name="wf_title[]"]' => 'title', 'textarea[name="wf_desc[]"]' => 'desc',
+                             'textarea[name="wf_items[]"]' => 'items',
                              'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
@@ -601,6 +594,12 @@ if ($action === 'new' || $action === 'edit') {
                              'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="why_final_html">Why Choose &ndash; Final Content <span class="text-muted">(optional — plain paragraph shown after all the cards above, no box/card)</span></label>
+                            <textarea id="why_final_html" name="why_final_html" rows="4"><?= e($f['why_final_html']) ?></textarea>
+                        </div>
+                    </div></div>
                 </div>
 
                 <!-- ============ CLIENT RESPONSIBILITIES ============ -->
@@ -652,31 +651,6 @@ if ($action === 'new' || $action === 'edit') {
                             $repeater_data['future'],
                             ['input[name="future_text_item[]"]' => 'text', 'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
-                    </div></div>
-                </div>
-
-                <!-- ============ RELATED STORIES ============ -->
-                <div class="section-tabs__panel" data-panel="related">
-                    <div class="admin-card"><div class="admin-card__body">
-                        <div class="form-row" style="margin-bottom:0;">
-                            <label for="related_count">Number to Display <span class="text-muted">(auto-fills with recent published stories if fewer are picked below)</span></label>
-                            <input type="number" id="related_count" name="related_count" min="0" max="12" value="<?= (int) $f['related_count'] ?>">
-                        </div>
-                    </div></div>
-                    <div class="admin-card"><div class="admin-card__body">
-                        <div class="repeater-row__title" style="margin-bottom:10px;">Manually Choose Stories <span class="text-muted">(optional — otherwise the most recent published stories are used)</span></div>
-                        <?php if (empty($other_stories)): ?>
-                            <p class="text-muted" style="font-size:13px;">No other published stories yet.</p>
-                        <?php endif; ?>
-                        <div style="max-height:320px;overflow-y:auto;">
-                        <?php foreach ($other_stories as $os): ?>
-                            <label style="display:block;padding:6px 0;">
-                                <input type="checkbox" name="related_story_ids[]" value="<?= (int) $os['id'] ?>"
-                                    <?= in_array((int) $os['id'], $selected_related_ids, true) ? 'checked' : '' ?>>
-                                <?= e($os['title']) ?> <span class="text-muted">(<?= e($os['slug']) ?>)</span>
-                            </label>
-                        <?php endforeach; ?>
-                        </div>
                     </div></div>
                 </div>
 
@@ -777,7 +751,7 @@ if ($action === 'new' || $action === 'edit') {
         showTab(navBtns[0] ? navBtns[0].dataset.tab : 'core');
 
         // ---- CKEditor on rich-content fields ----
-        ['body_html', 'challenge_html', 'solution_html'].forEach(function (id) {
+        ['body_html', 'challenge_html', 'solution_html', 'why_final_html'].forEach(function (id) {
             var el = document.getElementById(id);
             if (!el) return;
             ClassicEditor.create(el, {
