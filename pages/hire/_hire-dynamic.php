@@ -4,8 +4,9 @@
  * Hire Master bridge — loads a `hire_pages` row by slug and maps it onto the
  * exact variable contract `_subhire.php` expects (see that file's doc
  * block), then includes it. Reached only when no literal
- * pages/hire-ai-engineers/{slug}.php file exists for the URL
- * (core/router.php checks that first) and a published row matches the slug.
+ * pages/hire/{slug}.php file exists for the URL (core/router.php checks
+ * that first) and a published row matches the slug. Detail pages live at
+ * /hire/{slug}; the hub page lives separately at /hire-ai-engineers.
  *
  * Mirrors pages/services/_service-dynamic.php 1:1 — same shape, same
  * section list, just resolved from `hire_pages` instead of `services`.
@@ -116,7 +117,7 @@ $related_items = $pdo
             static fn(array $h) => [
                 'label' => $h['role_label'] !== '' ? $h['role_label'] : $h['name'],
                 'title' => $h['title'],
-                'slug' => 'hire-ai-engineers/' . $h['slug'],
+                'slug' => 'hire/' . $h['slug'],
                 'excerpt' => $h['excerpt'],
                 'featured_image' => $h['featured_image'],
                 'is_hire' => true,
@@ -181,7 +182,7 @@ $page_title       = $hire_page['meta_title'] !== '' ? $hire_page['meta_title'] :
 $page_description = $hire_page['meta_description'] !== '' ? $hire_page['meta_description'] : $hire_page['excerpt'];
 $page_keywords    = $hire_page['meta_keywords'];
 $page_og_image    = $hire_page['og_image'] !== '' ? $hire_page['og_image'] : $hire_page['featured_image'];
-$canonical        = $hire_page['canonical'] !== '' ? $hire_page['canonical'] : (defined('SITE_URL') ? rtrim(SITE_URL, '/') : '') . '/hire-ai-engineers/' . $hire_page['slug'];
+$canonical        = $hire_page['canonical'] !== '' ? $hire_page['canonical'] : (defined('SITE_URL') ? rtrim(SITE_URL, '/') : '') . '/hire/' . $hire_page['slug'];
 $page_schema_json = $hire_page['schema_json'];
 $page_robots      = $hire_page['robots'];
 

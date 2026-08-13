@@ -4,7 +4,7 @@
 --          (see db/migrations/2025-05-11-003-create-services-table.sql and
 --          2026-07-28-001-extend-services-table.sql). Each row is one
 --          hire-able role page (e.g. python-developer, llm-engineer),
---          reachable at /hire-ai-engineers/{slug}. Follows the exact same
+--          reachable at /hire/{slug}. Follows the exact same
 --          section-based shape as `services`: a scalar *_sub/*_title_html/
 --          *_text triplet per section heading, plus a *_json repeater
 --          column per section's card list, so admin/hire.php can reuse the

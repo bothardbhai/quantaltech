@@ -76,6 +76,16 @@ if ($request_path === '/sitemap.xml') {
 
 $resolved = router_resolve($request_path);
 
+// Legacy URL redirects (e.g. old /hire-ai-engineers/{slug} -> /hire/{slug})
+// come back as a 'redirect' key instead of a template — no other route
+// returns this shape, so this is the only place it needs handling.
+if (isset($resolved['redirect'])) {
+    $qs = $_SERVER['QUERY_STRING'] ?? '';
+    $target = url($resolved['redirect']) . ($qs !== '' ? '?' . $qs : '');
+    header('Location: ' . $target, true, $resolved['status'] ?? 301);
+    exit;
+}
+
 // ---------------------------------------------------------------------------
 // Build the SEO context
 // ---------------------------------------------------------------------------

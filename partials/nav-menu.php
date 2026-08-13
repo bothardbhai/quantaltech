@@ -34,6 +34,26 @@ if ($pdo) {
     }
 }
 
+// Hire dropdown is data-driven the same way: every published Hire Master
+// entry (admin/hire.php, `hire_pages` table) becomes a menu item automatically,
+// ordered by sort_order (the same ordering the Hire Master admin list and hub
+// grid use). No hardcoded per-role links here — add a hire page in the admin
+// and it appears in this menu on the next request.
+$hire_menu_items = [];
+if ($pdo) {
+    try {
+        foreach (get_hire_pages($pdo, ['status' => 'published']) as $hire) {
+            $hire_menu_items[] = [
+                'label' => $hire['name'],
+                'href' => '/hire/' . $hire['slug'],
+                'key' => 'hire',
+            ];
+        }
+    } catch (\Throwable $e) {
+        $hire_menu_items = [];
+    }
+}
+
 // Define the menu structure once. Each item: label, href, key (for active state),
 // and optionally children.
 //
@@ -73,9 +93,7 @@ $menu = [
         'label' => 'Hire with Us',
         'href' => '',
         'key' => 'hire',
-        'children' => [
-            ['label' => 'Hire AI Engineers', 'href' => '/hire-ai-engineers', 'key' => 'hire'],
-        ],
+        'children' => $hire_menu_items,
     ],
     [
         'label' => 'Contact Us',

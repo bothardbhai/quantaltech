@@ -182,8 +182,8 @@ function sitemap_source_services(): array
 }
 
 /**
- * Hire Master — /hire-ai-engineers/{slug} for every published, non-noindex
- * row (mirrors router_hire_page_exists()'s own gate).
+ * Hire Master — /hire/{slug} for every published, non-noindex row (mirrors
+ * router_hire_page_exists()'s own gate).
  *
  * @return array<string, ?string> loc => lastmod
  */
@@ -200,7 +200,7 @@ function sitemap_source_hire_pages(): array
             if (stripos((string) $r['robots'], 'noindex') !== false) {
                 continue;
             }
-            $loc = ($r['canonical'] ?? '') !== '' ? $r['canonical'] : '/hire-ai-engineers/' . $r['slug'];
+            $loc = ($r['canonical'] ?? '') !== '' ? $r['canonical'] : '/hire/' . $r['slug'];
             $items[sitemap_absolute_url($loc)] = $r['updated_at'];
         }
     } catch (PDOException $e) {

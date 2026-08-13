@@ -25,7 +25,7 @@ The migrations are organized by creation date and purpose:
 
 4. **2026-08-07-001-create-hire-pages-table.sql**
    - Creates the `hire_pages` table — the Hire Master, mirrors the `services` table's section-based shape
-   - Each row is one hire-able role page, served at `/hire-ai-engineers/{slug}`
+   - Each row is one hire-able role page, served at `/hire/{slug}`
    - **2026-08-07-002-add-hire-media-category.sql** adds a `hire` value to `media.category` alongside it
 
 5. **2026-08-12-001-create-success-story-categories-table.sql**
@@ -163,7 +163,7 @@ Stores AI service offering details.
 
 ### hire_pages
 
-Stores Hire Master role pages (the Service Master's counterpart for `/hire-ai-engineers/{slug}`).
+Stores Hire Master role pages (the Service Master's counterpart for `/hire/{slug}`).
 
 | Column | Type | Notes |
 |--------|------|-------|

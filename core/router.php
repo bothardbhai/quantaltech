@@ -214,23 +214,37 @@ function router_resolve(string $path): array
     }
 
     // Hire Master fallback — mirrors the Service Master fallback above.
-    // Only reached when no literal /pages/hire-ai-engineers/{slug}.php file
-    // exists for this path, so /hire-ai-engineers itself (no slug) keeps
-    // resolving to the hand-authored hub file via the generic file-path
-    // routing further up.
-    if (str_starts_with($path, '/hire-ai-engineers/')) {
-        $slug = trim(substr($path, strlen('/hire-ai-engineers/')), '/');
+    // Detail pages live at /hire/{slug}; the hub page itself is a separate,
+    // hand-authored file at /hire-ai-engineers, matched by the generic
+    // file-path routing further up and untouched by this block.
+    if (str_starts_with($path, '/hire/')) {
+        $slug = trim(substr($path, strlen('/hire/')), '/');
         if ($slug !== '' && preg_match('/^[a-z0-9\-]+$/', $slug)) {
             $template = PAGES_DIR . '/hire/_hire-dynamic.php';
             if (is_file($template) && router_hire_page_exists($slug)) {
                 $GLOBALS['hire_slug'] = $slug;
                 return [
                     'template'       => $template,
-                    'canonical_path' => '/hire-ai-engineers/' . $slug,
+                    'canonical_path' => '/hire/' . $slug,
                     'active_page'    => 'hire',
                     'status'         => 200,
                 ];
             }
+        }
+    }
+
+    // Legacy Hire Master URLs — detail pages used to live at
+    // /hire-ai-engineers/{slug}; 301 redirect those to /hire/{slug} for SEO
+    // continuity. Only redirects when the slug still resolves to a
+    // published row, so unknown slugs fall through to the normal 404 below
+    // instead of being redirected anywhere.
+    if (str_starts_with($path, '/hire-ai-engineers/')) {
+        $slug = trim(substr($path, strlen('/hire-ai-engineers/')), '/');
+        if ($slug !== '' && preg_match('/^[a-z0-9\-]+$/', $slug) && router_hire_page_exists($slug)) {
+            return [
+                'redirect' => '/hire/' . $slug,
+                'status'   => 301,
+            ];
         }
     }
 

@@ -277,7 +277,7 @@ if ($action === 'new' || $action === 'edit') {
                 <div class="subtitle">
                     Slug: <code class="text-mono"><?= e($f['slug']) ?></code>
                     <?php if ($f['status'] === 'published'): ?>
-                        &middot; <a href="<?= url('/hire-ai-engineers/' . $f['slug']) ?>" target="_blank" rel="noopener">View live &rarr;</a>
+                        &middot; <a href="<?= url('/hire/' . $f['slug']) ?>" target="_blank" rel="noopener">View live &rarr;</a>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -324,7 +324,7 @@ if ($action === 'new' || $action === 'edit') {
                             <div class="form-row">
                                 <label for="slug">Slug</label>
                                 <input type="text" id="slug" name="slug" value="<?= attr($f['slug']) ?>" placeholder="auto-generated">
-                                <div class="help">Live at <code class="text-mono">/hire-ai-engineers/<?= e($f['slug'] ?: '{slug}') ?></code></div>
+                                <div class="help">Live at <code class="text-mono">/hire/<?= e($f['slug'] ?: '{slug}') ?></code></div>
                             </div>
                             <div class="form-row">
                                 <label for="sort_order">Display Order</label>
@@ -726,7 +726,7 @@ if ($action === 'new' || $action === 'edit') {
                     '@type': 'WebPage',
                     'name': titleEl ? titleEl.value : '',
                     'description': document.getElementById('excerpt') ? document.getElementById('excerpt').value : '',
-                    'url': SITE + '/hire-ai-engineers/' + slug
+                    'url': SITE + '/hire/' + slug
                 };
                 var repeater = window.svcRepeaters && window.svcRepeaters['schemas'];
                 if (repeater) {
@@ -791,7 +791,7 @@ require __DIR__ . '/_header.php';
                     <td><?= $r['display_on_hub'] ? '✓' : '' ?></td>
                     <td class="col-actions">
                         <?php if ($r['status'] === 'published'): ?>
-                            <a href="<?= url('/hire-ai-engineers/' . $r['slug']) ?>" target="_blank" rel="noopener" class="admin-btn admin-btn--ghost admin-btn--small">View</a>
+                            <a href="<?= url('/hire/' . $r['slug']) ?>" target="_blank" rel="noopener" class="admin-btn admin-btn--ghost admin-btn--small">View</a>
                         <?php endif; ?>
                         <a href="?action=edit&amp;id=<?= (int) $r['id'] ?>" class="admin-btn admin-btn--small">Edit</a>
                         <form method="post" action="?action=delete" style="display:inline;"

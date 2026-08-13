@@ -418,9 +418,9 @@ $final_cta_btn_url = '/case-studies';
 									<div class="icon"><i class="<?= attr($hp['icon_class'] ?: 'fas fa-brain') ?>"></i></div>
 								</div>
 								<div class="content">
-									<h3 class="title"><a href="<?= url('/hire-ai-engineers/' . attr($hp['slug'])) ?>"><?= e($hp['name']) ?></a></h3>
+									<h3 class="title"><a href="<?= url('/hire/' . attr($hp['slug'])) ?>"><?= e($hp['name']) ?></a></h3>
 									<p class="text"><?= e(truncate_text($hp['excerpt'], 85)) ?></p>
-									<a href="<?= url('/hire-ai-engineers/' . attr($hp['slug'])) ?>" class="theme-btn-main theme-btn-main2">
+									<a href="<?= url('/hire/' . attr($hp['slug'])) ?>" class="theme-btn-main theme-btn-main2">
 										<span class="theme-btn-arrow-left"> <i class="far fa-long-arrow-right "></i></span>
 										<span class="theme-btn">Read More</span>
 										<span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span>
