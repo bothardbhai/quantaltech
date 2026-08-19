@@ -40,6 +40,11 @@ The migrations are organized by creation date and purpose:
    - Adds `why_final_html` to `success_stories` — one optional closing paragraph rendered after all "Why Choose Our Solution" cards, no box/card, plain content
    - `workflow_json` rows gained an optional `items` key (bullet points shown under a step's description) — no migration needed since it's a JSON column; existing rows without `items` keep working unchanged
 
+8. **2026-08-19-001-add-engineers-json-to-hire-pages.sql**
+   - Adds `engineers_json` to `hire_pages` — the "Meet Our Engineers" section, a first-class section of one specific hire page (not a Related/picker feature, not a separate master)
+   - Same object-repeater shape as `impact_stats_json`/`expertise_cards_json`: a JSON array of row objects `[{image, name, role, years_of_experience, linkedin_url, education: [...], skills: [...]}, ...]`
+   - `education`/`skills` are flat string-array sub-fields within each row, same "list" field type already used by `services.grid_services_json`'s `tags` sub-field (see `admin/services.php`)
+
 ## Running Migrations
 
 ### Automatic (Recommended)

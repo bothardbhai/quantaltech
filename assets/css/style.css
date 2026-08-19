@@ -28029,6 +28029,140 @@ body {
 }
 
 /*=========================================================
+    MEET OUR ENGINEERS (Hire Detail page)
+    Same dark-card/cyan-accent language as .framework-card /
+    .benefit-card on this page; the hover-reveal LinkedIn icon
+    reuses the .team-block .social-icon technique from the
+    Founders section.
+==========================================================*/
+.engineer-card {
+    position: relative;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 30px;
+    height: 100%;
+    transition: 0.35s;
+}
+
+.engineer-card:hover {
+    transform: translateY(-10px);
+    border-color: #26e5e8;
+    box-shadow: 0 20px 50px rgba(38, 229, 232, 0.12);
+}
+
+.engineer-card__photo {
+    position: relative;
+    flex: 0 0 110px;
+    width: 110px;
+    height: 140px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #1a1a1a;
+}
+
+.engineer-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.engineer-card__social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    background: #26e5e8;
+    color: #111;
+    font-size: 16px;
+}
+
+.engineer-card:hover .engineer-card__social {
+    bottom: 12px;
+    opacity: 1;
+    visibility: visible;
+}
+
+.engineer-card__info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.engineer-card__info h4 {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.engineer-card__exp {
+    display: inline-block;
+    color: #26e5e8;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.engineer-card__role {
+    color: #a6a6a6;
+    font-size: 14px;
+    margin: 0 0 12px;
+    line-height: 1.6;
+}
+
+.engineer-card__education {
+    margin: 0 0 14px;
+    padding-left: 18px;
+    color: #a6a6a6;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.engineer-card__education li{
+    list-style: disc !important;
+}
+
+.engineer-card__skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 4px 12px;
+    background: rgba(38, 229, 232, 0.08);
+    color: #26e5e8;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+@media (max-width: 575.98px) {
+    .engineer-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .engineer-card__education {
+        text-align: left;
+    }
+}
+
+/*=========================================================
     SUCCESS STORIES PAGE (NEW REDESIGN — STATIC PHASE)
     Scoped entirely under .success-stories-page so it can
     never bleed into Service / Hire / other pages. Reuses

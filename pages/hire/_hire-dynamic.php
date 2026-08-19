@@ -48,6 +48,10 @@ $hero_features   = hire_json($hire_page['hero_features_json']);
 // --- Impact stats ---
 $impact_stats = hire_json($hire_page['impact_stats_json']);
 
+// --- Meet Our Engineers --- (a section of this hire page, not a picker;
+// row shape already includes 'education'/'skills' as decoded string arrays)
+$engineers = hire_json($hire_page['engineers_json']);
+
 // --- Expertise of Our Engineers ---
 $expertise_sub        = $hire_page['expertise_sub'];
 $expertise_title_html = $hire_page['expertise_title_html'] ?? '';

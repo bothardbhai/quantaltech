@@ -107,6 +107,12 @@ if ($action === 'new' || $action === 'edit') {
         if (!ctype_digit($sort_order_raw) && !is_numeric($sort_order_raw)) {
             $errors[] = 'Display Order must be a number.';
         }
+        foreach ($_POST['eng_years'] ?? [] as $eng_idx => $eng_years_raw) {
+            $eng_years_raw = trim((string) $eng_years_raw);
+            if ($eng_years_raw !== '' && (!is_numeric($eng_years_raw) || (float) $eng_years_raw < 0)) {
+                $errors[] = 'Years of Experience for engineer #' . ((int) $eng_idx + 1) . ' must be a non-negative number.';
+            }
+        }
 
         // Multiple JSON-LD schema blocks — stored as one JSON array
         // [{label, code}, ...] in the schema_json column, same convention as
@@ -183,6 +189,9 @@ if ($action === 'new' || $action === 'edit') {
                 ['icon' => 'hf_icon', 'text' => 'hf_text']));
             $data['impact_stats_json'] = json_encode(svc_build_repeater($_POST,
                 ['number' => 'impact_number', 'title' => 'impact_title']));
+            $data['engineers_json'] = json_encode(svc_build_repeater($_POST,
+                ['image' => 'eng_image', 'name' => 'eng_name', 'role' => 'eng_role', 'years_of_experience' => 'eng_years', 'linkedin_url' => 'eng_linkedin'],
+                ['education' => 'eng_education', 'skills' => 'eng_skills']));
             $data['expertise_cards_json'] = json_encode(svc_build_repeater($_POST,
                 ['icon' => 'exp_icon', 'title' => 'exp_title', 'desc' => 'exp_desc']));
             $data['build_cards_json'] = json_encode(svc_build_repeater($_POST,
@@ -240,6 +249,7 @@ if ($action === 'new' || $action === 'edit') {
     $repeater_data = [
         'hero_features' => svc_json_decode($hire_page['hero_features_json'] ?? null),
         'impact_stats' => svc_json_decode($hire_page['impact_stats_json'] ?? null),
+        'engineers' => svc_json_decode($hire_page['engineers_json'] ?? null),
         'expertise_cards' => svc_json_decode($hire_page['expertise_cards_json'] ?? null),
         'build_cards' => svc_json_decode($hire_page['build_cards_json'] ?? null),
         'engagement_models' => svc_json_decode($hire_page['engagement_models_json'] ?? null),
@@ -293,6 +303,7 @@ if ($action === 'new' || $action === 'edit') {
                 <?php
                 $tabs = [
                     'core' => 'Core', 'hero' => 'Hero', 'impact' => 'Impact Stats',
+                    'engineers' => 'Meet Our Engineers',
                     'expertise' => 'Expertise', 'build' => 'What They Build',
                     'engagement' => 'Engagement Models', 'why' => 'Why Hire', 'industries' => 'Industries',
                     'cta' => 'Mid CTA', 'final_cta' => 'Final CTA', 'cases' => 'Success Stories',
@@ -416,6 +427,35 @@ if ($action === 'new' || $action === 'edit') {
                             '<div class="form-row" style="margin-bottom:0;"><label>Title</label><input type="text" name="impact_title[]" placeholder="Production AI"></div>',
                             $repeater_data['impact_stats'],
                             ['input[name="impact_number[]"]' => 'number', 'input[name="impact_title[]"]' => 'title']
+                        ); ?>
+                    </div></div>
+                </div>
+
+                <!-- ============ MEET OUR ENGINEERS ============ -->
+                <div class="section-tabs__panel" data-panel="engineers">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <p class="text-muted" style="font-size:13px;margin-top:0;">
+                            Engineers featured on this specific hire page. First 4 shown initially on the frontend; the rest appear behind a "View All" button.
+                        </p>
+                        <?php svc_repeater_field(
+                            'engineers', 'Engineers', '+ Add Engineer',
+                            '<div class="form-row"><label>Photo Path <span class="text-muted">(copy from the Media Library)</span></label><input type="text" name="eng_image[]" placeholder="/uploads/hire/..."></div>' .
+                            '<div class="form-row"><label>Name</label><input type="text" name="eng_name[]"></div>' .
+                            '<div class="form-row"><label>Role</label><input type="text" name="eng_role[]"></div>' .
+                            '<div class="form-row"><label>Years of Experience</label><input type="number" name="eng_years[]" min="0" step="any"></div>' .
+                            '<div class="form-row"><label>LinkedIn URL <span class="text-muted">(optional)</span></label><input type="url" name="eng_linkedin[]" placeholder="https://www.linkedin.com/in/..."></div>' .
+                            '<div class="form-row"><label>Education <span class="text-muted">(one per line)</span></label><textarea name="eng_education[]" rows="3" placeholder="B.Tech in Computer Science&#10;AWS Certified Developer"></textarea></div>' .
+                            '<div class="form-row" style="margin-bottom:0;"><label>Skills <span class="text-muted">(one per line)</span></label><textarea name="eng_skills[]" rows="3" placeholder="PHP&#10;Laravel&#10;AWS"></textarea></div>',
+                            $repeater_data['engineers'],
+                            [
+                                'input[name="eng_image[]"]' => 'image',
+                                'input[name="eng_name[]"]' => 'name',
+                                'input[name="eng_role[]"]' => 'role',
+                                'input[name="eng_years[]"]' => 'years_of_experience',
+                                'input[name="eng_linkedin[]"]' => 'linkedin_url',
+                                'textarea[name="eng_education[]"]' => ['key' => 'education', 'type' => 'list'],
+                                'textarea[name="eng_skills[]"]' => ['key' => 'skills', 'type' => 'list'],
+                            ]
                         ); ?>
                     </div></div>
                 </div>

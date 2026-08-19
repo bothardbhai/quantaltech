@@ -11,6 +11,7 @@
  *   $page_title, $active_page      - core/hero, banner + <title>
  *   $hero_tag, $hero_title_html*, $hero_desc, $hero_features[{icon,text}]
  *   $impact_stats[{number,title}]
+ *   $engineers[{name,role,years_of_experience,image,linkedin_url,education[],skills[]}] - "Meet Our Engineers"
  *   $expertise_sub, $expertise_title_html*, $expertise_text, $expertise_cards[{icon,title,desc}]
  *   $build_sub, $build_title_html*, $build_text, $build_cards[{number,title,desc}]
  *   $engagement_sub, $engagement_title_html*, $engagement_text, $engagement_models[{icon,title,desc,featured}]
@@ -238,6 +239,96 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Meet Our Engineers -->
+	<?php if (!empty($engineers)): ?>
+		<section class="meet-engineers-section pt-50 pb-50 section-bg-3">
+			<div class="container">
+				<div class="sec-title text-center mb-70">
+					<h2>Meet Our Engineers</h2>
+				</div>
+				<div class="row g-4">
+					<?php foreach ($engineers as $i => $eng): ?>
+						<div class="col-lg-6 col-12<?= $i >= 4 ? ' d-none engineer-extra' : '' ?>">
+							<div class="engineer-card">
+								<div class="engineer-card__photo">
+									<img src="<?= e($eng['image'] ? media_url($eng['image']) : asset('images/quantal/team/default-avatar.svg')) ?>"
+										alt="<?= attr($eng['name']) ?>" loading="lazy">
+									<?php if (!empty($eng['linkedin_url'])): ?>
+										<a class="engineer-card__social" href="<?= attr($eng['linkedin_url']) ?>" target="_blank"
+											rel="noopener">
+											<i class="fa-brands fa-linkedin-in"></i>
+										</a>
+									<?php endif; ?>
+								</div>
+								<div class="engineer-card__info">
+									<h4>
+										<?= e($eng['name']) ?>
+									</h4>
+									<span class="engineer-card__exp">
+										<?= (float) $eng['years_of_experience'] ?> Years
+									</span>
+									<p class="engineer-card__role">
+										<?= e($eng['role']) ?>
+									</p>
+									<?php if (!empty($eng['education'])): ?>
+										<ul class="engineer-card__education">
+											<?php foreach ($eng['education'] as $item): ?>
+												<li>
+													<?= e($item) ?>
+												</li>
+											<?php endforeach; ?>
+										</ul>
+									<?php endif; ?>
+									<?php if (!empty($eng['skills'])): ?>
+										<div class="engineer-card__skills">
+											<?php foreach ($eng['skills'] as $skill): ?>
+												<span class="skill-tag">
+													<?= e($skill) ?>
+												</span>
+											<?php endforeach; ?>
+										</div>
+									<?php endif; ?>
+								</div>
+							</div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+				<?php if (count($engineers) > 4): ?>
+					<div class="row text-center mt-4">
+						<div>
+							<a href="javascript:void(0);" id="view-all-engineers"
+								class="theme-btn-main wow fadeInUp justify-content-center" data-wow-delay=".9s">
+
+								<span class="theme-btn-arrow-left">
+									<i class="far fa-long-arrow-right"></i>
+								</span>
+
+								<span class="theme-btn">View All</span>
+
+								<span class="theme-btn-arrow-right">
+									<i class="far fa-long-arrow-right"></i>
+								</span>
+
+							</a>
+						</div>
+					</div>
+								<?php endif; ?>
+			</div>
+		</section>
+		<?php if (count($engineers) > 4): ?>
+			<script>
+				(function () {
+					var btn = document.getElementById('view-all-engineers');
+					if (!btn) return;
+					btn.addEventListener('click', function () {
+						document.querySelectorAll('.engineer-extra').forEach(function (el) { el.classList.remove('d-none'); });
+						btn.remove();
+					});
+				})();
+			</script>
+		<?php endif; ?>
+	<?php endif; ?>
 
 	<!-- Expertise of Our Engineers -->
 	<?php if (!empty($expertise_cards)): ?>
