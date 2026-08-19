@@ -157,9 +157,9 @@ $page_robots = $story['robots'];
                         <span><?= e($crumb) ?></span>
                     </p>
 
-                    <?php if (!empty($cs['category'])): ?>
-                        <span class="ss-featured-category"><?= e($cs['category']) ?></span>
-                    <?php endif; ?>
+                    <!-- <?php if (!empty($cs['category'])): ?>
+                    <span class="ss-featured-category"><?= e($cs['category']) ?></span>
+                    <?php endif; ?> -->
 
                     <h1><?= e($cs['title']) ?></h1>
 

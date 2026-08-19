@@ -243,6 +243,12 @@
 	<!-- Meet Our Engineers -->
 	<?php if (!empty($engineers)): ?>
 		<section class="meet-engineers-section pt-50 pb-50 section-bg-3">
+			<div class="line-shape" aria-hidden="true">
+				<img src="<?= asset('images/home-1/features/line-shape.png') ?>" alt="">
+			</div>
+			<div class="ellipse-shape" aria-hidden="true">
+				<img src="<?= asset('images/home-1/features/ellipse-bg.png') ?>" alt="">
+			</div>
 			<div class="container">
 				<div class="sec-title text-center mb-70">
 					<h2>Meet Our Engineers</h2>
@@ -251,23 +257,28 @@
 					<?php foreach ($engineers as $i => $eng): ?>
 						<div class="col-lg-6 col-12<?= $i >= 4 ? ' d-none engineer-extra' : '' ?>">
 							<div class="engineer-card">
-								<div class="engineer-card__photo">
-									<img src="<?= e($eng['image'] ? media_url($eng['image']) : asset('images/quantal/team/default-avatar.svg')) ?>"
-										alt="<?= attr($eng['name']) ?>" loading="lazy">
+								<div class="engineer-card__media">
+									<div class="engineer-card__photo">
+										<img src="<?= e($eng['image'] ? media_url($eng['image']) : asset('images/quantal/team/default-avatar.svg')) ?>"
+											alt="<?= attr($eng['name']) ?>" loading="lazy">
+									</div>
 									<?php if (!empty($eng['linkedin_url'])): ?>
-										<a class="engineer-card__social" href="<?= attr($eng['linkedin_url']) ?>" target="_blank"
+										<a class="theme-btn btn-style-border engineer-card__linkedin-btn" href="<?= attr($eng['linkedin_url']) ?>" target="_blank"
 											rel="noopener">
 											<i class="fa-brands fa-linkedin-in"></i>
+											<span class="btn-title">LinkedIn</span>
 										</a>
 									<?php endif; ?>
 								</div>
 								<div class="engineer-card__info">
-									<h4>
-										<?= e($eng['name']) ?>
-									</h4>
-									<span class="engineer-card__exp">
-										<?= (float) $eng['years_of_experience'] ?> Years
-									</span>
+									<div class="engineer-card__header">
+										<h4>
+											<?= e($eng['name']) ?>
+										</h4>
+										<span class="engineer-card__exp">
+											Years of Experience <?= (float) $eng['years_of_experience'] ?>
+										</span>
+									</div>
 									<p class="engineer-card__role">
 										<?= e($eng['role']) ?>
 									</p>

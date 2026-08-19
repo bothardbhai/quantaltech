@@ -47,11 +47,11 @@ if (!empty($ss_featured_rows)) {
     $fr = $ss_featured_rows[0];
     $ss_featured = [
         'category' => $category_map[(int) ($fr['category_id'] ?? 0)] ?? '',
-        'title'    => $fr['title'],
-        'excerpt'  => $fr['excerpt'],
-        'image'    => media_url($fr['featured_image']),
-        'client'   => $fr['company_name'],
-        'slug'     => $fr['slug'],
+        'title' => $fr['title'],
+        'excerpt' => $fr['excerpt'],
+        'image' => media_url($fr['featured_image']),
+        'client' => $fr['company_name'],
+        'slug' => $fr['slug'],
     ];
 }
 
@@ -61,13 +61,13 @@ if ($pdo) {
     foreach (get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']) as $ss_story) {
         $ss_cid = (int) ($ss_story['category_id'] ?? 0);
         $ss_projects[] = [
-            'title'    => $ss_story['title'],
+            'title' => $ss_story['title'],
             'category' => $category_map[$ss_cid] ?? '',
-            'filter'   => $category_slug_map[$ss_cid] ?? '',
-            'excerpt'  => $ss_story['excerpt'],
-            'client'   => $ss_story['company_name'],
-            'image'    => media_url($ss_story['featured_image']),
-            'slug'     => $ss_story['slug'],
+            'filter' => $category_slug_map[$ss_cid] ?? '',
+            'excerpt' => $ss_story['excerpt'],
+            'client' => $ss_story['company_name'],
+            'image' => media_url($ss_story['featured_image']),
+            'slug' => $ss_story['slug'],
         ];
     }
 }
@@ -121,7 +121,8 @@ if ($pdo) {
 
             <div class="ss-hero-right">
                 <div class="ss-hero-visual">
-                    <img src="<?= asset('images/quantal/success-stories/success-stories-main.webp') ?>" alt="Success Stories">
+                    <img src="<?= asset('images/quantal/success-stories/success-stories-main.webp') ?>"
+                        alt="Success Stories">
                 </div>
             </div>
 
@@ -154,49 +155,50 @@ if ($pdo) {
 
     <!-- ============== FEATURED PROJECT ============== -->
     <?php if (!empty($ss_featured)): ?>
-    <section class="ss-featured-section pb-100">
-        <div class="container">
+        <section class="ss-featured-section pb-100">
+            <div class="container">
 
-            <div class="section-title text-center mb-70">
-                <div class="sub-title">
-                    <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
-                            fill="currentColor" />
-                    </svg>
-                    <span>Our Featured Project</span>
-                </div>
-                <h2 class="title split-text split-in-right">Our Latest <span>Success Story</span></h2>
-            </div>
-
-            <div class="ss-featured-card wow fadeInUp" data-wow-delay=".2s">
-                <div class="row g-0 align-items-center">
-                    <div class="col-lg-5 col-md-6 col-12">
-                        <div class="ss-featured-image">
-                            <span class="ss-featured-badge">Featured</span>
-                            <img src="<?= attr($ss_featured['image']) ?>" alt="<?= attr($ss_featured['title']) ?>">
-                        </div>
+                <div class="section-title text-center mb-70">
+                    <div class="sub-title">
+                        <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
+                                fill="currentColor" />
+                        </svg>
+                        <span>Our Featured Project</span>
                     </div>
-                    <div class="col-lg-7 col-md-6 col-12">
-                        <div class="ss-featured-content">
-                            <?php if (!empty($ss_featured['category'])): ?>
-                                <span class="ss-featured-category"><?= e($ss_featured['category']) ?></span>
-                            <?php endif; ?>
-                            <h3><?= e($ss_featured['title']) ?></h3>
-                            <p><?= e($ss_featured['excerpt']) ?></p>
-                            <div class="ss-featured-meta">
-                                <span><i class="fa-light fa-building"></i><?= e($ss_featured['client']) ?></span>
+                    <h2 class="title split-text split-in-right">Our Latest <span>Success Story</span></h2>
+                </div>
+
+                <div class="ss-featured-card wow fadeInUp" data-wow-delay=".2s">
+                    <div class="row g-0 align-items-center">
+                        <div class="col-lg-5 col-md-6 col-12">
+                            <div class="ss-featured-image">
+                                <span class="ss-featured-badge">Featured</span>
+                                <img src="<?= attr($ss_featured['image']) ?>" alt="<?= attr($ss_featured['title']) ?>">
                             </div>
-                            <a href="<?= !empty($ss_featured['slug']) ? url('/success-stories/' . $ss_featured['slug']) : '#' ?>" class="ss-read-link">
-                                Read Full Story <i class="far fa-arrow-right"></i>
-                            </a>
+                        </div>
+                        <div class="col-lg-7 col-md-6 col-12">
+                            <div class="ss-featured-content">
+                                <!-- <?php if (!empty($ss_featured['category'])): ?>
+                            <span class="ss-featured-category"><?= e($ss_featured['category']) ?></span>
+                            <?php endif; ?> -->
+                                <h3><?= e($ss_featured['title']) ?></h3>
+                                <p><?= e($ss_featured['excerpt']) ?></p>
+                                <div class="ss-featured-meta">
+                                    <span><i class="fa-light fa-building"></i><?= e($ss_featured['client']) ?></span>
+                                </div>
+                                <a href="<?= !empty($ss_featured['slug']) ? url('/success-stories/' . $ss_featured['slug']) : '#' ?>"
+                                    class="ss-read-link">
+                                    Read Full Story <i class="far fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
-    </section>
+            </div>
+        </section>
     <?php endif; ?>
 
     <!-- ============== CATEGORY FILTER + RECENT PROJECTS ============== -->
@@ -242,8 +244,9 @@ if ($pdo) {
                     <div class="case-block mix <?= attr($project['filter']) ?> wow fadeInUp"
                         data-wow-delay="<?= 0.1 + ($i % 3) * 0.1 ?>s">
                         <div class="image not-hide-cursor" data-cursor="View<br>Story">
-                            <a href="<?= attr($project_url) ?>" class="cursor-hide tp--hover-img" data-displacement="<?= attr($project['image']) ?>"
-                                data-intensity="0.6" data-speedin="1" data-speedout="1">
+                            <a href="<?= attr($project_url) ?>" class="cursor-hide tp--hover-img"
+                                data-displacement="<?= attr($project['image']) ?>" data-intensity="0.6" data-speedin="1"
+                                data-speedout="1">
                                 <img src="<?= attr($project['image']) ?>" alt="<?= attr($project['title']) ?>">
                             </a>
                         </div>
