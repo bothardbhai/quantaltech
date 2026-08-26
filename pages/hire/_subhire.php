@@ -28,7 +28,7 @@
 ?>
 
 <!-- Start main-content -->
-<section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
+<!-- <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
 	<div class="container">
 		<h1 style="color:#fff;font-size:36px;margin:25px 0 12px;line-height:1.2;"><?= e($page_title) ?></h1>
 		<p style="opacity:0.75;margin:0;font-size:14px;">
@@ -37,7 +37,7 @@
 			<span><?= e($page_label ?? $page_title) ?></span>
 		</p>
 	</div>
-</section>
+</section> -->
 <!-- end main-content -->
 
 <div class="services-details__content">
@@ -263,8 +263,8 @@
 											alt="<?= attr($eng['name']) ?>" loading="lazy">
 									</div>
 									<?php if (!empty($eng['linkedin_url'])): ?>
-										<a class="theme-btn btn-style-border engineer-card__linkedin-btn" href="<?= attr($eng['linkedin_url']) ?>" target="_blank"
-											rel="noopener">
+										<a class="theme-btn btn-style-border engineer-card__linkedin-btn"
+											href="<?= attr($eng['linkedin_url']) ?>" target="_blank" rel="noopener">
 											<i class="fa-brands fa-linkedin-in"></i>
 											<span class="btn-title">LinkedIn</span>
 										</a>
@@ -276,7 +276,7 @@
 											<?= e($eng['name']) ?>
 										</h4>
 										<span class="engineer-card__exp">
-											Years of Experience <?= (float) $eng['years_of_experience'] ?>
+											<?= (float) $eng['years_of_experience'] ?> Years of Experience
 										</span>
 									</div>
 									<p class="engineer-card__role">
@@ -324,7 +324,7 @@
 							</a>
 						</div>
 					</div>
-								<?php endif; ?>
+				<?php endif; ?>
 			</div>
 		</section>
 		<?php if (count($engineers) > 4): ?>
