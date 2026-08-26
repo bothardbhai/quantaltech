@@ -1,161 +1,212 @@
 <?php
 
 /**
- * Podcasts listing page.
+ * Podcast — main listing page.
  *
- * Future database integration ready for webinar event management.
+ * Structure/CSS classes deliberately mirror pages/success-stories/index.php
+ * (.podcast-page wrapper reusing .ss-hero and .ss-featured-card building
+ * blocks, decor-glow, section-title, etc.) per the project's
+ * "Podcast should look like another Success Stories" design requirement.
+ * Featured episode and All Episodes grid are pulled from the `podcasts`
+ * table (see admin/podcasts.php). Main-page SEO comes from the existing
+ * Pages & SEO Master (admin/pages.php), keyed on this page's path — same
+ * pattern as success-stories/index.php.
  */
-$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Podcasts - Quantal AI';
-$active_page = 'resources';
 
 $pdo = db();
-$webinars_per_page = 6;
-$current_page = max(1, (int) ($_GET['page'] ?? 1));
-$offset = ($current_page - 1) * $webinars_per_page;
+$page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'AI Podcast for Business Leaders - Quantal AI';
+$active_page = 'resources';
 
-$webinars = [];
-$total = 0;
-$filter = $_GET['filter'] ?? 'upcoming';  // upcoming, past, all
-
-// Placeholder: when podcasts table is added, replace this with live query
-// For now, showing template structure
-if (false && $pdo) {
-    try {
-        $where = "status = 'published'";
-        if ($filter === 'upcoming') {
-            $where .= ' AND scheduled_at > NOW()';
-        } elseif ($filter === 'past') {
-            $where .= ' AND scheduled_at <= NOW()';
-        }
-
-        $total = (int) $pdo->query("SELECT COUNT(*) FROM webinars WHERE $where")->fetchColumn();
-        $stmt = $pdo->prepare(
-            "SELECT id, slug, title, excerpt, featured_image, featured_alt, speaker_name, speaker_title, 
-                    scheduled_at, duration_minutes, registration_url, published_at
-             FROM webinars
-             WHERE $where
-             ORDER BY scheduled_at DESC, id DESC
-             LIMIT :lim OFFSET :off"
-        );
-        $stmt->bindValue(':lim', $webinars_per_page, PDO::PARAM_INT);
-        $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
-        $stmt->execute();
-        $webinars = $stmt->fetchAll();
-    } catch (PDOException $e) {
-        // tables may not exist yet
+// --- Featured episode: admin featured=1, else most recent published ---
+$pd_featured = null;
+if ($pdo) {
+    $featured_rows = get_podcasts($pdo, ['status' => 'published', 'featured_only' => true]);
+    if (empty($featured_rows)) {
+        $featured_rows = get_podcasts($pdo, ['status' => 'published']);
+    }
+    if (!empty($featured_rows)) {
+        $pd_featured = podcast_card_data($featured_rows[0]);
     }
 }
 
-$total_pages = max(1, (int) ceil($total / $webinars_per_page));
+// --- All Episodes grid ---
+$pd_episodes = [];
+if ($pdo) {
+    foreach (get_podcasts($pdo, ['status' => 'published']) as $pd_row) {
+        $pd_episodes[] = podcast_card_data($pd_row);
+    }
+}
+
+// Optional Spotify link — spec asks to add it "if available"; no URL was
+// supplied, so the button only renders once this constant is defined
+// (e.g. in config), never a guessed/fabricated URL.
+$pd_spotify_url = defined('PODCAST_SPOTIFY_URL') ? PODCAST_SPOTIFY_URL : '';
 ?>
 
-<!-- Page Banner -->
-<section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
-    <div class="container">
-        <h1 style="color:#fff;font-size:42px;margin:25px 0 12px;">Podcasts</h1>
-        <p style="opacity:0.7;margin:0;">
-            <a href="/" style="color:#72aee6;">Home</a> &nbsp;/&nbsp; <a href="#" style="color:#72aee6;">Resources</a> &nbsp;/&nbsp; Podcasts
-        </p>
-    </div>
-</section>
+<div class="podcast-page">
 
-<!-- Filters -->
-<section style="padding:40px 0;border-bottom:1px solid rgba(255,255,255,0.1);">
-    <div class="container">
-        <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
-            <a href="?filter=upcoming" class="theme-btn" style="<?= $filter === 'upcoming' ? 'background:#2fe7d9;color:#000;' : 'background:transparent;border:1px solid #2fe7d9;' ?>">
-                Upcoming
-            </a>
-            <a href="?filter=past" class="theme-btn" style="<?= $filter === 'past' ? 'background:#2fe7d9;color:#000;' : 'background:transparent;border:1px solid #2fe7d9;' ?>">
-                Past Podcasts
-            </a>
-            <a href="?filter=all" class="theme-btn" style="<?= $filter === 'all' ? 'background:#2fe7d9;color:#000;' : 'background:transparent;border:1px solid #2fe7d9;' ?>">
-                All
-            </a>
-        </div>
-    </div>
-</section>
+    <!-- ============== HERO ============== -->
+    <section class="ss-hero">
+        <div class="container">
 
-<section class="news-wrapper section-padding">
-    <div class="container">
-        <?php if (empty($webinars)): ?>
-            <div style="text-align:center;padding:80px 20px;">
-                <h3>No Podcasts Available</h3>
-                <p class="text-muted">Our webinar schedule is coming soon. Stay tuned for insights on AI, automation, and digital transformation.</p>
+            <div class="ss-hero-left">
+
+                <p class="ss-breadcrumb">
+                    <a href="<?= url('/') ?>">Home</a>
+                    <span class="sep">/</span>
+                    <span>Podcast</span>
+                </p>
+
+                <span class="hero-badge">
+                    <i class="fa-brands fa-youtube"></i>
+                    Quantal AI Podcast
+                </span>
+
+                <h1>
+                    AI Podcast for <span>Business Leaders</span>
+                </h1>
+
+                <p>
+                    Welcome to the Quantal AI Podcast where we sit down with CEOs, founders, and operators
+                    who are moving beyond AI experimentation and actually deploying AI that delivers real
+                    business results. No hype, no theoretical frameworks. Just honest conversations about
+                    what it really takes to build and scale AI-powered businesses. A must-listen AI business
+                    podcast for leaders who want actionable insights, not empty promises.
+                </p>
+
+                <div class="pd-subscribe-row">
+                    <a href="https://www.youtube.com/@QuantaltechAI" target="_blank" rel="noopener"
+                        class="theme-btn btn-style-one">
+                        <span class="btn-title"><i class="fa-brands fa-youtube"></i> Subscribe on YouTube</span>
+                    </a>
+                    <?php if ($pd_spotify_url !== ''): ?>
+                        <a href="<?= attr($pd_spotify_url) ?>" target="_blank" rel="noopener"
+                            class="theme-btn btn-style-border">
+                            <span class="btn-title"><i class="fa-brands fa-spotify"></i> Listen on Spotify</span>
+                        </a>
+                    <?php endif; ?>
+                </div>
+
             </div>
-        <?php else: ?>
-            <div class="row g-4">
-                <?php foreach ($webinars as $webinar): ?>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="news-items wow fadeInUp" data-wow-delay=".3s">
-                            <div class="news-image" style="position:relative;">
-                                <?php if ($webinar['featured_image']): ?>
-                                    <img src="<?= attr($webinar['featured_image']) ?>" alt="<?= attr($webinar['featured_alt'] ?: $webinar['title']) ?>" style="width:100%;display:block;">
-                                <?php else: ?>
-                                    <img src="<?= asset('images/home-1/news/news-1.jpg') ?>" alt="<?= attr($webinar['title']) ?>" style="width:100%;display:block;">
+
+            <div class="ss-hero-right">
+                <div class="ss-hero-visual pd-hero-visual">
+                    <!-- Placeholder mic graphic — swap for a real photo asset
+                         under assets/images/quantal/podcast/ once supplied. -->
+                    <svg viewBox="0 0 200 200" class="pd-hero-mic" aria-hidden="true">
+                        <rect x="85" y="20" width="30" height="80" rx="15" fill="currentColor" />
+                        <path d="M60 90 a40 40 0 0 0 80 0" stroke="currentColor" stroke-width="8" fill="none"
+                            stroke-linecap="round" />
+                        <line x1="100" y1="130" x2="100" y2="160" stroke="currentColor" stroke-width="8"
+                            stroke-linecap="round" />
+                        <line x1="70" y1="160" x2="130" y2="160" stroke="currentColor" stroke-width="8"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============== FEATURED EPISODE ============== -->
+    <?php if (!empty($pd_featured)): ?>
+        <section class="ss-featured-section pb-100">
+            <div class="container">
+
+                <div class="section-title text-center mb-70">
+                    <div class="sub-title">
+                        <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
+                                fill="currentColor" />
+                        </svg>
+                        <span>Featured Episode</span>
+                    </div>
+                    <h2 class="title split-text split-in-right">Our Latest <span>Episode</span></h2>
+                </div>
+
+                <div class="ss-featured-card pd-featured-card wow fadeInUp" data-wow-delay=".2s">
+                    <div class="row g-0 align-items-center">
+                        <div class="col-lg-5 col-md-6 col-12">
+                            <div class="ss-featured-image pd-featured-image">
+                                <!-- <span class="ss-featured-badge">Featured Episode</span> -->
+                                <img src="<?= attr($pd_featured['thumbnail']) ?>" alt="<?= attr($pd_featured['title']) ?>">
+                                <?php if (!empty($pd_featured['video_id'])): ?>
+                                    <!-- <button type="button" class="pd-play-btn pd-play-btn--lg"
+                                        data-video-id="<?= attr($pd_featured['video_id']) ?>"
+                                        aria-label="Play episode: <?= attr($pd_featured['title']) ?>">
+                                        <i class="fas fa-play"></i>
+                                    </button> -->
                                 <?php endif; ?>
-                                <span class="badge" style="position:absolute;top:15px;right:15px;background:#2fe7d9;color:#000;padding:8px 12px;border-radius:4px;font-size:12px;font-weight:600;">
-                                    WEBINAR
-                                </span>
                             </div>
-                            <div class="news-content">
-                                <ul class="post-list">
-                                    <li>
-                                        <i class="fa-light fa-calendar-days"></i>
-                                        <?php if ($webinar['scheduled_at']): ?>
-                                            <?= e(date('M j, Y', strtotime((string) $webinar['scheduled_at']))) ?>
-                                        <?php endif; ?>
-                                    </li>
-                                    <li>
-                                        <i class="fa-light fa-clock"></i>
-                                        <?= e($webinar['duration_minutes'] ?? 60) ?> min
-                                    </li>
-                                </ul>
-                                <h4 class="title"><a href="#"><?= e($webinar['title']) ?></a></h4>
-                                <p class="speaker" style="color:#2fe7d9;font-size:13px;margin:10px 0;">
-                                    <?= e($webinar['speaker_name'] ?? 'Speaker') ?>
-                                    <?php if ($webinar['speaker_title']): ?>
-                                        <br><span style="color:#999;font-size:12px;"><?= e($webinar['speaker_title']) ?></span>
+                        </div>
+                        <div class="col-lg-7 col-md-6 col-12">
+                            <div class="ss-featured-content">
+                                <h3><?= e($pd_featured['title']) ?></h3>
+                                <div class="ss-featured-meta">
+                                    <span><i
+                                            class="fa-light fa-user"></i><?= e($pd_featured['guest_name']) ?><?php if (!empty($pd_featured['guest_designation'])): ?>,
+                                            <?= e($pd_featured['guest_designation']) ?>     <?php endif; ?></span>
+                                    <?php if (!empty($pd_featured['publish_date'])): ?>
+                                        <span><i
+                                                class="fa-light fa-calendar-days"></i><?= e($pd_featured['publish_date']) ?></span>
                                     <?php endif; ?>
-                                </p>
-                                <p class="text"><?= e($webinar['excerpt']) ?></p>
-                                <a href="<?= attr($webinar['registration_url'] ?? '#') ?>" class="read-more" target="_blank">Register <i class="fa-regular fa-arrow-right"></i></a>
+                                </div>
+                                <a href="<?= attr($pd_featured['url']) ?>" class="ss-read-link">
+                                    Watch Full Episode <i class="far fa-arrow-right"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                </div>
+
             </div>
-            
-            <!-- Pagination -->
-            <?php if ($total_pages > 1): ?>
-                <div class="pagination-wrapper" style="text-align:center;margin-top:60px;">
-                    <ul class="pagination">
-                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <li>
-                                <?php if ($i === $current_page): ?>
-                                    <span class="page-link active"><?= $i ?></span>
-                                <?php else: ?>
-                                    <a href="?page=<?= $i ?>&filter=<?= attr($filter) ?>" class="page-link"><?= $i ?></a>
-                                <?php endif; ?>
-                            </li>
-                        <?php endfor; ?>
-                    </ul>
+        </section>
+    <?php endif; ?>
+
+    <!-- ============== ALL EPISODES GRID ============== -->
+    <section class="ss-projects-section pd-episodes-section pt-100 pb-100 section-bg-3">
+        <div class="container">
+
+            <div class="section-title text-center mb-40">
+                <div class="sub-title">
+                    <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
+                            fill="currentColor" />
+                    </svg>
+                    <span>All Episodes</span>
+                </div>
+                <h2 class="title split-text split-in-right">Watch All <span>Episodes</span></h2>
+            </div>
+
+            <?php if (empty($pd_episodes)): ?>
+                <div class="text-center" style="padding:60px 20px;color:#c7c7c7;">
+                    <p>No episodes published yet. Check back soon.</p>
+                </div>
+            <?php else: ?>
+                <div class="row g-4 pd-episodes-grid">
+                    <?php foreach ($pd_episodes as $i => $episode): ?>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <?php
+                            $episode_slot = 'pd-card wow fadeInUp';
+                            $episode_delay = 0.1 + ($i % 4) * 0.1;
+                            ?>
+                            <div class="wow fadeInUp" data-wow-delay="<?= $episode_delay ?>s">
+                                <?php $slot_class = 'pd-card';
+                                include PARTIALS_DIR . '/podcast-card.php'; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             <?php endif; ?>
-        <?php endif; ?>
-    </div>
-</section>
 
-<!-- Newsletter CTA -->
-<section style="padding:80px 0;background:linear-gradient(135deg, rgba(47,231,217,0.1) 0%, rgba(13,13,13,0) 100%);">
-    <div class="container">
-        <div style="text-align:center;max-width:600px;margin:0 auto;">
-            <h2 style="color:#fff;margin:0 0 15px;">Never Miss a Podcast</h2>
-            <p style="color:#ccc;margin:0 0 30px;">Subscribe to our newsletter to get updates on upcoming podcasts, AI insights, and industry trends.</p>
-            <form action="/newsletter" method="post" style="display:flex;gap:10px;">
-                <input type="email" name="email" placeholder="Enter your email" required style="flex:1;padding:14px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(47,231,217,0.3);border-radius:6px;color:#fff;outline:none;">
-                <button type="submit" class="theme-btn" style="background:#2fe7d9;color:#000;padding:14px 30px;border:none;border-radius:6px;font-weight:600;cursor:pointer;">Subscribe</button>
-            </form>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- ============== FINAL CTA ============== -->
+    <?php include PARTIALS_DIR . '/podcast-cta.php'; ?>
+
+</div>
+
+<?php include PARTIALS_DIR . '/youtube-modal.php'; ?>

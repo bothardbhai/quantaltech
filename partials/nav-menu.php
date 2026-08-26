@@ -84,7 +84,7 @@ $menu = [
         'children' => [
             ['label' => 'Blogs', 'href' => '/blog', 'key' => 'blog'],
             ['label' => 'Success Stories', 'href' => '/success-stories', 'key' => 'resources'],
-            // ['label' => 'Podcasts', 'href' => '/podcast', 'key' => 'resources'],
+            ['label' => 'Podcasts', 'href' => '/podcast', 'key' => 'resources'],
             // ['label' => 'Terms of Service', 'href' => '/terms-of-service', 'key' => 'terms'],
             // ['label' => 'Refund & Cancellation Policy', 'href' => '/refund-policy', 'key' => 'refund'],
         ],

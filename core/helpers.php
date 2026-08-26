@@ -137,6 +137,30 @@ function first_nonempty(string ...$candidates): string
 }
 
 /**
+ * Extract the 11-character video ID from a supported YouTube URL shape
+ * (youtu.be/ID or youtube.com/watch?v=ID, with or without extra query
+ * params like ?si=...). Returns null for anything else so callers never
+ * pass an unvalidated string into an <iframe src> or image URL.
+ */
+function youtube_id_from_url(?string $url): ?string
+{
+    $url = trim((string) $url);
+    if ($url === '') {
+        return null;
+    }
+    if (preg_match('#youtu\.be/([A-Za-z0-9_-]{11})#', $url, $m)) {
+        return $m[1];
+    }
+    if (preg_match('#[?&]v=([A-Za-z0-9_-]{11})#', $url, $m)) {
+        return $m[1];
+    }
+    if (preg_match('#youtube\.com/embed/([A-Za-z0-9_-]{11})#', $url, $m)) {
+        return $m[1];
+    }
+    return null;
+}
+
+/**
  * Truncate a description/excerpt for card previews. Strips any HTML tags,
  * decodes entities, collapses/trims whitespace, then cuts to $limit
  * characters — appending "..." only when the source was actually longer.

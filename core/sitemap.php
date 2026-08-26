@@ -240,21 +240,34 @@ function sitemap_source_success_stories(): array
 }
 
 /**
- * Webinars / Podcast — pages/podcast/index.php (the static listing page,
- * already included via sitemap_source_static_pages()) currently renders a
- * placeholder with its DB query disabled ("if (false && $pdo)" in that
- * file), so there is no live /podcast/{slug} (or /webinar/{slug}) detail
- * template for core/router.php to route to. Per the "don't create URLs for
- * records with no public frontend page" rule, this intentionally returns
- * no items — wire in a `SELECT slug, updated_at FROM webinars WHERE
- * status = 'published'` loop here (mirroring the sources above) the day a
- * real detail route ships.
+ * Podcast — /podcast/{slug} for every published, non-noindex row in the
+ * `podcasts` table. The /podcast hub itself is a static page, handled by
+ * sitemap_source_static_pages(). (Historically this sourced the `webinars`
+ * table before a real /podcast/{slug} detail route existed — see
+ * pages/podcast/single.php and core/router.php's Podcast routes block.)
  *
  * @return array<string, ?string> loc => lastmod
  */
 function sitemap_source_webinars(): array
 {
-    return [];
+    $pdo = db();
+    $items = [];
+    if (!$pdo) {
+        return $items;
+    }
+    try {
+        $stmt = $pdo->query("SELECT slug, robots, canonical, updated_at FROM podcasts WHERE status = 'published'");
+        foreach ($stmt as $r) {
+            if (stripos((string) $r['robots'], 'noindex') !== false) {
+                continue;
+            }
+            $loc = ($r['canonical'] ?? '') !== '' ? $r['canonical'] : '/podcast/' . $r['slug'];
+            $items[sitemap_absolute_url($loc)] = $r['updated_at'];
+        }
+    } catch (PDOException $e) {
+        // podcasts table missing — skip
+    }
+    return $items;
 }
 
 /**

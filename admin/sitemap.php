@@ -116,7 +116,7 @@ require __DIR__ . '/_header.php';
                 <tr><td>Services</td><td><?= (int) $sources['services'] ?></td></tr>
                 <tr><td>Hire pages</td><td><?= (int) $sources['hire_pages'] ?></td></tr>
                 <tr><td>Success stories</td><td><?= (int) $sources['success_stories'] ?></td></tr>
-                <tr><td>Webinars / Podcast <span class="text-muted">(no public detail route yet)</span></td><td><?= (int) $sources['webinars'] ?></td></tr>
+                <tr><td>Podcast</td><td><?= (int) $sources['webinars'] ?></td></tr>
                 <tr>
                     <td><strong>Total before duplicate removal</strong></td>
                     <td><strong><?= (int) $sitemap_result['raw_total'] ?></strong></td>

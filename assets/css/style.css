@@ -3632,7 +3632,7 @@ Scroll To Top style
 
 ***/
 .section-padding {
-  padding: 120px 0;
+  padding: 100px 0;
 }
 @media (max-width: 1199.98px) {
   .section-padding {
@@ -29025,4 +29025,545 @@ body {
     max-width: 560px;
     min-width: 0;
     margin: 0;
+}
+
+/*=========================================================
+    PODCAST PAGES
+    Scoped under .podcast-page / .podcast-detail-page,
+    mirroring the Success Stories block above component-for-
+    component (same hero/breadcrumb/featured-card treatment,
+    same decor-glow/section-title/hero-features/contact-details
+    site-wide components reused as-is). Only genuinely new
+    markup — the episode card, play button, video embed/modal,
+    and the placeholder hero mic graphic — gets new rules.
+=========================================================*/
+
+/* ---------- Breadcrumb (inside hero) ---------- */
+.podcast-page .ss-breadcrumb {
+    font-size: 14px;
+    opacity: .7;
+    margin-bottom: 28px;
+}
+.podcast-page .ss-breadcrumb a {
+    color: #72aee6;
+}
+.podcast-page .ss-breadcrumb span.sep {
+    margin: 0 8px;
+    opacity: .6;
+}
+
+/* ---------- Hero ---------- */
+.podcast-page .ss-hero {
+    position: relative;
+    padding: 70px 0 90px;
+    overflow: hidden;
+}
+.podcast-page .ss-hero:before {
+    content: "";
+    position: absolute;
+    width: 550px;
+    height: 550px;
+    top: -220px;
+    left: -180px;
+    border-radius: 50%;
+    background: radial-gradient(rgba(47, 231, 217, 0.16), transparent 70%);
+    pointer-events: none;
+}
+.podcast-page .ss-hero .container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+}
+.podcast-page .ss-hero-left {
+    width: 56%;
+}
+.podcast-page .ss-hero-right {
+    width: 40%;
+    flex-shrink: 0;
+}
+.podcast-page .ss-hero-left h1 {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #fff;
+    margin: 0px 0 18px;
+}
+.podcast-page .ss-hero-left h1 span {
+    color: var(--theme-color1);
+}
+.podcast-page .ss-hero-left p {
+    font-size: 17px;
+    line-height: 30px;
+    color: #c7c7c7;
+    max-width: 600px;
+    margin-bottom: 36px;
+}
+.podcast-page .pd-subscribe-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.podcast-page .pd-subscribe-row .btn-title i {
+    margin-right: 8px;
+}
+
+/* Decorative visual card on the right of the hero */
+.podcast-page .ss-hero-visual {
+    position: relative;
+    height: 380px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.podcast-page .ss-hero-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+/* Placeholder mic graphic — swap this block for a real photo
+   under assets/images/quantal/podcast/ once one is supplied. */
+.podcast-page .pd-hero-mic {
+    width: 180px;
+    height: 180px;
+    color: var(--theme-color1);
+    opacity: .9;
+}
+
+@media (max-width: 991px) {
+    .podcast-page .ss-hero {
+        padding: 130px 0 60px;
+    }
+    .podcast-page .ss-hero .container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 40px;
+    }
+    .podcast-page .ss-hero-left,
+    .podcast-page .ss-hero-right {
+        width: 100%;
+    }
+    .podcast-page .ss-hero-left h1 {
+        font-size: 42px;
+    }
+    .podcast-page .ss-hero-visual {
+        height: 260px;
+    }
+}
+@media (max-width: 575px) {
+    .podcast-page .ss-hero-left h1 {
+        font-size: 32px;
+    }
+}
+
+/* ---------- Featured episode ----------
+   Column split (Bootstrap .row > .col-lg-5/.col-lg-7, not CSS Grid) —
+   .pd-featured-card only supplies the card's visual chrome, same as
+   .ss-featured-card on the Success Stories listing page. */
+.podcast-page .pd-featured-card {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    background: #111315;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.podcast-page .pd-featured-image {
+    position: relative;
+    min-height: 400px;
+    height: 100%;
+}
+.podcast-page .pd-featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.podcast-page .ss-featured-content {
+    padding: 0px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.podcast-page .ss-featured-content h3 {
+    color: #fff;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 16px;
+}
+.podcast-page .ss-featured-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 26px;
+    font-size: 14px;
+    color: #9a9a9a;
+}
+.podcast-page .ss-featured-meta span i {
+    color: var(--theme-color1);
+    margin-right: 7px;
+}
+.podcast-page .ss-read-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--theme-color1);
+    font-weight: 600;
+    transition: .3s;
+}
+.podcast-page .ss-read-link i {
+    transition: transform .3s;
+}
+.podcast-page .ss-read-link:hover {
+    color: #fff;
+}
+.podcast-page .ss-read-link:hover i {
+    transform: translateX(5px);
+}
+@media (max-width: 767px) {
+    .podcast-page .pd-featured-image {
+        min-height: 220px;
+    }
+    .podcast-page .ss-featured-content {
+        padding: 32px 26px;
+    }
+    .podcast-page .ss-featured-content h3 {
+        font-size: 24px;
+    }
+}
+
+/* ---------- Play button (Featured Episode card, All Episodes /
+   Watch More cards, and the single-episode video facade) ---------- */
+.podcast-page .pd-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.92);
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .3s;
+    z-index: 3;
+}
+.podcast-page .pd-play-btn i {
+    margin-left: 3px;
+}
+.podcast-page .pd-play-btn:hover {
+    background: var(--theme-color1);
+    transform: translate(-50%, -50%) scale(1.08);
+}
+.podcast-page .pd-play-btn--lg {
+    width: 76px;
+    height: 76px;
+    font-size: 22px;
+}
+
+/* ---------- All Episodes / Watch More Episodes card ----------
+   Same visual language as .case-block (rounded image, hover-zoom,
+   underline-on-hover title, circular arrow CTA) but full-width so it
+   fills its Bootstrap grid column instead of .case-block's fixed
+   470px/350px masonry width. */
+.podcast-page .pd-card {
+    width: 100%;
+    position: relative;
+}
+.podcast-page .pd-card-image {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    border-radius: 20px;
+}
+.podcast-page .pd-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+.podcast-page .pd-card:hover .pd-card-image img {
+    transform: scale(1.08);
+}
+.podcast-page .pd-card .content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+.podcast-page .pd-card .title-area {
+    min-width: 0;
+}
+.podcast-page .pd-card .content .title {
+    padding: 22px 0 6px;
+    font-weight: 500;
+    font-size: 18px;
+}
+.podcast-page .pd-card .content .title a {
+    color: var(--theme-color-white);
+    background-position: 0 95%;
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+    background-image: linear-gradient(180deg, var(--theme-color1) 0%, var(--theme-color1) 100%);
+}
+.podcast-page .pd-card .content .title a:hover {
+    color: var(--theme-color1);
+    background-size: 100% 2px;
+}
+.podcast-page .pd-card .content .text {
+    color: #b9b9b9;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+.podcast-page .pd-guest-designation {
+    color: #8a8a8a;
+}
+.podcast-page .pd-guest-designation:before {
+    content: " \2014 ";
+}
+.podcast-page .pd-card-date {
+    color: #8a8a8a;
+    font-size: 13px;
+    margin: 0;
+}
+.podcast-page .pd-card-date i {
+    color: var(--theme-color1);
+    margin-right: 6px;
+}
+.podcast-page .pd-card .arrow-icon {
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: var(--theme-color-white);
+    color: var(--theme-color-black);
+    transition: .3s;
+}
+.podcast-page .pd-card .arrow-icon i {
+    transition: .3s;
+    rotate: -45deg;
+}
+.podcast-page .pd-card:hover .arrow-icon {
+    background-color: var(--theme-color1);
+}
+.podcast-page .pd-card:hover .arrow-icon i {
+    rotate: 0deg;
+}
+
+/* ---------- All Episodes grid heading spacing (site-wide .section-title
+   already handles the rest) ---------- */
+.podcast-page .pd-episodes-section .pd-episodes-grid {
+    row-gap: 40px;
+}
+
+/* ---------- Detail page hero ---------- */
+.podcast-detail-page .ss-detail-hero {
+    position: relative;
+    padding: 0px 0 80px;
+    overflow: hidden;
+}
+.podcast-detail-page .ss-detail-hero .row {
+    row-gap: 40px;
+}
+.podcast-detail-page .ss-detail-hero .row > div {
+    /* Same fix as .success-stories-page .ss-detail-hero .row > div: flex
+       items default to min-width:auto, which lets a large intrinsic image
+       size force the column wider than its intended share and get clipped
+       by this section's overflow:hidden. min-width:0 lets it shrink to the
+       column's actual (100%/41.6%) width as intended. */
+    min-width: 0;
+}
+@media (max-width: 991px) {
+    .podcast-detail-page .ss-detail-hero .row > div {
+        /* Below the lg breakpoint Bootstrap gives these columns no explicit
+           width (only .col-lg-7/.col-lg-5 set widths, and only at >=992px),
+           so they fall back to being plain flex children whose basis can
+           still be pulled wide by the hero visual's size. Forcing an
+           explicit 100% flex-basis here is a harder guarantee than
+           width:100% alone that each column truly fills the row once
+           stacked, instead of overflowing it. */
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+.podcast-detail-page .ss-detail-hero h1 {
+    color: #fff;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 18px;
+    max-width: 820px;
+}
+.podcast-detail-page .pd-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 26px;
+    color: #a9a9a9;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+.podcast-detail-page .pd-detail-meta i {
+    color: var(--theme-color1);
+    margin-right: 8px;
+}
+@media (max-width: 575px) {
+    .podcast-detail-page .ss-detail-hero h1 {
+        font-size: 32px;
+    }
+}
+
+/* ---------- Embedded video (single episode page) ---------- */
+.podcast-detail-page .pd-video-embed {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #000;
+}
+.podcast-detail-page .pd-video-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* ---------- Key Takeaways decorative background ----------
+   Same line-shape.png treatment/positioning as .skill-section1 .line-shape
+   (pages/home.php), reused as-is under a page-specific section class since
+   this section has no other unique hook of its own to scope onto. */
+.podcast-detail-page .pd-takeaways-section {
+    position: relative;
+}
+.podcast-detail-page .pd-takeaways-section .line-shape {
+    position: absolute;
+    top: -36%;
+    left: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ---------- Episode Highlights decorative background ----------
+   Same light-bg.png / object-shape.png treatment/positioning as
+   .skill-section1 (pages/home.php). object-shape also carries
+   .tm-gsap-animate-circle, already wired site-wide in
+   assets/js/gsap-custom.js — no new JS needed. */
+.podcast-detail-page .pd-highlights-section {
+    position: relative;
+}
+.podcast-detail-page .pd-highlights-section .light-bg {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    top: -36%;
+    z-index: -1;
+    pointer-events: none;
+}
+.podcast-detail-page .pd-highlights-section .light-bg img {
+    height: 100%;
+}
+.podcast-detail-page .pd-highlights-section .object-shape {
+    position: absolute;
+    top: 100px;
+    right: -150px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ---------- Shared YouTube video modal (Featured Episode / grid cards
+   play buttons on both podcast pages) ---------- */
+.pd-video-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.pd-video-modal.is-open {
+    display: flex;
+}
+.pd-video-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+}
+.pd-video-modal__dialog {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    z-index: 1;
+}
+.pd-video-modal__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+.pd-video-modal__frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+.pd-video-modal__close {
+    position: absolute;
+    top: -46px;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .3s;
+}
+.pd-video-modal__close:hover {
+    background: var(--theme-color1);
+    color: #000;
+}
+body.pd-modal-open {
+    overflow: hidden;
+}
+@media (max-width: 575px) {
+    .pd-video-modal {
+        padding: 12px;
+    }
+    .pd-video-modal__close {
+        top: -40px;
+        width: 34px;
+        height: 34px;
+    }
 }

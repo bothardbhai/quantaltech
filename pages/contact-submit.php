@@ -33,7 +33,13 @@ if (!empty($_POST['form_botcheck'])) {
 }
 
 // Collect and sanitise
+$first_name = trim(strip_tags($_POST['form_first_name'] ?? ''));
+$last_name = trim(strip_tags($_POST['form_last_name'] ?? ''));
 $name = trim(strip_tags($_POST['form_name'] ?? ''));
+if ($name === '' && ($first_name !== '' || $last_name !== '')) {
+    $name = trim($first_name . ' ' . $last_name);
+}
+$company = trim(strip_tags($_POST['form_company'] ?? ''));
 $email = trim($_POST['form_email'] ?? '');
 $subject = trim(strip_tags($_POST['form_subject'] ?? ''));
 $phone = trim(strip_tags($_POST['form_phone'] ?? ''));
@@ -63,6 +69,11 @@ $ip = $en($_SERVER['REMOTE_ADDR'] ?? '');
 $to_addr = defined('CONTACT_TO_EMAIL') ? CONTACT_TO_EMAIL : 'contact@quantaltech.ai';
 $to_name = defined('CONTACT_TO_NAME') ? CONTACT_TO_NAME : 'Quantal AI Team';
 
+$company_row = $company !== ''
+    ? '<tr style="background:#f9f9f9;"><td style="padding:10px 8px;font-weight:600;color:#555;">Company</td>'
+        . '<td style="padding:10px 8px;">' . $en($company) . '</td></tr>'
+    : '';
+
 // $to_addr = 'developer@savit.in';
 // $to_name = 'Quantal AI Team';
 
@@ -80,6 +91,7 @@ $notify_html = <<<HTML
             <td style="padding:10px 8px;"><a href="mailto:{$en($email)}">{$en($email)}</a></td></tr>
         <tr><td style="padding:10px 8px;font-weight:600;color:#555;">Phone</td>
             <td style="padding:10px 8px;">{$en($phone)}</td></tr>
+        {$company_row}
         <tr style="background:#f9f9f9;">
             <td style="padding:10px 8px;font-weight:600;color:#555;">Subject</td>
             <td style="padding:10px 8px;">{$en($subject)}</td></tr>

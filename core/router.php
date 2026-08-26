@@ -146,6 +146,36 @@ function router_resolve(string $path): array
         }
     }
 
+    // Podcast routes
+    if ($path === '/podcast') {
+        $template = PAGES_DIR . '/podcast/index.php';
+        if (is_file($template)) {
+            return [
+                'template'       => $template,
+                'canonical_path' => '/podcast',
+                'active_page'    => 'resources',
+                'status'         => 200,
+            ];
+        }
+    }
+    if (str_starts_with($path, '/podcast/')) {
+        $slug = substr($path, strlen('/podcast/'));
+        $slug = trim($slug, '/');
+        if ($slug !== '' && preg_match('/^[a-z0-9\-]+$/', $slug)) {
+            $template = PAGES_DIR . '/podcast/single.php';
+            if (is_file($template)) {
+                // Make slug available to the template
+                $GLOBALS['podcast_slug'] = $slug;
+                return [
+                    'template'       => $template,
+                    'canonical_path' => '/podcast/' . $slug,
+                    'active_page'    => 'resources',
+                    'status'         => 200,
+                ];
+            }
+        }
+    }
+
     // Webinar routes
     if ($path === '/webinar') {
         $template = PAGES_DIR . '/webinar/index.php';
@@ -362,6 +392,7 @@ function router_discover_pages(): array
         // success-stories/index) DO map to one static URL each and are kept.
         if ($rel === '/blog/single' ||
             $rel === '/success-stories/single' ||
+            $rel === '/podcast/single' ||
             $rel === '/webinar/index') {
             continue;
         }

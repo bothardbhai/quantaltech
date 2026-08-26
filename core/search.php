@@ -292,13 +292,7 @@ function search_success_stories(\PDO $pdo, string $query, int $limit = 20): arra
 }
 
 /**
- * Search published podcasts/webinars (webinars table — see
- * pages/podcast/index.php for why podcasts live in the webinars table).
- *
- * There is no single-episode route/template yet (only /podcast, the
- * listing), so results link to the listing page rather than a slug that
- * would 404. Once a /podcast/<slug> route + template exists, change the
- * url() call below to point at the episode directly.
+ * Search published podcast episodes (podcasts table).
  */
 function search_podcasts(\PDO $pdo, string $query, int $limit = 20): array
 {
@@ -307,17 +301,17 @@ function search_podcasts(\PDO $pdo, string $query, int $limit = 20): array
 
     try {
         $stmt = $pdo->prepare(
-            "SELECT slug, title, excerpt, description, content_html, speaker_name,
+            "SELECT slug, title, short_description, description_html, guest_name,
                     meta_title, meta_description, meta_keywords
-             FROM webinars
+             FROM podcasts
              WHERE status = 'published'
-               AND (title LIKE ? OR slug LIKE ? OR excerpt LIKE ? OR speaker_name LIKE ?
+               AND (title LIKE ? OR slug LIKE ? OR short_description LIKE ? OR guest_name LIKE ?
                     OR meta_title LIKE ? OR meta_description LIKE ? OR meta_keywords LIKE ?
-                    OR description LIKE ? OR content_html LIKE ?)
-             ORDER BY scheduled_at DESC
+                    OR description_html LIKE ?)
+             ORDER BY publish_date DESC
              LIMIT $limit"
         );
-        $stmt->execute([$like, $like, $like, $like, $like, $like, $like, $like, $like]);
+        $stmt->execute([$like, $like, $like, $like, $like, $like, $like, $like]);
         $rows = $stmt->fetchAll();
     } catch (PDOException $e) {
         error_log('search_podcasts failed: ' . $e->getMessage());
@@ -327,24 +321,24 @@ function search_podcasts(\PDO $pdo, string $query, int $limit = 20): array
     $results = [];
     foreach ($rows as $row) {
         $title = $row['meta_title'] !== '' ? $row['meta_title'] : $row['title'];
-        $body = $row['description'] . ' ' . $row['content_html'];
+        $body = $row['short_description'] . ' ' . $row['description_html'];
 
         $score = 0;
         $score += search_score_field($title, $needle, 5);
         $score += search_score_field($row['slug'], $needle, 3);
-        $score += search_score_field($row['speaker_name'], $needle, 2);
-        $score += search_score_field($row['excerpt'], $needle, 2);
+        $score += search_score_field($row['guest_name'], $needle, 2);
+        $score += search_score_field($row['short_description'], $needle, 2);
         $score += search_score_field($row['meta_description'], $needle, 2);
         $score += search_score_field($row['meta_keywords'], $needle, 1);
         $score += search_score_field(search_plain_text($body, 4000), $needle, 1);
 
         $excerpt = $row['meta_description'] !== '' ? $row['meta_description']
-            : ($row['excerpt'] !== '' ? $row['excerpt'] : search_plain_text($body));
+            : ($row['short_description'] !== '' ? $row['short_description'] : search_plain_text($body));
 
         $results[] = [
             'title'   => $row['title'],
             'type'    => 'podcast',
-            'url'     => url('/podcast'),
+            'url'     => url('/podcast/' . $row['slug']),
             'excerpt' => search_plain_text($excerpt, 160),
             'score'   => $score,
         ];
