@@ -105,11 +105,8 @@ $page_robots = $episode['robots'];
                 <div class="col-lg-5">
                     <!-- Same hero visual as the Podcast Main Page
                          (pages/podcast/index.php) — reuses .ss-hero-visual /
-                         .pd-hero-mic as-is via the shared .podcast-page
+                         .pd-hero-image as-is via the shared .podcast-page
                          wrapper class, so both hero images stay in sync.
-                         Placeholder mic graphic — swap for a real photo
-                         asset under assets/images/quantal/podcast/ once
-                         supplied. -->
                     <div class="ss-hero-visual pd-hero-visual">
                         <svg viewBox="0 0 200 200" class="pd-hero-mic" aria-hidden="true">
                             <rect x="85" y="20" width="30" height="80" rx="15" fill="currentColor" />
@@ -120,6 +117,11 @@ $page_robots = $episode['robots'];
                             <line x1="70" y1="160" x2="130" y2="160" stroke="currentColor" stroke-width="8"
                                 stroke-linecap="round" />
                         </svg>
+                    </div>
+                    -->
+                    <div class="ss-hero-visual pd-hero-visual">
+                        <img src="<?= asset('images/quantal/podcast/podcast-hero.webp') ?>" alt="Quantal AI Podcast"
+                            class="pd-hero-image">
                     </div>
                 </div>
             </div>

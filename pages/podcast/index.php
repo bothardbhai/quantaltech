@@ -93,15 +93,8 @@ $pd_spotify_url = defined('PODCAST_SPOTIFY_URL') ? PODCAST_SPOTIFY_URL : '';
                 <div class="ss-hero-visual pd-hero-visual">
                     <!-- Placeholder mic graphic — swap for a real photo asset
                          under assets/images/quantal/podcast/ once supplied. -->
-                    <svg viewBox="0 0 200 200" class="pd-hero-mic" aria-hidden="true">
-                        <rect x="85" y="20" width="30" height="80" rx="15" fill="currentColor" />
-                        <path d="M60 90 a40 40 0 0 0 80 0" stroke="currentColor" stroke-width="8" fill="none"
-                            stroke-linecap="round" />
-                        <line x1="100" y1="130" x2="100" y2="160" stroke="currentColor" stroke-width="8"
-                            stroke-linecap="round" />
-                        <line x1="70" y1="160" x2="130" y2="160" stroke="currentColor" stroke-width="8"
-                            stroke-linecap="round" />
-                    </svg>
+                    <img src="assets/images/quantal/podcast/podcast-hero.webp" alt="Quantal AI Podcast"
+                        class="pd-hero-image">
                 </div>
             </div>
 
