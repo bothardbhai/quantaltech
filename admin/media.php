@@ -23,6 +23,7 @@ const MEDIA_CATEGORY_LABELS = [
     'service'       => 'Service',
     'media'         => 'Media',
     'success-story' => 'Success Story',
+    'hire'          => 'Hire',
 ];
 
 /**
@@ -39,6 +40,7 @@ function media_category_dirs(string $category): array
         'page'          => ['/uploads/page', UPLOADS_DIR . '/page'],
         'service'       => ['/uploads/service', UPLOADS_DIR . '/service'],
         'success-story' => ['/uploads/success-story', UPLOADS_DIR . '/success-story'],
+        'hire'          => ['/uploads/hire', UPLOADS_DIR . '/hire'],
         default         => ['/uploads/media/' . $ym, UPLOADS_DIR . '/media/' . $ym],
     };
 }

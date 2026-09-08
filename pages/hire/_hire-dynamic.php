@@ -58,6 +58,18 @@ $expertise_title_html = $hire_page['expertise_title_html'] ?? '';
 $expertise_text       = $hire_page['expertise_text'] ?? '';
 $expertise_cards      = hire_json($hire_page['expertise_cards_json']);
 
+// --- Foundation Model Expertise ---
+$foundation_sub        = $hire_page['foundation_sub'];
+$foundation_title_html = $hire_page['foundation_title_html'] ?? '';
+$foundation_text       = $hire_page['foundation_text'] ?? '';
+$foundation_cards      = hire_json($hire_page['foundation_cards_json']);
+
+// --- Our Tech ---
+$tech_sub        = $hire_page['tech_sub'];
+$tech_title_html = $hire_page['tech_title_html'] ?? '';
+$tech_text       = $hire_page['tech_text'] ?? '';
+$tech_categories = hire_json($hire_page['tech_categories_json']);
+
 // --- What Our Engineers Build ---
 $build_sub        = $hire_page['build_sub'];
 $build_title_html = $hire_page['build_title_html'] ?? '';

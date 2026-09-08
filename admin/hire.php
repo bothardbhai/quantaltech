@@ -145,7 +145,8 @@ if ($action === 'new' || $action === 'edit') {
             // Plain scalar fields — pass straight through, trimmed.
             $plain_fields = [
                 'role_label', 'page_label', 'crumb', 'hero_tag', 'hero_desc',
-                'expertise_sub', 'expertise_text', 'build_sub', 'build_text',
+                'expertise_sub', 'expertise_text', 'foundation_sub', 'foundation_text',
+                'tech_sub', 'tech_text', 'build_sub', 'build_text',
                 'engagement_sub', 'engagement_text', 'why_sub', 'why_text',
                 'industries_sub', 'industries_text',
                 'cta_tag', 'cta_text', 'cs_sub', 'cs_text',
@@ -156,7 +157,7 @@ if ($action === 'new' || $action === 'edit') {
             // Fields that allow trusted inline HTML (CKEditor) — sanitized +
             // unwrapped rather than escaped.
             $html_fields = [
-                'hero_title_html', 'expertise_title_html', 'build_title_html',
+                'hero_title_html', 'expertise_title_html', 'foundation_title_html', 'tech_title_html', 'build_title_html',
                 'engagement_title_html', 'why_title_html', 'industries_title_html',
                 'cta_title_html', 'cs_title_html', 'related_title_html', 'blog_title_html',
                 'final_cta_title_html',
@@ -194,6 +195,10 @@ if ($action === 'new' || $action === 'edit') {
                 ['education' => 'eng_education', 'skills' => 'eng_skills']));
             $data['expertise_cards_json'] = json_encode(svc_build_repeater($_POST,
                 ['icon' => 'exp_icon', 'title' => 'exp_title', 'desc' => 'exp_desc']));
+            $data['foundation_cards_json'] = json_encode(svc_build_repeater($_POST,
+                ['image' => 'found_logo', 'title' => 'found_title', 'desc' => 'found_desc']));
+            $data['tech_categories_json'] = json_encode(svc_build_repeater($_POST,
+                ['title' => 'tech_cat_title'], ['items' => 'tech_cat_items']));
             $data['build_cards_json'] = json_encode(svc_build_repeater($_POST,
                 ['number' => 'build_number', 'title' => 'build_title', 'desc' => 'build_desc']));
             $data['engagement_models_json'] = json_encode(svc_build_repeater($_POST,
@@ -234,6 +239,8 @@ if ($action === 'new' || $action === 'edit') {
         'display_on_hub' => 1, 'published_at' => null,
         'page_label' => '', 'crumb' => '', 'hero_tag' => '', 'hero_title_html' => '', 'hero_desc' => '',
         'expertise_sub' => '', 'expertise_title_html' => '', 'expertise_text' => '',
+        'foundation_sub' => '', 'foundation_title_html' => '', 'foundation_text' => '',
+        'tech_sub' => '', 'tech_title_html' => '', 'tech_text' => '',
         'build_sub' => '', 'build_title_html' => '', 'build_text' => '',
         'engagement_sub' => '', 'engagement_title_html' => '', 'engagement_text' => '',
         'why_sub' => '', 'why_title_html' => '', 'why_text' => '',
@@ -251,6 +258,8 @@ if ($action === 'new' || $action === 'edit') {
         'impact_stats' => svc_json_decode($hire_page['impact_stats_json'] ?? null),
         'engineers' => svc_json_decode($hire_page['engineers_json'] ?? null),
         'expertise_cards' => svc_json_decode($hire_page['expertise_cards_json'] ?? null),
+        'foundation_cards' => svc_json_decode($hire_page['foundation_cards_json'] ?? null),
+        'tech_categories' => svc_json_decode($hire_page['tech_categories_json'] ?? null),
         'build_cards' => svc_json_decode($hire_page['build_cards_json'] ?? null),
         'engagement_models' => svc_json_decode($hire_page['engagement_models_json'] ?? null),
         'why_cards' => svc_json_decode($hire_page['why_cards_json'] ?? null),
@@ -304,7 +313,7 @@ if ($action === 'new' || $action === 'edit') {
                 $tabs = [
                     'core' => 'Core', 'hero' => 'Hero', 'impact' => 'Impact Stats',
                     'engineers' => 'Meet Our Engineers',
-                    'expertise' => 'Expertise', 'build' => 'What They Build',
+                    'expertise' => 'Expertise', 'foundation' => 'Foundation', 'tech' => 'Our Tech', 'build' => 'What They Build',
                     'engagement' => 'Engagement Models', 'why' => 'Why Hire', 'industries' => 'Industries',
                     'cta' => 'Mid CTA', 'final_cta' => 'Final CTA', 'cases' => 'Success Stories',
                     'related' => 'Related', 'blog' => 'Knowledge Hub', 'faq' => 'FAQ', 'seo' => 'SEO',
@@ -470,6 +479,33 @@ if ($action === 'new' || $action === 'edit') {
                             '<div class="form-row" style="margin-bottom:0;"><label>Description</label><textarea name="exp_desc[]" rows="2"></textarea></div>',
                             $repeater_data['expertise_cards'],
                             ['input.icon-input' => ['key' => 'icon', 'type' => 'icon'], 'input[name="exp_title[]"]' => 'title', 'textarea[name="exp_desc[]"]' => 'desc']
+                        ); ?>
+                    </div></div>
+                </div>
+
+                <!-- ============ FOUNDATION MODEL EXPERTISE ============ -->
+                <div class="section-tabs__panel" data-panel="foundation">
+                    <div class="admin-card"><div class="admin-card__body"><?php hire_section_header('foundation', $f, 'Foundation Model <span>Expertise</span>'); ?></div></div>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <?php svc_repeater_field('foundation-cards', 'Cards', '+ Add card',
+                            '<div class="form-row"><label>Logo Path <span class="text-muted">(copy from the <a href="' . ADMIN_URL . '/media.php?category=hire" target="_blank" rel="noopener">Hire Media Library</a>)</span></label><input type="text" name="found_logo[]" placeholder="/uploads/hire/..."></div>' .
+                            '<div class="form-row"><label>Title</label><input type="text" name="found_title[]"></div>' .
+                            '<div class="form-row" style="margin-bottom:0;"><label>Description</label><textarea name="found_desc[]" rows="2"></textarea></div>',
+                            $repeater_data['foundation_cards'],
+                            ['input[name="found_logo[]"]' => 'image', 'input[name="found_title[]"]' => 'title', 'textarea[name="found_desc[]"]' => 'desc']
+                        ); ?>
+                    </div></div>
+                </div>
+
+                <!-- ============ OUR TECH ============ -->
+                <div class="section-tabs__panel" data-panel="tech">
+                    <div class="admin-card"><div class="admin-card__body"><?php hire_section_header('tech', $f, 'Our <span>Tech</span> Stack'); ?></div></div>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <?php svc_repeater_field('tech-categories', 'Categories', '+ Add category',
+                            '<div class="form-row"><label>Category Name</label><input type="text" name="tech_cat_title[]" placeholder="Programming Languages"></div>' .
+                            '<div class="form-row" style="margin-bottom:0;"><label>Technologies <span class="text-muted">(one per line, unlimited)</span></label><textarea name="tech_cat_items[]" rows="4" placeholder="Python&#10;R&#10;JavaScript"></textarea></div>',
+                            $repeater_data['tech_categories'],
+                            ['input[name="tech_cat_title[]"]' => 'title', 'textarea[name="tech_cat_items[]"]' => ['key' => 'items', 'type' => 'list']]
                         ); ?>
                     </div></div>
                 </div>

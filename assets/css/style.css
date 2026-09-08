@@ -27577,6 +27577,12 @@ RESPONSIVE
   color: #111;
 }
 
+.industry-solution-icon img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
 .industry-solution-card h4,
 h3 {
   color: #fff;
@@ -27617,6 +27623,11 @@ h3 {
     height: 60px;
     font-size: 24px;
   }
+
+  .industry-solution-icon img {
+    width: 34px;
+    height: 34px;
+  }
 }
 
 @media (max-width: 575px) {
@@ -27629,6 +27640,11 @@ h3 {
     height: 54px;
     font-size: 22px;
     margin-bottom: 18px;
+  }
+
+  .industry-solution-icon img {
+    width: 30px;
+    height: 30px;
   }
 
   .industry-solution-card h4,

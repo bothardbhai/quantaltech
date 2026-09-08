@@ -13,6 +13,8 @@
  *   $impact_stats[{number,title}]
  *   $engineers[{name,role,years_of_experience,image,linkedin_url,education[],skills[]}] - "Meet Our Engineers"
  *   $expertise_sub, $expertise_title_html*, $expertise_text, $expertise_cards[{icon,title,desc}]
+ *   $foundation_sub, $foundation_title_html*, $foundation_text, $foundation_cards[{image,title,desc}]
+ *   $tech_sub, $tech_title_html*, $tech_text, $tech_categories[{title,items[]}]
  *   $build_sub, $build_title_html*, $build_text, $build_cards[{number,title,desc}]
  *   $engagement_sub, $engagement_title_html*, $engagement_text, $engagement_models[{icon,title,desc,featured}]
  *   $why_sub, $why_title_html*, $why_text, $why_cards[{title,desc}]
@@ -396,6 +398,106 @@
 
 							</div>
 
+						</div>
+					<?php endforeach; ?>
+
+				</div>
+
+			</div>
+
+		</section>
+	<?php endif; ?>
+
+	<!-- Foundation Model Expertise -->
+	<?php if (!empty($foundation_cards)): ?>
+		<section class="industry-solution-section pb-100 section-bg-3">
+
+			<div class="decor-glow decor-glow--left decor-glow--top" aria-hidden="true"></div>
+
+			<div class="container">
+
+				<div class="sec-title text-center mb-70">
+
+					<?php if (!empty($foundation_sub)): ?>
+						<span class="sub-title">
+							<?= e($foundation_sub) ?>
+						</span>
+					<?php endif; ?>
+
+					<h2>
+						<?= $foundation_title_html ?? '' /* trusted HTML */ ?>
+					</h2>
+
+					<?php if (!empty($foundation_text)): ?>
+						<div class="text">
+							<?= e($foundation_text) ?>
+						</div>
+					<?php endif; ?>
+
+				</div>
+
+				<div class="row g-4">
+
+					<?php foreach ($foundation_cards as $card): ?>
+						<div class="col-lg-4 col-md-6">
+
+							<div class="industry-solution-card">
+								<div class="industry-solution-icon">
+									<img src="<?= e(media_url($card['image'] ?? '')) ?>" alt="<?= e($card['title'] ?? '') ?>">
+								</div>
+								<h3><?= e($card['title'] ?? '') ?></h3>
+								<p>
+									<?= e($card['desc'] ?? '') ?>
+								</p>
+							</div>
+						</div>
+					<?php endforeach; ?>
+
+				</div>
+
+			</div>
+
+		</section>
+	<?php endif; ?>
+
+	<!-- Our Tech -->
+	<?php if (!empty($tech_categories)): ?>
+		<section class="tech-stack-section pb-100 section-bg-3">
+
+			<div class="decor-glow decor-glow--left decor-glow--bottom" aria-hidden="true"></div>
+
+			<div class="container">
+
+				<div class="sec-title">
+					<span class="sub-title">
+						<?= e($tech_sub ?? '') ?>
+					</span>
+					<h2>
+						<?= $tech_title_html ?? '' /* trusted HTML */ ?>
+					</h2>
+					<div class="text">
+						<?= e($tech_text ?? '') ?>
+					</div>
+				</div>
+
+				<div class="tech-stack-wrapper row g-4">
+
+					<?php foreach ($tech_categories as $cat): ?>
+						<div class="col-lg-4 col-md-6 mb-4 d-flex wow fadeInUp">
+							<div class="tech-category">
+								<span class="tech-category-title">
+									<?= e($cat['title']) ?>
+								</span>
+
+								<div class="tech-list">
+									<?php foreach ($cat['items'] as $item): ?>
+										<span class="tech-item">
+											<?= e($item) ?>
+										</span>
+									<?php endforeach; ?>
+								</div>
+
+							</div>
 						</div>
 					<?php endforeach; ?>
 
