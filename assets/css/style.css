@@ -27554,7 +27554,7 @@ RESPONSIVE
 
   border-radius: 18px;
 
-  background: rgba(38, 229, 232, 0.08);
+  /* background: rgba(38, 229, 232, 0.08); */
 
   color: #26e5e8;
 
@@ -27572,14 +27572,14 @@ RESPONSIVE
 }
 
 .industry-solution-card:hover .industry-solution-icon {
-  background: #26e5e8;
+  /* background: #26e5e8; */
 
   color: #111;
 }
 
 .industry-solution-icon img {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
 }
 
@@ -27625,8 +27625,8 @@ h3 {
   }
 
   .industry-solution-icon img {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
   }
 }
 
@@ -27643,8 +27643,8 @@ h3 {
   }
 
   .industry-solution-icon img {
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
   }
 
   .industry-solution-card h4,
