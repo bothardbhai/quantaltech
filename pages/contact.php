@@ -38,6 +38,8 @@ $active_page = 'contact';
 			<div id="contact-msg" class="contact-msg" style="display:none;"></div>
 			<form id="contact_form" name="contact_form" action="<?= url('/contact-submit') ?>" method="post">
 			<?= csrf_field() ?>
+			<input type="hidden" name="form_type" value="contact">
+			<input type="hidden" name="page_url" value="<?= attr(current_url()) ?>">
 			<div class="row">
 				<div class="col-sm-6">
 				<div class="mb-3">

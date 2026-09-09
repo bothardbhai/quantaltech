@@ -64,6 +64,8 @@
                 <form id="pd_contact_form" name="pd_contact_form" action="<?= url('/contact-submit') ?>" method="post">
                     <?= csrf_field() ?>
                     <input type="hidden" name="form_subject" value="Podcast Page Inquiry">
+                    <input type="hidden" name="form_type" value="podcast">
+                    <input type="hidden" name="page_url" value="<?= attr(current_url()) ?>">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="mb-3"><input name="form_first_name" class="form-control" type="text"
@@ -119,7 +121,13 @@
                                     msgEl.textContent = data.message;
                                     msgEl.className = 'contact-msg ' + (data.success ? 'contact-msg--ok' : 'contact-msg--err');
                                     msgEl.style.display = 'block';
-                                    if (data.success) { form.reset(); }
+                                    if (data.success) {
+                                        form.reset();
+
+                                        if (data.redirect) {
+                                            window.location.href = data.redirect;
+                                        }
+                                    }
                                 })
                                 .catch(function () {
                                     msgEl.textContent = 'Something went wrong. Please try again.';

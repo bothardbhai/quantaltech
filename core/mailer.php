@@ -11,13 +11,16 @@ declare(strict_types=1);
  * @param string $subject   Subject line
  * @param string $html_body HTML email body
  * @param string $text_body Plain-text alternative (auto-derived from HTML when empty)
+ * @param string $cc_email  Optional CC recipient — always caller-supplied (e.g. a config
+ *                          constant), never taken from request input.
  */
 function send_email(
     string $to_email,
     string $to_name,
     string $subject,
     string $html_body,
-    string $text_body = ''
+    string $text_body = '',
+    string $cc_email = ''
 ): bool {
     if ($text_body === '') {
         $text_body = trim(strip_tags(
@@ -26,33 +29,36 @@ function send_email(
     }
 
     if (!defined('SMTP_HOST') || SMTP_HOST === '') {
-        return _mailer_fallback($to_email, $to_name, $subject, $html_body);
+        return _mailer_fallback($to_email, $to_name, $subject, $html_body, $cc_email);
     }
 
-    return _mailer_smtp($to_email, $to_name, $subject, $html_body, $text_body);
+    return _mailer_smtp($to_email, $to_name, $subject, $html_body, $text_body, $cc_email);
 }
 
 /**
  * PHP mail() fallback (local dev / shared hosting with sendmail configured).
  */
-function _mailer_fallback(string $to_email, string $to_name, string $subject, string $html): bool
+function _mailer_fallback(string $to_email, string $to_name, string $subject, string $html, string $cc_email = ''): bool
 {
     $from = defined('SMTP_FROM_EMAIL') ? SMTP_FROM_EMAIL : 'noreply@example.com';
     $name = defined('SMTP_FROM_NAME')  ? SMTP_FROM_NAME  : 'Quantal AI';
 
-    $headers = implode("\r\n", [
+    $header_lines = [
         'From: =?UTF-8?B?' . base64_encode($name) . "?= <{$from}>",
         "Reply-To: {$from}",
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8',
-        'X-Mailer: PHP/' . PHP_VERSION,
-    ]);
+    ];
+    if ($cc_email !== '') {
+        $header_lines[] = "Cc: {$cc_email}";
+    }
+    $header_lines[] = 'MIME-Version: 1.0';
+    $header_lines[] = 'Content-Type: text/html; charset=UTF-8';
+    $header_lines[] = 'X-Mailer: PHP/' . PHP_VERSION;
 
     return @mail(
         $to_email,
         '=?UTF-8?B?' . base64_encode($subject) . '?=',
         $html,
-        $headers
+        implode("\r\n", $header_lines)
     );
 }
 
@@ -65,7 +71,8 @@ function _mailer_smtp(
     string $to_name,
     string $subject,
     string $html_body,
-    string $text_body
+    string $text_body,
+    string $cc_email = ''
 ): bool {
     $host      = SMTP_HOST;
     $port      = (int) (defined('SMTP_PORT') ? SMTP_PORT : 587);
@@ -145,18 +152,27 @@ function _mailer_smtp(
     // Envelope
     $cmd("MAIL FROM:<{$from}>");
     $cmd("RCPT TO:<{$to_email}>");
+    if ($cc_email !== '') {
+        $cmd("RCPT TO:<{$cc_email}>");
+    }
     $cmd('DATA');
 
     // Build multipart/alternative MIME message
     $boundary = 'qai_' . bin2hex(random_bytes(8));
-    $message  = implode("\r\n", [
+    $header_lines = [
         'Date: ' . date('r'),
         'From: =?UTF-8?B?' . base64_encode($from_name) . "?= <{$from}>",
         'To: =?UTF-8?B?' . base64_encode($to_name) . "?= <{$to_email}>",
-        'Subject: =?UTF-8?B?' . base64_encode($subject) . '?=',
-        'MIME-Version: 1.0',
-        "Content-Type: multipart/alternative; boundary=\"{$boundary}\"",
-        '',
+    ];
+    if ($cc_email !== '') {
+        $header_lines[] = "Cc: {$cc_email}";
+    }
+    $header_lines[] = 'Subject: =?UTF-8?B?' . base64_encode($subject) . '?=';
+    $header_lines[] = 'MIME-Version: 1.0';
+    $header_lines[] = "Content-Type: multipart/alternative; boundary=\"{$boundary}\"";
+    $header_lines[] = '';
+    $message  = implode("\r\n", [
+        ...$header_lines,
         "--{$boundary}",
         'Content-Type: text/plain; charset=UTF-8',
         'Content-Transfer-Encoding: quoted-printable',

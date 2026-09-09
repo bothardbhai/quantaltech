@@ -1,9 +1,12 @@
 <?php
 
 /**
- * Contact form POST handler — returns JSON, always exits.
+ * Hire form POST handler — returns JSON, always exits.
  * Loaded by the file-path router like any page, but calls exit() immediately
- * so the header/footer wrapping from index.php is bypassed.
+ * so the header/footer wrapping from index.php is bypassed. Mirrors
+ * pages/contact-submit.php's structure exactly (same CSRF/honeypot/DB-first
+ * pattern), against the dedicated `hire_submissions` table instead of the
+ * shared `contact_submissions` table.
  */
 
 declare(strict_types=1);
@@ -33,17 +36,13 @@ if (!empty($_POST['form_botcheck'])) {
 }
 
 // Collect and sanitise
-$first_name = trim(strip_tags($_POST['form_first_name'] ?? ''));
-$last_name = trim(strip_tags($_POST['form_last_name'] ?? ''));
-$name = trim(strip_tags($_POST['form_name'] ?? ''));
-if ($name === '' && ($first_name !== '' || $last_name !== '')) {
-    $name = trim($first_name . ' ' . $last_name);
-}
-$company = trim(strip_tags($_POST['form_company'] ?? ''));
-$email = trim($_POST['form_email'] ?? '');
-$subject = trim(strip_tags($_POST['form_subject'] ?? ''));
-$phone = trim(strip_tags($_POST['form_phone'] ?? ''));
-$message = trim(strip_tags($_POST['form_message'] ?? ''));
+$name = trim(strip_tags($_POST['name'] ?? ''));
+$email = trim($_POST['email'] ?? '');
+$phone = trim(strip_tags($_POST['phone'] ?? ''));
+$company = trim(strip_tags($_POST['company'] ?? ''));
+$country = trim(strip_tags($_POST['country'] ?? ''));
+$hiring_model = trim(strip_tags($_POST['hiring_model'] ?? ''));
+$project_details = trim(strip_tags($_POST['project_details'] ?? ''));
 
 // Validate
 $errors = [];
@@ -51,10 +50,8 @@ if ($name === '')
     $errors[] = 'Your name is required.';
 if (!filter_var($email, FILTER_VALIDATE_EMAIL))
     $errors[] = 'A valid email address is required.';
-if ($subject === '')
-    $errors[] = 'Please enter a subject.';
-if (mb_strlen($message) < 10)
-    $errors[] = 'Message must be at least 10 characters.';
+if (mb_strlen($project_details) < 10)
+    $errors[] = 'Please tell us a bit more about your project (at least 10 characters).';
 
 if ($errors) {
     http_response_code(422);
@@ -69,7 +66,6 @@ if ($page_url === '') {
     $page_url = trim((string) ($_SERVER['HTTP_REFERER'] ?? ''));
 }
 $page_url = mb_substr(strip_tags($page_url), 0, 500);
-$form_type = in_array($_POST['form_type'] ?? '', ['contact', 'podcast'], true) ? $_POST['form_type'] : 'contact';
 
 // Store in the database first — this is the source of truth for the submission.
 // Email delivery below is best-effort and must never affect success/failure.
@@ -78,28 +74,26 @@ $db_ok = false;
 if ($pdo) {
     try {
         $pdo->prepare(
-            'INSERT INTO contact_submissions
-                (form_type, name, first_name, last_name, email, phone, company, subject, message, page_url, ip_address)
-             VALUES (:form_type, :name, :first_name, :last_name, :email, :phone, :company, :subject, :message, :page_url, :ip)'
+            'INSERT INTO hire_submissions
+                (name, email, phone, company, country, hiring_model, project_details, page_url, ip_address)
+             VALUES (:name, :email, :phone, :company, :country, :hiring_model, :project_details, :page_url, :ip)'
         )->execute([
-            ':form_type' => $form_type,
             ':name' => $name,
-            ':first_name' => $first_name,
-            ':last_name' => $last_name,
             ':email' => $email,
             ':phone' => $phone,
             ':company' => $company,
-            ':subject' => $subject,
-            ':message' => $message,
+            ':country' => $country,
+            ':hiring_model' => $hiring_model,
+            ':project_details' => $project_details,
             ':page_url' => $page_url,
             ':ip' => $ip_raw,
         ]);
         $db_ok = true;
     } catch (PDOException $e) {
-        error_log('Contact submission DB insert failed: ' . $e->getMessage());
+        error_log('Hire submission DB insert failed: ' . $e->getMessage());
     }
 } else {
-    error_log('Contact submission DB insert skipped: no DB connection');
+    error_log('Hire submission DB insert skipped: no DB connection');
 }
 
 if (!$db_ok) {
@@ -115,46 +109,49 @@ $ip = $en($ip_raw);
 $to_addr = defined('CONTACT_TO_EMAIL') ? CONTACT_TO_EMAIL : 'contact@quantaltech.ai';
 $to_name = defined('CONTACT_TO_NAME') ? CONTACT_TO_NAME : 'Quantal AI Team';
 
-$company_row = $company !== ''
-    ? '<tr style="background:#f9f9f9;"><td style="padding:10px 8px;font-weight:600;color:#555;">Company</td>'
-        . '<td style="padding:10px 8px;">' . $en($company) . '</td></tr>'
-    : '';
-
-// $to_addr = 'developer@savit.in';
-// $to_name = 'Quantal AI Team';
+$optional_row = static function (string $label, string $value): string {
+    if ($value === '') {
+        return '';
+    }
+    $en = static fn(string $v): string => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+    return '<tr style="background:#f9f9f9;"><td style="padding:10px 8px;font-weight:600;color:#555;">' . $en($label) . '</td>'
+        . '<td style="padding:10px 8px;">' . $en($value) . '</td></tr>';
+};
 
 // Notification email to the team
 $notify_html = <<<HTML
     <!DOCTYPE html>
     <html lang="en">
     <body style="font-family:sans-serif;color:#333;max-width:600px;margin:0 auto;padding:20px;">
-      <h2 style="color:#1d2327;border-bottom:2px solid #eee;padding-bottom:10px;">New Contact Form Submission</h2>
+      <h2 style="color:#1d2327;border-bottom:2px solid #eee;padding-bottom:10px;">New Hire Enquiry</h2>
       <table style="width:100%;border-collapse:collapse;font-size:15px;">
-        <tr><td style="padding:10px 8px;font-weight:600;width:110px;color:#555;">Name</td>
+        <tr><td style="padding:10px 8px;font-weight:600;width:140px;color:#555;">Form Type</td>
+            <td style="padding:10px 8px;">Hire</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:10px 8px;font-weight:600;color:#555;">Name</td>
             <td style="padding:10px 8px;">{$en($name)}</td></tr>
-        <tr style="background:#f9f9f9;">
-            <td style="padding:10px 8px;font-weight:600;color:#555;">Email</td>
+        <tr><td style="padding:10px 8px;font-weight:600;color:#555;">Email</td>
             <td style="padding:10px 8px;"><a href="mailto:{$en($email)}">{$en($email)}</a></td></tr>
-        <tr><td style="padding:10px 8px;font-weight:600;color:#555;">Phone</td>
-            <td style="padding:10px 8px;">{$en($phone)}</td></tr>
-        {$company_row}
-        <tr style="background:#f9f9f9;">
-            <td style="padding:10px 8px;font-weight:600;color:#555;">Subject</td>
-            <td style="padding:10px 8px;">{$en($subject)}</td></tr>
-        <tr><td style="padding:10px 8px;font-weight:600;color:#555;vertical-align:top;">Message</td>
-            <td style="padding:10px 8px;line-height:1.7;">{$en($message)}</td></tr>
+        {$optional_row('Phone', $phone)}
+        {$optional_row('Company', $company)}
+        {$optional_row('Country', $country)}
+        {$optional_row('Hiring Model', $hiring_model)}
+        <tr><td style="padding:10px 8px;font-weight:600;color:#555;vertical-align:top;">Project Details</td>
+            <td style="padding:10px 8px;line-height:1.7;">{$en($project_details)}</td></tr>
+        <tr style="background:#f9f9f9;"><td style="padding:10px 8px;font-weight:600;color:#555;">Page URL</td>
+            <td style="padding:10px 8px;">{$en($page_url)}</td></tr>
+        <tr><td style="padding:10px 8px;font-weight:600;color:#555;">Submitted</td>
+            <td style="padding:10px 8px;">{$en(date('Y-m-d H:i:s'))}</td></tr>
       </table>
       <p style="color:#aaa;font-size:12px;margin-top:24px;border-top:1px solid #eee;padding-top:12px;">
-        Sent via quantaltech.ai contact form &middot; IP: {$ip}
+        Sent via quantaltech.ai hire form &middot; IP: {$ip}
       </p>
     </body>
     </html>
     HTML;
 
-$cc_addr = defined('CONTACT_CC_EMAIL') ? CONTACT_CC_EMAIL : '';
-$notify_ok = send_email($to_addr, $to_name, "Contact: {$subject}", $notify_html, '', $cc_addr);
+$notify_ok = send_email($to_addr, $to_name, "Hire Enquiry: {$name}", $notify_html);
 if (!$notify_ok) {
-    error_log('Contact submission notification email failed (form_type=' . $form_type . ')');
+    error_log('Hire submission notification email failed for ' . $email);
 }
 
 // Auto-reply to the sender (best-effort — its outcome never affects the response below)
@@ -164,10 +161,10 @@ if ($notify_ok) {
         <html lang="en">
         <body style="font-family:sans-serif;color:#333;max-width:600px;margin:0 auto;padding:20px;">
           <h2 style="color:#1d2327;">Hi {$en($name)}, thanks for reaching out!</h2>
-          <p style="line-height:1.7;">We received your message and a member of our team will get back to you within 1 business day.</p>
+          <p style="line-height:1.7;">We received your hire enquiry and a member of our team will get back to you within 1 business day.</p>
           <p style="line-height:1.7;">
             In the meantime, explore our
-            <a href="https://quantaltech.ai/blog" style="color:#2271b1;">AI engineering blog</a>
+            <a href="https://quantaltech.ai/hire-ai-engineers" style="color:#2271b1;">AI engineer profiles</a>
             or learn more about our
             <a href="https://quantaltech.ai/services" style="color:#2271b1;">services</a>.
           </p>
@@ -178,15 +175,15 @@ if ($notify_ok) {
         </body>
         </html>
         HTML;
-    $reply_ok = send_email($email, $name, 'We received your message — Quantal AI', $reply_html);
+    $reply_ok = send_email($email, $name, 'We received your enquiry — Quantal AI', $reply_html);
     if (!$reply_ok) {
-        error_log('Contact submission auto-reply email failed for ' . $email);
+        error_log('Hire submission auto-reply email failed for ' . $email);
     }
 }
 
 echo json_encode([
     'success' => true,
-    'message' => "Thank you, {$en($name)}! We'll be in touch within 1 business day.",
+    'message' => "Thank you, {$en($name)}! Our team will reach out within 1 business day.",
     'redirect' => url('/thank-you'),
 ]);
 exit;

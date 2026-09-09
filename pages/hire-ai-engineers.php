@@ -225,18 +225,22 @@ $final_cta_btn_url = '/case-studies';
 
 					<h3>Let's Build Your AI Team</h3>
 
-					<form class="hire-form">
+					<div id="hire-form-msg" class="contact-msg" style="display:none;"></div>
+					<form id="hire_form" class="hire-form" action="<?= url('/hire-submit') ?>" method="post">
+						<?= csrf_field() ?>
+						<input type="hidden" name="form_botcheck" value="">
+						<input type="hidden" name="page_url" value="<?= attr(current_url()) ?>">
 
 						<div class="grid-2">
 
 							<div class="form-group">
 								<label>Name</label>
-								<input type="text" placeholder="John Doe">
+								<input type="text" name="name" placeholder="John Doe" required>
 							</div>
 
 							<div class="form-group">
 								<label>Email</label>
-								<input type="email" placeholder="john@company.com">
+								<input type="email" name="email" placeholder="john@company.com" required>
 							</div>
 
 						</div>
@@ -245,12 +249,12 @@ $final_cta_btn_url = '/case-studies';
 
 							<div class="form-group">
 								<label>Phone</label>
-								<input type="text" placeholder="+91 9876543210">
+								<input type="text" name="phone" placeholder="+91 9876543210">
 							</div>
 
 							<div class="form-group">
 								<label>Company</label>
-								<input type="text" placeholder="Company Name">
+								<input type="text" name="company" placeholder="Company Name">
 							</div>
 
 						</div>
@@ -259,7 +263,7 @@ $final_cta_btn_url = '/case-studies';
 
 							<div class="form-group">
 								<label>Country</label>
-								<select class="custom-select">
+								<select class="custom-select" name="country">
 									<option value="">Select Country</option>
 									<option>India</option>
 									<option>United States</option>
@@ -269,8 +273,8 @@ $final_cta_btn_url = '/case-studies';
 
 							<div class="form-group">
 								<label>Hiring Model</label>
-								<select class="custom-select">
-									<option>Select</option>
+								<select class="custom-select" name="hiring_model">
+									<option value="">Select</option>
 									<option>Dedicated</option>
 									<option>Hourly</option>
 									<option>Project Based</option>
@@ -282,14 +286,58 @@ $final_cta_btn_url = '/case-studies';
 						<div class="form-group">
 							<label>Project Requirements</label>
 
-							<textarea rows="3" placeholder="Tell us about your AI project..."></textarea>
+							<textarea rows="3" name="project_details" placeholder="Tell us about your AI project..." required></textarea>
 						</div>
 
-						<button class="submit-btn">
-							Schedule Free Consultation
+						<button type="submit" id="hire-form-submit-btn" class="submit-btn">
+							<span class="btn-title">Schedule Free Consultation</span>
 						</button>
 
 					</form>
+					<script>
+						(function () {
+							var form = document.getElementById('hire_form');
+							var msgEl = document.getElementById('hire-form-msg');
+							var btn = document.getElementById('hire-form-submit-btn');
+							if (!form) return;
+
+							form.addEventListener('submit', function (e) {
+								e.preventDefault();
+								var origLabel = btn.querySelector('.btn-title').textContent;
+								btn.disabled = true;
+								btn.querySelector('.btn-title').textContent = 'Sending…';
+
+								fetch(form.action, {
+									method: 'POST',
+									body: new FormData(form),
+									headers: { 'X-Requested-With': 'XMLHttpRequest' }
+								})
+									.then(function (r) { return r.json(); })
+									.then(function (data) {
+										msgEl.textContent = data.message;
+										msgEl.className = 'contact-msg ' + (data.success ? 'contact-msg--ok' : 'contact-msg--err');
+										msgEl.style.display = 'block';
+										if (data.success) {
+											form.reset();
+
+											if (data.redirect) {
+												window.location.href = data.redirect;
+											}
+										}
+									})
+									.catch(function () {
+										msgEl.textContent = 'Something went wrong. Please try again.';
+										msgEl.className = 'contact-msg contact-msg--err';
+										msgEl.style.display = 'block';
+									})
+									.finally(function () {
+										btn.disabled = false;
+										btn.querySelector('.btn-title').textContent = origLabel;
+										msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+									});
+							});
+						})();
+					</script>
 
 				</div>
 
@@ -965,6 +1013,8 @@ $final_cta_btn_url = '/case-studies';
 					<div id="contact-msg" class="contact-msg" style="display:none;"></div>
 					<form id="contact_form" name="contact_form" action="<?= url('/contact-submit') ?>" method="post">
 						<?= csrf_field() ?>
+						<input type="hidden" name="form_type" value="contact">
+						<input type="hidden" name="page_url" value="<?= attr(current_url()) ?>">
 						<div class="row">
 							<div class="col-sm-6">
 								<div class="mb-3"><input name="form_name" class="form-control" type="text"
@@ -1023,7 +1073,13 @@ $final_cta_btn_url = '/case-studies';
 										msgEl.textContent = data.message;
 										msgEl.className = 'contact-msg ' + (data.success ? 'contact-msg--ok' : 'contact-msg--err');
 										msgEl.style.display = 'block';
-										if (data.success) { form.reset(); }
+										if (data.success) {
+											form.reset();
+
+											if (data.redirect) {
+												window.location.href = data.redirect;
+											}
+										}
 									})
 									.catch(function () {
 										msgEl.textContent = 'Something went wrong. Please try again.';

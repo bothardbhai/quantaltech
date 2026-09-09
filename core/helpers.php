@@ -44,6 +44,21 @@ function url(string $path = ''): string
 }
 
 /**
+ * The full URL of the current request (scheme + host + path + query),
+ * as actually seen by the browser. Unlike url(), which builds a link from a
+ * route path relative to site root, $_SERVER['REQUEST_URI'] already includes
+ * any subdirectory the site is installed under (e.g. BASE_URL's "/quantaltech"),
+ * so it must NOT be passed through url() — that would double the subdirectory.
+ */
+function current_url(): string
+{
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    return $scheme . '://' . $host . $uri;
+}
+
+/**
  * Output a JSON-LD script block from an array or already-encoded JSON string.
  */
 function jsonld(mixed $data): string
