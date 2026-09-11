@@ -1210,7 +1210,12 @@ $service_links ??= [
                                                 msgEl.textContent = data.message;
                                                 msgEl.className = 'contact-msg ' + (data.success ? 'contact-msg--ok' : 'contact-msg--err');
                                                 msgEl.style.display = 'block';
-                                                if (data.success) { form.reset(); }
+                                                if (data.success) {
+                                                    form.reset();
+                                                    if (data.redirect) {
+                                                        window.location.href = data.redirect;
+                                                    }
+                                                }
                                             })
                                             .catch(function () {
                                                 msgEl.textContent = 'Something went wrong. Please try again.';
