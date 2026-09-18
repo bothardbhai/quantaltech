@@ -145,12 +145,12 @@ if ($action === 'new' || $action === 'edit') {
             // Plain scalar fields — pass straight through, trimmed.
             $plain_fields = [
                 'role_label', 'page_label', 'crumb', 'hero_tag', 'hero_desc',
-                'expertise_sub', 'expertise_text', 'foundation_sub', 'foundation_text',
-                'tech_sub', 'tech_text', 'build_sub', 'build_text',
-                'engagement_sub', 'engagement_text', 'why_sub', 'why_text',
-                'industries_sub', 'industries_text',
-                'cta_tag', 'cta_text', 'cs_sub', 'cs_text',
-                'related_sub', 'related_text', 'blog_sub', 'blog_text', 'faq_intro',
+                'expertise_sub', 'foundation_sub',
+                'tech_sub', 'build_sub',
+                'engagement_sub', 'why_sub',
+                'industries_sub',
+                'cta_tag', 'cs_sub',
+                'related_sub', 'blog_sub',
                 'final_cta_desc', 'final_cta_btn_text', 'final_cta_btn_url',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
             ];
@@ -161,6 +161,9 @@ if ($action === 'new' || $action === 'edit') {
                 'engagement_title_html', 'why_title_html', 'industries_title_html',
                 'cta_title_html', 'cs_title_html', 'related_title_html', 'blog_title_html',
                 'final_cta_title_html',
+                'expertise_text', 'foundation_text', 'tech_text', 'build_text', 'engagement_text',
+                'why_text', 'industries_text', 'cta_text', 'cs_text', 'related_text', 'blog_text',
+                'faq_intro',
             ];
 
             $data = [
@@ -776,6 +779,26 @@ if ($action === 'new' || $action === 'edit') {
         // ---- CKEditor on every "_title_html" field (short inline fragments: bold/italic/link) ----
         document.querySelectorAll('textarea[id$="_title_html"]').forEach(function (el) {
             ClassicEditor.create(el, { toolbar: ['bold', 'italic', 'link', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
+        });
+
+        // CKEditor 5's default silently maps "Heading 1" -> <h2> etc.
+        // (reserving <h1> for the page's own title); this makes each label
+        // match the tag it names.
+        var CK_HEADING_OPTIONS = {
+            options: [
+                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+            ]
+        };
+
+        // ---- CKEditor on every "Intro Text" field (short section intro/description: heading/bold/italic/link) ----
+        document.querySelectorAll('textarea[id$="_text"], #faq_intro').forEach(function (el) {
+            ClassicEditor.create(el, {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'undo', 'redo'],
+                heading: CK_HEADING_OPTIONS
+            }).catch(function (err) { console.error(err); });
         });
 
         // ---- Slug auto-generation ----

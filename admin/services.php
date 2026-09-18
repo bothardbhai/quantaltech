@@ -175,13 +175,13 @@ if ($action === 'new' || $action === 'edit') {
             $plain_fields = [
                 'page_label', 'crumb', 'hero_tag', 'hero_desc',
                 'platform_title', 'overview_sub', 'overview_btn_text',
-                'benefits_sub', 'benefits_text', 'grid_sub', 'grid_text',
-                'whatyouget_sub', 'whatyouget_text', 'industries_sub', 'industries_text',
-                'framework_sub', 'framework_text', 'why_sub', 'why_text',
-                'engagement_sub', 'engagement_text', 'process_sub', 'process_text',
-                'cta_tag', 'cta_text', 'cs_sub', 'cs_text', 'tech_sub', 'tech_text',
-                'security_sub', 'security_text', 'related_sub', 'related_text', 'related_group_title',
-                'blog_sub', 'blog_text', 'faq_intro',
+                'benefits_sub', 'grid_sub',
+                'whatyouget_sub', 'industries_sub',
+                'framework_sub', 'why_sub',
+                'engagement_sub', 'process_sub',
+                'cta_tag', 'cs_sub', 'tech_sub',
+                'security_sub', 'related_sub', 'related_group_title',
+                'blog_sub',
                 'final_cta_desc', 'final_cta_btn_text', 'final_cta_btn_url',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
                 'overview_html', 'features_html', 'use_cases_html', 'benefits_html',
@@ -195,6 +195,9 @@ if ($action === 'new' || $action === 'edit') {
                 'engagement_title_html', 'process_title_html', 'cta_title_html', 'cs_title_html',
                 'tech_title_html', 'security_title_html', 'related_title_html', 'blog_title_html',
                 'final_cta_title_html',
+                'benefits_text', 'grid_text', 'whatyouget_text', 'industries_text', 'framework_text',
+                'why_text', 'engagement_text', 'process_text', 'cta_text', 'cs_text', 'tech_text',
+                'security_text', 'related_text', 'blog_text', 'faq_intro',
             ];
 
             $data = [
@@ -221,7 +224,14 @@ if ($action === 'new' || $action === 'edit') {
 
             // Simple string lists
             $data['platforms_json'] = json_encode(svc_lines_to_array((string) ($_POST['platforms'] ?? '')));
-            $data['overview_paragraphs_json'] = json_encode(svc_lines_to_array((string) ($_POST['overview_paragraphs'] ?? '')));
+            // overview_paragraphs_json: JSON-encoded HTML string (CKEditor output),
+            // sanitized the same way as the *_title_html fields. See
+            // svc_paragraphs_to_html() in core/content-helpers.php for the read
+            // side, which also still understands the old one-line-per-paragraph array.
+            $data['overview_paragraphs_json'] = json_encode(
+                strip_wrapping_p(sanitize_html_fragment((string) ($_POST['overview_paragraphs'] ?? ''))),
+                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            );
 
             // Object repeaters
             $data['impact_stats_json'] = json_encode(svc_build_repeater($_POST,
@@ -302,7 +312,7 @@ if ($action === 'new' || $action === 'edit') {
 
     // JSON-backed data for the JS repeaters (edit mode) — empty arrays for "new"
     $platforms_list = svc_lines_to_array(implode("\n", svc_json_decode($f['platforms_json'] ?? null)));
-    $overview_paragraphs_list = svc_json_decode($f['overview_paragraphs_json'] ?? null);
+    $overview_paragraphs_html = svc_paragraphs_to_html($f['overview_paragraphs_json'] ?? null);
     $repeater_data = [
         'impact_stats' => svc_json_decode($service['impact_stats_json'] ?? null),
         'overview_features' => svc_normalize_features($service['features_json'] ?? null),
@@ -519,8 +529,8 @@ if ($action === 'new' || $action === 'edit') {
                             <textarea id="overview_title_html" name="overview_title_html" rows="2"><?= e($f['overview_title_html']) ?></textarea>
                         </div>
                         <div class="form-row">
-                            <label for="overview_paragraphs">Paragraphs <span class="text-muted">(one per line)</span></label>
-                            <textarea id="overview_paragraphs" name="overview_paragraphs" rows="6"><?= e(implode("\n", $overview_paragraphs_list)) ?></textarea>
+                            <label for="overview_paragraphs">Paragraphs <span class="text-muted">(HTML allowed)</span></label>
+                            <textarea id="overview_paragraphs" name="overview_paragraphs" rows="6"><?= e($overview_paragraphs_html) ?></textarea>
                         </div>
                         <div class="form-row">
                             <label for="overview_btn_text">Button Text</label>
@@ -915,6 +925,36 @@ if ($action === 'new' || $action === 'edit') {
         document.querySelectorAll('textarea[id$="_title_html"]').forEach(function (el) {
             ClassicEditor.create(el, { toolbar: ['bold', 'italic', 'link', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
         });
+
+        // Shared heading map for the two configs below — CKEditor 5's default
+        // silently maps "Heading 1" -> <h2> etc. (reserving <h1> for the page's
+        // own title); this makes each label match the tag it names.
+        var CK_HEADING_OPTIONS = {
+            options: [
+                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+            ]
+        };
+
+        // ---- CKEditor on every "Intro Text" field (short section intro/description: heading/bold/italic/link) ----
+        document.querySelectorAll('textarea[id$="_text"], #faq_intro').forEach(function (el) {
+            ClassicEditor.create(el, {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'undo', 'redo'],
+                heading: CK_HEADING_OPTIONS
+            }).catch(function (err) { console.error(err); });
+        });
+
+        // ---- CKEditor on Overview "Paragraphs" (multi-paragraph body content: heading/bold/italic/link/lists) ----
+        var overviewParagraphsEl = document.getElementById('overview_paragraphs');
+        if (overviewParagraphsEl) {
+            ClassicEditor.create(overviewParagraphsEl, {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList',
+                          '|', 'blockQuote', '|', 'undo', 'redo'],
+                heading: CK_HEADING_OPTIONS
+            }).catch(function (err) { console.error(err); });
+        }
 
         // ---- Slug auto-generation ----
         var titleEl = document.getElementById('title');

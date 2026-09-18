@@ -8,6 +8,29 @@
 declare(strict_types=1);
 
 /**
+ * services.overview_paragraphs_json holds a JSON-encoded HTML string
+ * (CKEditor output) for rows saved since the rich-paragraphs editor
+ * shipped. Older rows stored a plain JSON array of one-paragraph-per-line
+ * strings — wrap each escaped line in <p> so existing content keeps
+ * rendering unchanged both in the admin form and on the public page.
+ * Shared by admin/services.php (edit form) and pages/services/_service-
+ * dynamic.php (public render).
+ */
+function svc_paragraphs_to_html(?string $raw): string
+{
+    if (!$raw) { return ''; }
+    $decoded = json_decode($raw, true);
+    if (is_string($decoded)) {
+        return $decoded;
+    }
+    if (is_array($decoded)) {
+        $lines = array_filter(array_map('trim', $decoded), static fn(string $l): bool => $l !== '');
+        return implode('', array_map(static fn(string $l): string => '<p>' . e($l) . '</p>', $lines));
+    }
+    return '';
+}
+
+/**
  * Get all webinars with optional filters
  */
 function get_webinars(\PDO $pdo, array $filters = []): array

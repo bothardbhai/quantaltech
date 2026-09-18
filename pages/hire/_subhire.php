@@ -12,18 +12,18 @@
  *   $hero_tag, $hero_title_html*, $hero_desc, $hero_features[{icon,text}]
  *   $impact_stats[{number,title}]
  *   $engineers[{name,role,years_of_experience,image,linkedin_url,education[],skills[]}] - "Meet Our Engineers"
- *   $expertise_sub, $expertise_title_html*, $expertise_text, $expertise_cards[{icon,title,desc}]
- *   $foundation_sub, $foundation_title_html*, $foundation_text, $foundation_cards[{image,title,desc}]
- *   $tech_sub, $tech_title_html*, $tech_text, $tech_categories[{title,items[]}]
- *   $build_sub, $build_title_html*, $build_text, $build_cards[{number,title,desc}]
- *   $engagement_sub, $engagement_title_html*, $engagement_text, $engagement_models[{icon,title,desc,featured}]
- *   $why_sub, $why_title_html*, $why_text, $why_cards[{title,desc}]
- *   $industries_sub, $industries_title_html*, $industries_text, $industries[{icon,title,desc}]
- *   $cta_tag, $cta_title_html*, $cta_text                          - mid-page CTA band
- *   $cs_sub, $cs_title_html*, $cs_text, $case_studies[{title,category,image,url}] - always the latest 4 published Success Stories, not manually picked
- *   $related_sub, $related_title_html*, $related_text, $related_items[{label,title,slug,excerpt,featured_image}]
- *   $blog_sub, $blog_title_html*, $blog_text, $blog_posts[{image,category,title,desc,link}]
- *   $faq_intro, $faqs[{question,answer}]
+ *   $expertise_sub, $expertise_title_html*, $expertise_text*, $expertise_cards[{icon,title,desc}]
+ *   $foundation_sub, $foundation_title_html*, $foundation_text*, $foundation_cards[{image,title,desc}]
+ *   $tech_sub, $tech_title_html*, $tech_text*, $tech_categories[{title,items[]}]
+ *   $build_sub, $build_title_html*, $build_text*, $build_cards[{number,title,desc}]
+ *   $engagement_sub, $engagement_title_html*, $engagement_text*, $engagement_models[{icon,title,desc,featured}]
+ *   $why_sub, $why_title_html*, $why_text*, $why_cards[{title,desc}]
+ *   $industries_sub, $industries_title_html*, $industries_text*, $industries[{icon,title,desc}]
+ *   $cta_tag, $cta_title_html*, $cta_text*                          - mid-page CTA band
+ *   $cs_sub, $cs_title_html*, $cs_text*, $case_studies[{title,category,image,url}] - always the latest 4 published Success Stories, not manually picked
+ *   $related_sub, $related_title_html*, $related_text*, $related_items[{label,title,slug,excerpt,featured_image}]
+ *   $blog_sub, $blog_title_html*, $blog_text*, $blog_posts[{image,category,title,desc,link}]
+ *   $faq_intro*, $faqs[{question,answer}]
  *   $final_cta_title_html*, $final_cta_desc, $final_cta_btn_text, $final_cta_btn_url
  *   (* = trusted HTML, printed raw, not escaped)
  */
@@ -421,7 +421,7 @@
 
 					<?php if (!empty($expertise_text)): ?>
 						<div class="text">
-							<?= e($expertise_text) ?>
+							<?= $expertise_text ?? '' /* trusted HTML */ ?>
 						</div>
 					<?php endif; ?>
 
@@ -478,7 +478,7 @@
 
 					<?php if (!empty($foundation_text)): ?>
 						<div class="text">
-							<?= e($foundation_text) ?>
+							<?= $foundation_text ?? '' /* trusted HTML */ ?>
 						</div>
 					<?php endif; ?>
 
@@ -524,7 +524,7 @@
 						<?= $tech_title_html ?? '' /* trusted HTML */ ?>
 					</h2>
 					<div class="text">
-						<?= e($tech_text ?? '') ?>
+						<?= $tech_text ?? '' /* trusted HTML */ ?>
 					</div>
 				</div>
 
@@ -875,7 +875,7 @@
 						<?= $cta_title_html ?? '' /* trusted HTML */ ?>
 					</h2>
 					<p>
-						<?= e($cta_text ?? '') ?>
+						<?= $cta_text ?? '' /* trusted HTML */ ?>
 					</p>
 					<div class="service-btns">
 						<hr>
@@ -1177,7 +1177,7 @@
 						<?= $related_title_html ?? '' /* trusted HTML */ ?>
 					</h2>
 					<div class="text">
-						<?= e($related_text ?? '') ?>
+						<?= $related_text ?? '' /* trusted HTML */ ?>
 					</div>
 				</div>
 
@@ -1263,7 +1263,7 @@
 						<?= $blog_title_html ?? '' /* trusted HTML */ ?>
 					</h2>
 					<div class="text">
-						<?= e($blog_text ?? '') ?>
+						<?= $blog_text ?? '' /* trusted HTML */ ?>
 					</div>
 				</div>
 				<div class="row g-4">
@@ -1306,7 +1306,7 @@
 			<div class="container faq-content pt-70">
 				<h3 class="mb-3">Frequently Asked Questions</h3>
 				<p class="text">
-					<?= e($faq_intro ?? '') ?>
+					<?= $faq_intro ?? '' /* trusted HTML */ ?>
 				</p>
 				<ul class="accordion-box wow fadeInUp p-0 mt-40" data-wow-delay=".3s">
 					<?php foreach ($faqs as $i => $faq):
