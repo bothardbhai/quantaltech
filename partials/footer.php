@@ -20,28 +20,32 @@
 </a> -->
 
 <!-- Main Footer -->
-<footer class="footer-section fix bg-cover" style="background-image: url('<?= asset('images/home-1/footer-line.png') ?>');">
+<footer class="footer-section fix bg-cover"
+  style="background-image: url('<?= asset('images/home-1/footer-line.png') ?>');">
   <div class="container">
     <div class="footer-top-wrapper">
       <div class="row">
         <div class="col-6 logo-section">
           <div>
             <a href="<?= url('/') ?>" class="footer-logo wow fadeInUp brand-logo" data-wow-delay=".3s">
-            <img class="img-fluid" src="<?= asset('images/brain-logo.png') ?>" alt="<?= attr(SITE_NAME) ?>">
-            <span class="brand-title">Quantal AI</span>
+              <img class="img-fluid" src="<?= asset('images/brain-logo.png') ?>" alt="<?= attr(SITE_NAME) ?>">
+              <span class="brand-title">Quantal AI</span>
             </a>
           </div>
           <div class="widget-title mb-25 wow fadeInUp" data-wow-delay=".3s">
-            <p class="">With 15+ years of combined expertise, Quantal AI helps businesses move beyond AI experimentation building production-ready agents, automation, and intelligent applications that deliver real, measurable outcomes.</p>
+            <p class="">With 15+ years of combined expertise, Quantal AI helps businesses move beyond AI experimentation
+              building production-ready agents, automation, and intelligent applications that deliver real, measurable
+              outcomes.</p>
           </div>
-        
+
         </div>
-      <div class="col-6 lets-talk-content wow fadeInUp" data-wow-delay=".5s">
-        <h2 class="title" style="text-align: end;">
-          Let&rsquo;s Talk <a href="<?= url('/contact') ?>" class="arrow-icon"><i class="fa-regular fa-arrow-up-right"></i></a>
-          <span>Work Together</span>
-        </h2>
-      </div>
+        <div class="col-6 lets-talk-content wow fadeInUp" data-wow-delay=".5s">
+          <h2 class="title" style="text-align: end;">
+            Let&rsquo;s Talk <a href="<?= url('/contact') ?>" class="arrow-icon"><i
+                class="fa-regular fa-arrow-up-right"></i></a>
+            <span>Work Together</span>
+          </h2>
+        </div>
       </div>
     </div>
     <div class="footer-widget-wrapper">
@@ -57,18 +61,22 @@
             <!--<p>H 7 Sickanagar, V P Road, Mumbai — 400004</p>-->
             <p>
               <a href="https://www.google.com/maps/search/?api=1&query=430+Park+Avenue,+New+York,+NY+10022"
-                  target="_blank"
-                  rel="noopener noreferrer">
-                    430 Park Avenue, New York, NY — 10022
+                target="_blank" rel="noopener noreferrer">
+                430 Park Avenue, New York, NY — 10022
               </a>
             </p>
-            
+
             <div class="social-icon">
-              <a href="https://www.linkedin.com/company/quantal-ai" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-              <a href="https://www.youtube.com/@QuantaltechAI" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-              <a href="https://www.instagram.com/quantaltech.ai/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-              <a href="https://www.upwork.com/agencies/1866102204539548169/" target="_blank" rel="noopener" aria-label="UpWork"><i class="fa-brands fa-upwork"></i></a>
-              <a href="https://www.glassdoor.co.in/Overview/Working-at-Quantal-AI-EI_IE10895843.11,21.htm" target="_blank" rel="noopener" aria-label="GlassDoor"><i class="fa-regular fa-quotes"></i></a>
+              <a href="https://www.linkedin.com/company/quantal-ai" target="_blank" rel="noopener"
+                aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+              <a href="https://www.youtube.com/@QuantaltechAI" target="_blank" rel="noopener" aria-label="YouTube"><i
+                  class="fa-brands fa-youtube"></i></a>
+              <a href="https://www.instagram.com/quantalai_/" target="_blank" rel="noopener" aria-label="Instagram"><i
+                  class="fa-brands fa-instagram"></i></a>
+              <a href="https://www.upwork.com/agencies/1866102204539548169/" target="_blank" rel="noopener"
+                aria-label="UpWork"><i class="fa-brands fa-upwork"></i></a>
+              <a href="https://www.glassdoor.co.in/Overview/Working-at-Quantal-AI-EI_IE10895843.11,21.htm"
+                target="_blank" rel="noopener" aria-label="GlassDoor"><i class="fa-regular fa-quotes"></i></a>
             </div>
             <h5 class="get-title">Get the latest AI engineering insights</h5>
             <form id="newsletter-form" action="<?= url('/newsletter') ?>" method="post">
@@ -158,37 +166,38 @@
 <script src="<?= asset('js/live-search.js') ?>"></script>
 <script src="<?= asset('js/podcast.js') ?>"></script>
 <script>
-(function () {
+  (function () {
     var form = document.getElementById('newsletter-form');
-    var msg  = document.getElementById('newsletter-msg');
+    var msg = document.getElementById('newsletter-msg');
     if (!form || !msg) return;
 
     form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var btn = form.querySelector('button[type=submit]');
-        btn.disabled = true;
+      e.preventDefault();
+      var btn = form.querySelector('button[type=submit]');
+      btn.disabled = true;
 
-        fetch(form.action, {
-            method: 'POST',
-            body: new FormData(form),
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
         .then(function (r) { return r.json(); })
         .then(function (data) {
-            msg.textContent   = data.message;
-            msg.style.display = 'block';
-            msg.style.color   = data.success ? '#4ade80' : '#f87171';
-            if (data.success) { form.reset(); }
+          msg.textContent = data.message;
+          msg.style.display = 'block';
+          msg.style.color = data.success ? '#4ade80' : '#f87171';
+          if (data.success) { form.reset(); }
         })
         .catch(function () {
-            msg.textContent   = 'Something went wrong. Please try again.';
-            msg.style.display = 'block';
-            msg.style.color   = '#f87171';
+          msg.textContent = 'Something went wrong. Please try again.';
+          msg.style.display = 'block';
+          msg.style.color = '#f87171';
         })
         .finally(function () { btn.disabled = false; });
     });
-})();
+  })();
 </script>
 
 </body>
+
 </html>
