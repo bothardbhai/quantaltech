@@ -911,9 +911,9 @@ if ($action === 'new' || $action === 'edit') {
         var iconField = document.getElementById('icon_class');
         if (iconField) initIconPicker(iconField);
 
-        // ---- CKEditor on every "_title_html" field (short inline fragments: bold/italic only) ----
+        // ---- CKEditor on every "_title_html" field (short inline fragments: bold/italic/link) ----
         document.querySelectorAll('textarea[id$="_title_html"]').forEach(function (el) {
-            ClassicEditor.create(el, { toolbar: ['bold', 'italic', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
+            ClassicEditor.create(el, { toolbar: ['bold', 'italic', 'link', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
         });
 
         // ---- Slug auto-generation ----
