@@ -31,6 +31,45 @@ function svc_paragraphs_to_html(?string $raw): string
 }
 
 /**
+ * Shared, site-wide section headings (Trusted Clients, Meet Our Founders,
+ * Testimonials, Contact Band) — these render identically on every Services
+ * and Hire Master page, so they're edited once in admin/settings.php
+ * instead of being duplicated per-service/per-hire-page. Returns every key
+ * with a '' fallback so callers never need isset() checks. Statically
+ * cached per-request like seo_site_defaults() in core/seo.php.
+ */
+function get_shared_chrome_settings(): array
+{
+    static $cached = null;
+    if ($cached !== null) {
+        return $cached;
+    }
+
+    $defaults = [
+        'shared_clients_label' => '',
+        'shared_founders_sub' => '', 'shared_founders_title_html' => '', 'shared_founders_intro_html' => '',
+        'shared_testimonials_sub' => '', 'shared_testimonials_title_html' => '', 'shared_testimonials_intro_html' => '',
+        'shared_contact_sub' => '', 'shared_contact_title_html' => '', 'shared_contact_intro_html' => '',
+    ];
+
+    $pdo = db();
+    if ($pdo !== null) {
+        try {
+            $stmt = $pdo->query('SELECT `key`, `value` FROM settings WHERE `key` LIKE \'shared\\_%\'');
+            if ($stmt) {
+                foreach ($stmt->fetchAll() as $row) {
+                    $defaults[$row['key']] = $row['value'];
+                }
+            }
+        } catch (PDOException $e) {
+            // settings table may not exist yet
+        }
+    }
+
+    return $cached = $defaults;
+}
+
+/**
  * Get all webinars with optional filters
  */
 function get_webinars(\PDO $pdo, array $filters = []): array

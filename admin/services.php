@@ -181,7 +181,7 @@ if ($action === 'new' || $action === 'edit') {
                 'engagement_sub', 'process_sub',
                 'cta_tag', 'cs_sub', 'tech_sub',
                 'security_sub', 'related_sub', 'related_group_title',
-                'blog_sub',
+                'blog_sub', 'faq_title',
                 'final_cta_desc', 'final_cta_btn_text', 'final_cta_btn_url',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
                 'overview_html', 'features_html', 'use_cases_html', 'benefits_html',
@@ -305,7 +305,7 @@ if ($action === 'new' || $action === 'edit') {
         'tech_sub' => '', 'tech_title_html' => '', 'tech_text' => '',
         'security_sub' => '', 'security_title_html' => '', 'security_text' => '',
         'related_sub' => '', 'related_title_html' => '', 'related_text' => '', 'related_group_title' => '',
-        'blog_sub' => '', 'blog_title_html' => '', 'blog_text' => '', 'faq_intro' => '',
+        'blog_sub' => '', 'blog_title_html' => '', 'blog_text' => '', 'faq_intro' => '', 'faq_title' => '',
         'final_cta_title_html' => '', 'final_cta_desc' => '', 'final_cta_btn_text' => '', 'final_cta_btn_url' => '',
         'platforms_json' => null, 'overview_paragraphs_json' => null,
     ], (array) $service);
@@ -799,6 +799,10 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ FAQ ============ -->
                 <div class="section-tabs__panel" data-panel="faq">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="faq_title">Title <span class="text-muted">(optional — defaults to "Frequently Asked Questions")</span></label>
+                            <input type="text" id="faq_title" name="faq_title" value="<?= attr($f['faq_title']) ?>" placeholder="Frequently Asked Questions">
+                        </div>
                         <div class="form-row">
                             <label for="faq_intro">Intro Text</label>
                             <textarea id="faq_intro" name="faq_intro" rows="2"><?= e($f['faq_intro']) ?></textarea>

@@ -150,7 +150,7 @@ if ($action === 'new' || $action === 'edit') {
                 'engagement_sub', 'why_sub',
                 'industries_sub',
                 'cta_tag', 'cs_sub',
-                'related_sub', 'blog_sub',
+                'related_sub', 'blog_sub', 'faq_title', 'hero_card_title', 'engineers_title',
                 'final_cta_desc', 'final_cta_btn_text', 'final_cta_btn_url',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
             ];
@@ -251,7 +251,8 @@ if ($action === 'new' || $action === 'edit') {
         'cta_tag' => '', 'cta_title_html' => '', 'cta_text' => '',
         'cs_sub' => '', 'cs_title_html' => '', 'cs_text' => '',
         'related_sub' => '', 'related_title_html' => '', 'related_text' => '',
-        'blog_sub' => '', 'blog_title_html' => '', 'blog_text' => '', 'faq_intro' => '',
+        'blog_sub' => '', 'blog_title_html' => '', 'blog_text' => '', 'faq_intro' => '', 'faq_title' => '',
+        'hero_card_title' => '', 'engineers_title' => '',
         'final_cta_title_html' => '', 'final_cta_desc' => '', 'final_cta_btn_text' => '', 'final_cta_btn_url' => '',
     ], (array) $hire_page);
 
@@ -418,6 +419,10 @@ if ($action === 'new' || $action === 'edit') {
                             <label for="hero_desc">Hero Description</label>
                             <textarea id="hero_desc" name="hero_desc" rows="3"><?= e($f['hero_desc']) ?></textarea>
                         </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="hero_card_title">Contact Card Heading <span class="text-muted">(optional — defaults to "Let's Build Your AI Team")</span></label>
+                            <input type="text" id="hero_card_title" name="hero_card_title" value="<?= attr($f['hero_card_title']) ?>" placeholder="Let's Build Your AI Team">
+                        </div>
                     </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field(
@@ -449,6 +454,12 @@ if ($action === 'new' || $action === 'edit') {
                         <p class="text-muted" style="font-size:13px;margin-top:0;">
                             Engineers featured on this specific hire page. First 4 shown initially on the frontend; the rest appear behind a "View All" button.
                         </p>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="engineers_title">Section Heading <span class="text-muted">(optional — defaults to "Meet Our Engineers")</span></label>
+                            <input type="text" id="engineers_title" name="engineers_title" value="<?= attr($f['engineers_title']) ?>" placeholder="Meet Our Engineers">
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field(
                             'engineers', 'Engineers', '+ Add Engineer',
                             '<div class="form-row"><label>Photo Path <span class="text-muted">(copy from the Media Library)</span></label><input type="text" name="eng_image[]" placeholder="/uploads/hire/..."></div>' .
@@ -680,6 +691,10 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ FAQ ============ -->
                 <div class="section-tabs__panel" data-panel="faq">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="faq_title">Title <span class="text-muted">(optional — defaults to "Frequently Asked Questions")</span></label>
+                            <input type="text" id="faq_title" name="faq_title" value="<?= attr($f['faq_title']) ?>" placeholder="Frequently Asked Questions">
+                        </div>
                         <div class="form-row">
                             <label for="faq_intro">Intro Text</label>
                             <textarea id="faq_intro" name="faq_intro" rows="2"><?= e($f['faq_intro']) ?></textarea>

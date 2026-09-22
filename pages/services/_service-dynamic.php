@@ -197,7 +197,22 @@ $blog_posts = $pdo
 
 // --- FAQ ---
 $faq_intro = $service['faq_intro'] ?? '';
+$faq_title = $service['faq_title'] ?? '';
 $faqs      = svc_json($service['faqs_json']);
+
+// --- Shared, site-wide section headings (Trusted Clients, Founders, Testimonials, Contact Band) ---
+// Edited once in admin > Settings, not per-service — renders identically on every service/hire page.
+$shared_chrome = get_shared_chrome_settings();
+$shared_clients_label = $shared_chrome['shared_clients_label'];
+$shared_founders_sub = $shared_chrome['shared_founders_sub'];
+$shared_founders_title_html = $shared_chrome['shared_founders_title_html'];
+$shared_founders_intro_html = $shared_chrome['shared_founders_intro_html'];
+$shared_testimonials_sub = $shared_chrome['shared_testimonials_sub'];
+$shared_testimonials_title_html = $shared_chrome['shared_testimonials_title_html'];
+$shared_testimonials_intro_html = $shared_chrome['shared_testimonials_intro_html'];
+$shared_contact_sub = $shared_chrome['shared_contact_sub'];
+$shared_contact_title_html = $shared_chrome['shared_contact_title_html'];
+$shared_contact_intro_html = $shared_chrome['shared_contact_intro_html'];
 
 // --- Final CTA (bottom-of-page band) ---
 $final_cta_title_html = $service['final_cta_title_html'] ?? '';

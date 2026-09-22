@@ -135,9 +135,27 @@ if ($action === 'new' || $action === 'edit') {
                 'final_cta_sub', 'final_cta_title',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
                 'featured_image', 'featured_alt',
+                'ourclient_sub', 'ourclient_title',
+                'objectives_sub', 'objectives_title',
+                'architecture_sub', 'architecture_title',
+                'workflow_sub', 'workflow_title',
+                'results_sub', 'results_title',
+                'deliverables_sub', 'deliverables_title',
+                'techstack_sub', 'techstack_title',
+                'why_sub',
+                // NOTE: why_title is deliberately NOT here — the Why Cards
+                // repeater already uses POST field "why_title[]" for each
+                // card's title, so the section heading uses a differently
+                // named POST field ("why_section_title") and is assigned
+                // to $cols['why_title'] explicitly below instead.
             ];
             // Rich-content fields (CKEditor) — sanitized, not escaped.
-            $html_fields = ['body_html', 'challenge_html', 'solution_html', 'why_final_html'];
+            $html_fields = [
+                'body_html', 'challenge_html', 'solution_html', 'why_final_html',
+                'ourclient_intro_html', 'objectives_intro_html', 'architecture_intro_html',
+                'workflow_intro_html', 'results_intro_html', 'deliverables_intro_html',
+                'techstack_intro_html', 'why_intro_html',
+            ];
 
             $cols = [
                 'slug'          => $slug,
@@ -153,6 +171,9 @@ if ($action === 'new' || $action === 'edit') {
                 'featured'      => $is_featured,
                 'author_id'     => $user['id'] ?? null,
                 'final_cta_desc' => trim((string) ($_POST['final_cta_desc'] ?? '')),
+                // Read from "why_section_title", not "why_title" — that POST
+                // key is already the Why Cards repeater's per-card title array.
+                'why_title' => trim((string) ($_POST['why_section_title'] ?? '')),
             ];
             foreach ($plain_fields as $fld) {
                 $cols[$fld] = trim((string) ($_POST[$fld] ?? ''));
@@ -227,6 +248,14 @@ if ($action === 'new' || $action === 'edit') {
         'responsibilities_sub' => '', 'responsibilities_title' => '', 'responsibilities_text' => '',
         'future_sub' => '', 'future_title' => '', 'future_text' => '',
         'final_cta_sub' => '', 'final_cta_title' => '', 'final_cta_desc' => '',
+        'ourclient_sub' => '', 'ourclient_title' => '', 'ourclient_intro_html' => '',
+        'objectives_sub' => '', 'objectives_title' => '', 'objectives_intro_html' => '',
+        'architecture_sub' => '', 'architecture_title' => '', 'architecture_intro_html' => '',
+        'workflow_sub' => '', 'workflow_title' => '', 'workflow_intro_html' => '',
+        'results_sub' => '', 'results_title' => '', 'results_intro_html' => '',
+        'deliverables_sub' => '', 'deliverables_title' => '', 'deliverables_intro_html' => '',
+        'techstack_sub' => '', 'techstack_title' => '', 'techstack_intro_html' => '',
+        'why_sub' => '', 'why_title' => '', 'why_intro_html' => '',
     ], (array) $story);
 
     // JSON-backed data for the JS repeaters (edit mode) — empty arrays for "new"
@@ -420,6 +449,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ CONTENT & INFO ============ -->
                 <div class="section-tabs__panel" data-panel="content">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="ourclient_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="ourclient_sub" name="ourclient_sub" value="<?= attr($f['ourclient_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="ourclient_title">Title <span class="text-muted">(optional — defaults to "Our Client")</span></label>
+                            <input type="text" id="ourclient_title" name="ourclient_title" value="<?= attr($f['ourclient_title']) ?>" placeholder="Our Client">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="ourclient_intro_html">Extra Intro <span class="text-muted">(optional — shown above the Short Description below, only if filled in)</span></label>
+                            <textarea id="ourclient_intro_html" name="ourclient_intro_html" rows="3"><?= e($f['ourclient_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <div class="form-row" style="margin-bottom:0;">
                             <label for="body_html">Main Content</label>
                             <textarea id="body_html" name="body_html" rows="8"><?= e($f['body_html']) ?></textarea>
@@ -449,6 +492,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ OBJECTIVES ============ -->
                 <div class="section-tabs__panel" data-panel="objectives">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="objectives_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="objectives_sub" name="objectives_sub" value="<?= attr($f['objectives_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="objectives_title">Title <span class="text-muted">(optional — defaults to "Objectives")</span></label>
+                            <input type="text" id="objectives_title" name="objectives_title" value="<?= attr($f['objectives_title']) ?>" placeholder="Objectives">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="objectives_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="objectives_intro_html" name="objectives_intro_html" rows="3"><?= e($f['objectives_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('objectives', 'Objectives', '+ Add objective',
                             '<div class="form-row"><label>Title</label><input type="text" name="obj_title[]"></div>' .
                             '<div class="form-row"><label>Description <span class="text-muted">(optional)</span></label><textarea name="obj_desc[]" rows="2"></textarea></div>' .
@@ -462,6 +519,20 @@ if ($action === 'new' || $action === 'edit') {
 
                 <!-- ============ ARCHITECTURE ============ -->
                 <div class="section-tabs__panel" data-panel="architecture">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="architecture_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="architecture_sub" name="architecture_sub" value="<?= attr($f['architecture_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="architecture_title">Title <span class="text-muted">(optional — defaults to "Proposed Architecture")</span></label>
+                            <input type="text" id="architecture_title" name="architecture_title" value="<?= attr($f['architecture_title']) ?>" placeholder="Proposed Architecture">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="architecture_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="architecture_intro_html" name="architecture_intro_html" rows="3"><?= e($f['architecture_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <p class="text-muted" style="font-size:13px;margin-top:0;">Each step renders as one node in the Proposed Architecture flow diagram, in the order listed below.</p>
                         <?php svc_repeater_field('architecture', 'Architecture Steps', '+ Add step',
@@ -525,6 +596,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ WORKFLOW ============ -->
                 <div class="section-tabs__panel" data-panel="workflow">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="workflow_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="workflow_sub" name="workflow_sub" value="<?= attr($f['workflow_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="workflow_title">Title <span class="text-muted">(optional — defaults to "Our Workflow")</span></label>
+                            <input type="text" id="workflow_title" name="workflow_title" value="<?= attr($f['workflow_title']) ?>" placeholder="Our Workflow">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="workflow_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="workflow_intro_html" name="workflow_intro_html" rows="3"><?= e($f['workflow_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('workflow', 'Workflow Steps', '+ Add step',
                             '<div class="form-row"><label>Title</label><input type="text" name="wf_title[]"></div>' .
                             '<div class="form-row"><label>Description</label><textarea name="wf_desc[]" rows="3"></textarea></div>' .
@@ -541,6 +626,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ RESULTS & IMPACT ============ -->
                 <div class="section-tabs__panel" data-panel="results">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="results_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="results_sub" name="results_sub" value="<?= attr($f['results_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="results_title">Title <span class="text-muted">(optional — defaults to "Results &amp; Impact")</span></label>
+                            <input type="text" id="results_title" name="results_title" value="<?= attr($f['results_title']) ?>" placeholder="Results &amp; Impact">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="results_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="results_intro_html" name="results_intro_html" rows="3"><?= e($f['results_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('results', 'Results & Impact', '+ Add result',
                             '<div class="form-row"><label>Title</label><input type="text" name="res_title[]"></div>' .
                             '<div class="form-row"><label>Description</label><textarea name="res_desc[]" rows="2"></textarea></div>' .
@@ -554,6 +653,20 @@ if ($action === 'new' || $action === 'edit') {
 
                 <!-- ============ WHAT WE DELIVERED ============ -->
                 <div class="section-tabs__panel" data-panel="deliverables">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="deliverables_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="deliverables_sub" name="deliverables_sub" value="<?= attr($f['deliverables_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="deliverables_title">Title <span class="text-muted">(optional — defaults to "What We Delivered")</span></label>
+                            <input type="text" id="deliverables_title" name="deliverables_title" value="<?= attr($f['deliverables_title']) ?>" placeholder="What We Delivered">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="deliverables_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="deliverables_intro_html" name="deliverables_intro_html" rows="3"><?= e($f['deliverables_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('deliverables', 'Deliverables', '+ Add deliverable',
                             '<div class="form-row"><label>Icon</label><input type="text" class="icon-input" name="del_icon[]"></div>' .
@@ -570,6 +683,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ TECH STACK ============ -->
                 <div class="section-tabs__panel" data-panel="tech">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="techstack_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="techstack_sub" name="techstack_sub" value="<?= attr($f['techstack_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="techstack_title">Title <span class="text-muted">(optional — defaults to "Our Technology Stack")</span></label>
+                            <input type="text" id="techstack_title" name="techstack_title" value="<?= attr($f['techstack_title']) ?>" placeholder="Our Technology Stack">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="techstack_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="techstack_intro_html" name="techstack_intro_html" rows="3"><?= e($f['techstack_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('tech-stack', 'Technology Stack', '+ Add technology',
                             '<div class="form-row"><label>Icon</label><input type="text" class="icon-input" name="tech_icon[]"></div>' .
                             '<div class="form-row"><label>Name</label><input type="text" name="tech_name[]" placeholder="Apollo"></div>' .
@@ -584,6 +711,20 @@ if ($action === 'new' || $action === 'edit') {
 
                 <!-- ============ WHY CHOOSE ============ -->
                 <div class="section-tabs__panel" data-panel="why">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="why_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="why_sub" name="why_sub" value="<?= attr($f['why_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="why_section_title">Title <span class="text-muted">(optional — defaults to "Why Choose Our Solution")</span></label>
+                            <input type="text" id="why_section_title" name="why_section_title" value="<?= attr($f['why_title']) ?>" placeholder="Why Choose Our Solution">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="why_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in; separate from the closing paragraph below the cards)</span></label>
+                            <textarea id="why_intro_html" name="why_intro_html" rows="3"><?= e($f['why_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('why-cards', 'Why Choose Our Solution', '+ Add card',
                             '<div class="form-row"><label>Title</label><input type="text" name="why_title[]"></div>' .
@@ -757,6 +898,32 @@ if ($action === 'new' || $action === 'edit') {
             ClassicEditor.create(el, {
                 toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList',
                           '|', 'blockQuote', '|', 'undo', 'redo', '|', 'sourceEditing']
+            }).catch(function (err) { console.error(err); });
+        });
+
+        // CKEditor 5's default silently maps "Heading 1" -> <h2> etc.
+        // (reserving <h1> for the page's own title); this makes each label
+        // match the tag it names.
+        var CK_HEADING_OPTIONS = {
+            options: [
+                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+            ]
+        };
+
+        // ---- CKEditor on every section's optional "Intro" field (heading/bold/italic/link) ----
+        [
+            'ourclient_intro_html', 'objectives_intro_html', 'architecture_intro_html',
+            'workflow_intro_html', 'results_intro_html', 'deliverables_intro_html',
+            'techstack_intro_html', 'why_intro_html'
+        ].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            ClassicEditor.create(el, {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'undo', 'redo'],
+                heading: CK_HEADING_OPTIONS
             }).catch(function (err) { console.error(err); });
         });
 

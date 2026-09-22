@@ -87,7 +87,7 @@
 
 				<div class="contact-card">
 
-					<h3>Let's Build Your AI Team</h3>
+					<h3><?= e(($hero_card_title ?? '') !== '' ? $hero_card_title : "Let's Build Your AI Team") ?></h3>
 
 					<div id="hire-form-msg" class="contact-msg" style="display:none;"></div>
 					<form id="hire_form" class="hire-form" action="<?= url('/hire-submit') ?>" method="post">
@@ -238,7 +238,7 @@
 		<div class="container">
 			<div class="brand-wrap-2">
 				<div class="text-box">
-					<p>Our Trusted Clients</p>
+					<p><?= e($shared_clients_label !== '' ? $shared_clients_label : 'Our Trusted Clients') ?></p>
 				</div>
 
 				<div class="swiper brand-slider2">
@@ -301,7 +301,7 @@
 			</div>
 			<div class="container">
 				<div class="sec-title text-center mb-70">
-					<h2>Meet Our Engineers</h2>
+					<h2><?= e(($engineers_title ?? '') !== '' ? $engineers_title : 'Meet Our Engineers') ?></h2>
 				</div>
 				<div class="row g-4">
 					<?php foreach ($engineers as $i => $eng): ?>
@@ -722,9 +722,12 @@
 									d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
 									fill="currentColor" />
 							</svg>
-							<span>Get in Touch</span>
+							<span><?= e($shared_contact_sub !== '' ? $shared_contact_sub : 'Get in Touch') ?></span>
 						</div>
-						<h2 class="title split-text split-in-right">Talk to an AI Expert</h2>
+						<h2 class="title split-text split-in-right"><?= $shared_contact_title_html !== '' ? $shared_contact_title_html : 'Talk to an AI Expert' /* trusted HTML */ ?></h2>
+						<?php if (!empty($shared_contact_intro_html)): ?>
+							<div class="text mt-3"><?= $shared_contact_intro_html /* trusted HTML */ ?></div>
+						<?php endif; ?>
 					</div>
 					<div id="contact-msg" class="contact-msg" style="display:none;"></div>
 					<form id="contact_form" name="contact_form" action="<?= url('/contact-submit') ?>" method="post">
@@ -917,10 +920,9 @@
 											d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
 											fill="currentColor" />
 									</svg>
-									<span>Featured Projects</span>
+									<span><?= e($cs_sub !== '' ? $cs_sub : 'Featured Projects') ?></span>
 								</div>
-								<h2 class="title split-text split-in-right">Success Stories That <span> Transform
-										Businesses</span></h2>
+								<h2 class="title split-text split-in-right"><?= $cs_title_html !== '' ? $cs_title_html : 'Success Stories That <span> Transform Businesses</span>' /* trusted HTML */ ?></h2>
 							</div>
 							<a class="theme-btn-main mb-5 mb-xl-0 wow fadeInUp" data-wow-delay=".3s"
 								href="<?= url('/success-stories') ?>">
@@ -1013,12 +1015,14 @@
 								d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
 								fill="currentColor" />
 						</svg>
-						<span>Leadership Team</span>
+						<span><?= e($shared_founders_sub !== '' ? $shared_founders_sub : 'Leadership Team') ?></span>
 					</div>
 					<h2 class="title split-text split-in-right">
-						Meet Our <br>
-						<span>Founders</span>
+						<?= $shared_founders_title_html !== '' ? $shared_founders_title_html : 'Meet Our <br><span>Founders</span>' /* trusted HTML */ ?>
 					</h2>
+					<?php if (!empty($shared_founders_intro_html)): ?>
+						<div class="text mt-3"><?= $shared_founders_intro_html /* trusted HTML */ ?></div>
+					<?php endif; ?>
 				</div>
 				<div class="row team-item-wrapper">
 					<div class="col-xl-2 col-0 wow fadeInUp" data-wow-delay=".3s"></div>
@@ -1090,10 +1094,12 @@
 										d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
 										fill="currentColor" />
 								</svg>
-								<span>Client Stories</span>
+								<span><?= e($shared_testimonials_sub !== '' ? $shared_testimonials_sub : 'Client Stories') ?></span>
 							</div>
-							<h2 class="title split-text split-in-right">What clients say <span>about
-									us.</span></h2>
+							<h2 class="title split-text split-in-right"><?= $shared_testimonials_title_html !== '' ? $shared_testimonials_title_html : 'What clients say <span>about us.</span>' /* trusted HTML */ ?></h2>
+							<?php if (!empty($shared_testimonials_intro_html)): ?>
+								<div class="text mt-3"><?= $shared_testimonials_intro_html /* trusted HTML */ ?></div>
+							<?php endif; ?>
 						</div>
 						<div class="swiper testimonial-slider">
 							<div class="swiper-wrapper">
@@ -1304,7 +1310,7 @@
 		<section class="pb-100 faq-section">
 
 			<div class="container faq-content pt-70">
-				<h3 class="mb-3">Frequently Asked Questions</h3>
+				<h3 class="mb-3"><?= e(($faq_title ?? '') !== '' ? $faq_title : 'Frequently Asked Questions') ?></h3>
 				<p class="text">
 					<?= $faq_intro ?? '' /* trusted HTML */ ?>
 				</p>

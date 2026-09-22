@@ -62,6 +62,51 @@ $cs = [
 
 $cs_body_html = $story['body_html'];
 
+// Editable eyebrow/title/intro for sections whose heading used to be a
+// hardcoded literal with no admin override. Title falls back to the
+// section's original default text when left blank in admin; intro is
+// trusted HTML (CKEditor) and only renders when non-empty.
+$ourclient_head = [
+    'sub' => $story['ourclient_sub'] ?? '',
+    'title' => $story['ourclient_title'] ?? '',
+    'intro' => $story['ourclient_intro_html'] ?? '',
+];
+$objectives_head = [
+    'sub' => $story['objectives_sub'] ?? '',
+    'title' => $story['objectives_title'] ?? '',
+    'intro' => $story['objectives_intro_html'] ?? '',
+];
+$architecture_head = [
+    'sub' => $story['architecture_sub'] ?? '',
+    'title' => $story['architecture_title'] ?? '',
+    'intro' => $story['architecture_intro_html'] ?? '',
+];
+$workflow_head = [
+    'sub' => $story['workflow_sub'] ?? '',
+    'title' => $story['workflow_title'] ?? '',
+    'intro' => $story['workflow_intro_html'] ?? '',
+];
+$results_head = [
+    'sub' => $story['results_sub'] ?? '',
+    'title' => $story['results_title'] ?? '',
+    'intro' => $story['results_intro_html'] ?? '',
+];
+$deliverables_head = [
+    'sub' => $story['deliverables_sub'] ?? '',
+    'title' => $story['deliverables_title'] ?? '',
+    'intro' => $story['deliverables_intro_html'] ?? '',
+];
+$techstack_head = [
+    'sub' => $story['techstack_sub'] ?? '',
+    'title' => $story['techstack_title'] ?? '',
+    'intro' => $story['techstack_intro_html'] ?? '',
+];
+$why_head = [
+    'sub' => $story['why_sub'] ?? '',
+    'title' => $story['why_title'] ?? '',
+    'intro' => $story['why_intro_html'] ?? '',
+];
+
 $objectives = ss_json($story['objectives_json']);
 
 $architecture = array_map(static function ($node) {
@@ -192,7 +237,13 @@ $page_robots = $story['robots'];
 
                 <!-- Left: main introduction/content -->
                 <div class="col-lg-7">
-                    <h2>Our Client</h2>
+                    <?php if (!empty($ourclient_head['sub'])): ?>
+                        <span class="sub-title" style="display:inline-block;margin-bottom:10px;"><?= e($ourclient_head['sub']) ?></span>
+                    <?php endif; ?>
+                    <h2><?= e($ourclient_head['title'] !== '' ? $ourclient_head['title'] : 'Our Client') ?></h2>
+                    <?php if (!empty($ourclient_head['intro'])): ?>
+                        <div class="text mt-2 mb-3"><?= $ourclient_head['intro'] /* trusted HTML */ ?></div>
+                    <?php endif; ?>
                     <p class="wow fadeInUp" style="color:#c7c7c7;line-height:1.9;margin-bottom:18px;font-size:17px;">
                         <?= e($cs['intro']) ?>
                     </p>
@@ -254,9 +305,12 @@ $page_robots = $story['robots'];
                                 d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                 fill="currentColor" />
                         </svg>
-                        <span>What We Set Out to Do</span>
+                        <span><?= e($objectives_head['sub'] !== '' ? $objectives_head['sub'] : 'What We Set Out to Do') ?></span>
                     </div>
-                    <h2 class="title split-text split-in-right">Objectives</h2>
+                    <h2 class="title split-text split-in-right"><?= e($objectives_head['title'] !== '' ? $objectives_head['title'] : 'Objectives') ?></h2>
+                    <?php if (!empty($objectives_head['intro'])): ?>
+                        <div class="text mt-3"><?= $objectives_head['intro'] /* trusted HTML */ ?></div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="row g-4">
@@ -294,9 +348,12 @@ $page_robots = $story['robots'];
                                 d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                 fill="currentColor" />
                         </svg>
-                        <span>System Design</span>
+                        <span><?= e($architecture_head['sub'] !== '' ? $architecture_head['sub'] : 'System Design') ?></span>
                     </div>
-                    <h2 class="title split-text split-in-right">Proposed Architecture</h2>
+                    <h2 class="title split-text split-in-right"><?= e($architecture_head['title'] !== '' ? $architecture_head['title'] : 'Proposed Architecture') ?></h2>
+                    <?php if (!empty($architecture_head['intro'])): ?>
+                        <div class="text mt-3"><?= $architecture_head['intro'] /* trusted HTML */ ?></div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- 5-step flow diagram: numbered card per step, connected by
@@ -406,9 +463,12 @@ $page_robots = $story['robots'];
                                 d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                 fill="currentColor" />
                         </svg>
-                        <span>Step by Step</span>
+                        <span><?= e($workflow_head['sub'] !== '' ? $workflow_head['sub'] : 'Step by Step') ?></span>
                     </div>
-                    <h2 class="title split-text split-in-right">Our Workflow</h2>
+                    <h2 class="title split-text split-in-right"><?= e($workflow_head['title'] !== '' ? $workflow_head['title'] : 'Our Workflow') ?></h2>
+                    <?php if (!empty($workflow_head['intro'])): ?>
+                        <div class="text mt-3"><?= $workflow_head['intro'] /* trusted HTML */ ?></div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="accordion process-accordion" id="workflowAccordion">
@@ -467,9 +527,12 @@ $page_robots = $story['robots'];
                                 d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                 fill="currentColor" />
                         </svg>
-                        <span>Proven Outcome</span>
+                        <span><?= e($results_head['sub'] !== '' ? $results_head['sub'] : 'Proven Outcome') ?></span>
                     </div>
-                    <h2 class="title split-text split-in-right">Results &amp; Impact</h2>
+                    <h2 class="title split-text split-in-right"><?= e($results_head['title'] !== '' ? $results_head['title'] : 'Results & Impact') ?></h2>
+                    <?php if (!empty($results_head['intro'])): ?>
+                        <div class="text mt-3"><?= $results_head['intro'] /* trusted HTML */ ?></div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="row g-4">
@@ -498,9 +561,12 @@ $page_robots = $story['robots'];
                                 d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                 fill="currentColor" />
                         </svg>
-                        <span>Deliverables</span>
+                        <span><?= e($deliverables_head['sub'] !== '' ? $deliverables_head['sub'] : 'Deliverables') ?></span>
                     </div>
-                    <h2 class="title split-text split-in-right">What We Delivered</h2>
+                    <h2 class="title split-text split-in-right"><?= e($deliverables_head['title'] !== '' ? $deliverables_head['title'] : 'What We Delivered') ?></h2>
+                    <?php if (!empty($deliverables_head['intro'])): ?>
+                        <div class="text mt-3"><?= $deliverables_head['intro'] /* trusted HTML */ ?></div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="row g-4">
@@ -536,9 +602,12 @@ $page_robots = $story['robots'];
                                 d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                 fill="currentColor" />
                         </svg>
-                        <span>Under the Hood</span>
+                        <span><?= e($techstack_head['sub'] !== '' ? $techstack_head['sub'] : 'Under the Hood') ?></span>
                     </div>
-                    <h2 class="title split-text split-in-right">Our Technology Stack</h2>
+                    <h2 class="title split-text split-in-right"><?= e($techstack_head['title'] !== '' ? $techstack_head['title'] : 'Our Technology Stack') ?></h2>
+                    <?php if (!empty($techstack_head['intro'])): ?>
+                        <div class="text mt-3"><?= $techstack_head['intro'] /* trusted HTML */ ?></div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="ssd-tech-list">
@@ -572,9 +641,12 @@ $page_robots = $story['robots'];
                                 d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                 fill="currentColor" />
                         </svg>
-                        <span>Why Quantal AI</span>
+                        <span><?= e($why_head['sub'] !== '' ? $why_head['sub'] : 'Why Quantal AI') ?></span>
                     </div>
-                    <h2 class="title split-text split-in-right">Why Choose Our Solution</h2>
+                    <h2 class="title split-text split-in-right"><?= e($why_head['title'] !== '' ? $why_head['title'] : 'Why Choose Our Solution') ?></h2>
+                    <?php if (!empty($why_head['intro'])): ?>
+                        <div class="text mt-3"><?= $why_head['intro'] /* trusted HTML */ ?></div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="row g-4">
