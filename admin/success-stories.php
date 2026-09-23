@@ -142,7 +142,7 @@ if ($action === 'new' || $action === 'edit') {
                 'results_sub', 'results_title',
                 'deliverables_sub', 'deliverables_title',
                 'techstack_sub', 'techstack_title',
-                'why_sub',
+                'why_sub', 'expert_tag', 'expert_title',
                 // NOTE: why_title is deliberately NOT here — the Why Cards
                 // repeater already uses POST field "why_title[]" for each
                 // card's title, so the section heading uses a differently
@@ -174,6 +174,7 @@ if ($action === 'new' || $action === 'edit') {
                 // Read from "why_section_title", not "why_title" — that POST
                 // key is already the Why Cards repeater's per-card title array.
                 'why_title' => trim((string) ($_POST['why_section_title'] ?? '')),
+                'expert_member_id' => ((int) ($_POST['expert_member_id'] ?? 0)) > 0 ? (int) $_POST['expert_member_id'] : null,
             ];
             foreach ($plain_fields as $fld) {
                 $cols[$fld] = trim((string) ($_POST[$fld] ?? ''));
@@ -256,6 +257,7 @@ if ($action === 'new' || $action === 'edit') {
         'deliverables_sub' => '', 'deliverables_title' => '', 'deliverables_intro_html' => '',
         'techstack_sub' => '', 'techstack_title' => '', 'techstack_intro_html' => '',
         'why_sub' => '', 'why_title' => '', 'why_intro_html' => '',
+        'expert_tag' => '', 'expert_title' => '', 'expert_member_id' => 0,
     ], (array) $story);
 
     // JSON-backed data for the JS repeaters (edit mode) — empty arrays for "new"
@@ -284,6 +286,9 @@ if ($action === 'new' || $action === 'edit') {
     }
 
     $categories = get_success_story_categories($pdo, []);
+    $team_members = $pdo->query(
+        "SELECT id, name, designation FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, name ASC"
+    )->fetchAll();
 
     $admin_page_title = $story ? 'Edit Success Story' : 'New Success Story';
     $admin_active     = 'success-stories';
@@ -322,6 +327,7 @@ if ($action === 'new' || $action === 'edit') {
                     'results' => 'Results & Impact', 'deliverables' => 'What We Delivered',
                     'tech' => 'Tech Stack', 'why' => 'Why Choose',
                     'responsibilities' => 'Client Responsibilities', 'future' => 'Future Enhancements',
+                    'expert' => 'Meet the Expert',
                     'final_cta' => 'Final CTA', 'seo' => 'SEO',
                 ];
                 foreach ($tabs as $key => $label): ?>
@@ -792,6 +798,32 @@ if ($action === 'new' || $action === 'edit') {
                             $repeater_data['future'],
                             ['input[name="future_text_item[]"]' => 'text', 'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
+                    </div></div>
+                </div>
+
+                <!-- ============ MEET THE EXPERT ============ -->
+                <div class="section-tabs__panel" data-panel="expert">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="expert_tag">Eyebrow / Subtitle <span class="text-muted">(optional — defaults to "The Expert Behind This Project")</span></label>
+                            <input type="text" id="expert_tag" name="expert_tag" value="<?= attr($f['expert_tag']) ?>" placeholder="The Expert Behind This Project">
+                        </div>
+                        <div class="form-row">
+                            <label for="expert_title">Title <span class="text-muted">(optional — defaults to "Meet the Expert")</span></label>
+                            <input type="text" id="expert_title" name="expert_title" value="<?= attr($f['expert_title']) ?>" placeholder="Meet the Expert">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="expert_member_id">Team Member</label>
+                            <select id="expert_member_id" name="expert_member_id">
+                                <option value="">— None (section hidden) —</option>
+                                <?php foreach ($team_members as $tm): ?>
+                                    <option value="<?= (int) $tm['id'] ?>" <?= (int) $f['expert_member_id'] === (int) $tm['id'] ? 'selected' : '' ?>>
+                                        <?= e($tm['name']) ?><?= $tm['designation'] !== '' ? ' — ' . e($tm['designation']) : '' ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="help">Manage the roster in <a href="<?= ADMIN_URL ?>/team-members.php" target="_blank" rel="noopener">Team Members</a>.</div>
+                        </div>
                     </div></div>
                 </div>
 

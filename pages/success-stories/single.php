@@ -151,6 +151,20 @@ $future_enhancements = [
     'items' => array_column(ss_json($story['future_json']), 'text'),
 ];
 
+// --- Meet the Expert (optional team_members profile picked in admin) ---
+$expert_tag = $story['expert_tag'] ?? '';
+$expert_title = $story['expert_title'] ?? '';
+$expert_member = null;
+if (!empty($story['expert_member_id']) && $pdo) {
+    $tm_stmt = $pdo->prepare("SELECT * FROM team_members WHERE id = :id AND status = 'active'");
+    $tm_stmt->execute([':id' => (int) $story['expert_member_id']]);
+    $row = $tm_stmt->fetch();
+    if ($row) {
+        $row['expertise'] = ss_json($row['expertise_json'] ?? null);
+        $expert_member = $row;
+    }
+}
+
 $final_cta = [
     'sub' => $story['final_cta_sub'],
     'title' => $story['final_cta_title'],
@@ -666,6 +680,26 @@ $page_robots = $story['robots'];
                         <?= $why_final_html ?>
                     </div>
                 <?php endif; ?>
+            </div>
+        </section>
+    <?php endif; ?>
+
+    <!-- ============== 11b. MEET THE EXPERT (standalone) ============== -->
+    <?php if (!empty($expert_member)): ?>
+        <section class="pb-100">
+            <div class="container">
+                <div class="section-title text-center mb-70">
+                    <div class="sub-title">
+                        <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
+                                fill="currentColor" />
+                        </svg>
+                        <span><?= e($expert_tag !== '' ? $expert_tag : 'The Expert Behind This Project') ?></span>
+                    </div>
+                    <h2 class="title split-text split-in-right"><?= e($expert_title !== '' ? $expert_title : 'Meet the Expert') ?></h2>
+                </div>
+                <?php $tm_member = $expert_member; require PARTIALS_DIR . '/team-member-card.php'; ?>
             </div>
         </section>
     <?php endif; ?>
