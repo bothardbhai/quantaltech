@@ -175,6 +175,7 @@ if ($action === 'new' || $action === 'edit') {
                 // key is already the Why Cards repeater's per-card title array.
                 'why_title' => trim((string) ($_POST['why_section_title'] ?? '')),
                 'expert_member_id' => ((int) ($_POST['expert_member_id'] ?? 0)) > 0 ? (int) $_POST['expert_member_id'] : null,
+                'techstack_display_mode' => ($_POST['techstack_display_mode'] ?? '') === 'pills' ? 'pills' : 'list',
             ];
             foreach ($plain_fields as $fld) {
                 $cols[$fld] = trim((string) ($_POST[$fld] ?? ''));
@@ -258,6 +259,7 @@ if ($action === 'new' || $action === 'edit') {
         'techstack_sub' => '', 'techstack_title' => '', 'techstack_intro_html' => '',
         'why_sub' => '', 'why_title' => '', 'why_intro_html' => '',
         'expert_tag' => '', 'expert_title' => '', 'expert_member_id' => 0,
+        'techstack_display_mode' => 'list',
     ], (array) $story);
 
     // JSON-backed data for the JS repeaters (edit mode) — empty arrays for "new"
@@ -703,10 +705,19 @@ if ($action === 'new' || $action === 'edit') {
                         </div>
                     </div></div>
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label>Display Style</label>
+                            <div style="display:flex;gap:20px;margin-top:4px;">
+                                <label style="font-weight:normal;"><input type="radio" name="techstack_display_mode" value="list" <?= $f['techstack_display_mode'] !== 'pills' ? 'checked' : '' ?>> Numbered List <span class="text-muted">(icon + name + purpose per row)</span></label>
+                                <label style="font-weight:normal;"><input type="radio" name="techstack_display_mode" value="pills" <?= $f['techstack_display_mode'] === 'pills' ? 'checked' : '' ?>> Simple Pills <span class="text-muted">(name only, no card — for when you don't have icon/purpose for each one)</span></label>
+                            </div>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('tech-stack', 'Technology Stack', '+ Add technology',
-                            '<div class="form-row"><label>Icon</label><input type="text" class="icon-input" name="tech_icon[]"></div>' .
+                            '<div class="form-row"><label>Icon <span class="text-muted">(ignored in Simple Pills mode)</span></label><input type="text" class="icon-input" name="tech_icon[]"></div>' .
                             '<div class="form-row"><label>Name</label><input type="text" name="tech_name[]" placeholder="Apollo"></div>' .
-                            '<div class="form-row"><label>Purpose</label><input type="text" name="tech_purpose[]" placeholder="Lead Database"></div>' .
+                            '<div class="form-row"><label>Purpose <span class="text-muted">(ignored in Simple Pills mode)</span></label><input type="text" name="tech_purpose[]" placeholder="Lead Database"></div>' .
                             '<div class="form-row" style="margin-bottom:0;"><label><input type="checkbox" class="active-checkbox" name="tech_active[]" value="1" checked> Active</label></div>',
                             $repeater_data['tech_stack'],
                             ['input.icon-input' => ['key' => 'icon', 'type' => 'icon'], 'input[name="tech_name[]"]' => 'name',

@@ -134,6 +134,7 @@ $workflow = ss_json($story['workflow_json']);
 $results_impact = ss_json($story['results_json']);
 $deliverables = ss_json($story['deliverables_json']);
 $tech_stack_list = ss_json($story['tech_stack_items_json']);
+$techstack_display_mode = ($story['techstack_display_mode'] ?? 'list') === 'pills' ? 'pills' : 'list';
 $why_cards = ss_json($story['why_cards_json']);
 $why_final_html = $story['why_final_html'] ?? '';
 
@@ -624,18 +625,26 @@ $page_robots = $story['robots'];
                     <?php endif; ?>
                 </div>
 
-                <div class="ssd-tech-list">
-                    <?php foreach ($tech_stack_list as $i => $tech): ?>
-                        <div class="ssd-tech-row wow fadeInUp" data-wow-delay="<?= 0.1 + $i * 0.1 ?>s">
-                            <div class="ssd-tech-number"><?= sprintf('%02d', $i + 1) ?></div>
-                            <div class="ssd-tech-name">
-                                <?php if (!empty($tech['icon'])): ?><i class="<?= attr($tech['icon']) ?>"></i><?php endif; ?>
-                                <?= e($tech['name'] ?? '') ?>
+                <?php if ($techstack_display_mode === 'pills'): ?>
+                    <div class="tech-list justify-content-center">
+                        <?php foreach ($tech_stack_list as $tech): ?>
+                            <span class="tech-item"><?= e($tech['name'] ?? '') ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="ssd-tech-list">
+                        <?php foreach ($tech_stack_list as $i => $tech): ?>
+                            <div class="ssd-tech-row wow fadeInUp" data-wow-delay="<?= 0.1 + $i * 0.1 ?>s">
+                                <div class="ssd-tech-number"><?= sprintf('%02d', $i + 1) ?></div>
+                                <div class="ssd-tech-name">
+                                    <?php if (!empty($tech['icon'])): ?><i class="<?= attr($tech['icon']) ?>"></i><?php endif; ?>
+                                    <?= e($tech['name'] ?? '') ?>
+                                </div>
+                                <div class="ssd-tech-purpose"><?= e($tech['purpose'] ?? '') ?></div>
                             </div>
-                            <div class="ssd-tech-purpose"><?= e($tech['purpose'] ?? '') ?></div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
     <?php endif; ?>
