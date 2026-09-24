@@ -610,7 +610,7 @@ $page_robots = $story['robots'];
     <?php if (!empty($tech_stack_list)): ?>
         <section class="pb-100 section-bg-3 dark-bg">
             <div class="container">
-                <div class="section-title text-center mb-70">
+                <div class="section-title text-center <?= $techstack_display_mode === 'pills' ? 'mb-30' : 'mb-70' ?>">
                     <div class="sub-title">
                         <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
