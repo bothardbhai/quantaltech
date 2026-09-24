@@ -175,6 +175,7 @@ if ($action === 'new' || $action === 'edit') {
                 // key is already the Why Cards repeater's per-card title array.
                 'why_title' => trim((string) ($_POST['why_section_title'] ?? '')),
                 'expert_member_id' => ((int) ($_POST['expert_member_id'] ?? 0)) > 0 ? (int) $_POST['expert_member_id'] : null,
+                'expert_expertise_json' => json_encode(array_values(array_filter(array_map('trim', $_POST['expert_expertise'] ?? [])))),
                 'techstack_display_mode' => ($_POST['techstack_display_mode'] ?? '') === 'pills' ? 'pills' : 'list',
             ];
             foreach ($plain_fields as $fld) {
@@ -264,7 +265,7 @@ if ($action === 'new' || $action === 'edit') {
         'deliverables_sub' => '', 'deliverables_title' => '', 'deliverables_intro_html' => '',
         'techstack_sub' => '', 'techstack_title' => '', 'techstack_intro_html' => '',
         'why_sub' => '', 'why_title' => '', 'why_intro_html' => '',
-        'expert_tag' => '', 'expert_title' => '', 'expert_member_id' => 0,
+        'expert_tag' => '', 'expert_title' => '', 'expert_member_id' => 0, 'expert_expertise_json' => null,
         'techstack_display_mode' => 'list',
     ], (array) $story);
 
@@ -295,8 +296,15 @@ if ($action === 'new' || $action === 'edit') {
 
     $categories = get_success_story_categories($pdo, []);
     $team_members = $pdo->query(
-        "SELECT id, name, designation FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, name ASC"
+        "SELECT id, name, designation, expertise_json FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, name ASC"
     )->fetchAll();
+    // {memberId: [tag, ...]} — for the "Meet the Expert" tab's JS to
+    // rebuild the expertise-subset checkboxes when the picked member changes.
+    $team_members_expertise_map = [];
+    foreach ($team_members as $tm) {
+        $team_members_expertise_map[(int) $tm['id']] = svc_json_decode($tm['expertise_json'] ?? null);
+    }
+    $selected_expert_expertise = array_map('strval', svc_json_decode($story['expert_expertise_json'] ?? null));
     $selected_related_story_ids = array_map('intval', svc_json_decode($story['related_story_ids_json'] ?? null));
     $other_stories = array_filter(
         get_success_stories($pdo, ['status' => 'published']),
@@ -847,6 +855,12 @@ if ($action === 'new' || $action === 'edit') {
                             <div class="help">Manage the roster in <a href="<?= ADMIN_URL ?>/team-members.php" target="_blank" rel="noopener">Team Members</a>.</div>
                         </div>
                     </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label>Expertise Shown on This Story <span class="text-muted">(optional — leave none checked to show every tag from their profile)</span></label>
+                            <div id="expert-expertise-picker" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+                        </div>
+                    </div></div>
                 </div>
 
                 <!-- ============ RELATED STORIES ============ -->
@@ -966,6 +980,37 @@ if ($action === 'new' || $action === 'edit') {
         }
         navBtns.forEach(function (b) { b.addEventListener('click', function () { showTab(b.dataset.tab); }); });
         showTab(navBtns[0] ? navBtns[0].dataset.tab : 'core');
+
+        // ---- Meet the Expert: expertise-subset checkboxes, rebuilt per picked member ----
+        (function () {
+            var TEAM_MEMBER_EXPERTISE = <?= json_encode($team_members_expertise_map, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+            var INITIAL_SELECTED = <?= json_encode($selected_expert_expertise, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+            var memberSelect = document.getElementById('expert_member_id');
+            var picker = document.getElementById('expert-expertise-picker');
+            if (!memberSelect || !picker) return;
+            var usedInitialSelection = false;
+
+            function renderPicker() {
+                var tags = TEAM_MEMBER_EXPERTISE[memberSelect.value] || [];
+                picker.innerHTML = '';
+                if (!memberSelect.value || tags.length === 0) {
+                    picker.innerHTML = '<span class="text-muted" style="font-size:13px;">Pick a team member above to choose which of their tags to show here.</span>';
+                    return;
+                }
+                var preselect = !usedInitialSelection ? INITIAL_SELECTED : [];
+                usedInitialSelection = true;
+                tags.forEach(function (tag) {
+                    var label = document.createElement('label');
+                    label.style.cssText = 'display:inline-flex;align-items:center;gap:5px;border:1px solid #3a3a3a;padding:4px 12px;border-radius:999px;font-weight:normal;font-size:13px;cursor:pointer;';
+                    var checked = preselect.indexOf(tag) !== -1;
+                    label.innerHTML = '<input type="checkbox" name="expert_expertise[]" value="' + tag.replace(/"/g, '&quot;') + '"' + (checked ? ' checked' : '') + '> ' + tag;
+                    picker.appendChild(label);
+                });
+            }
+
+            memberSelect.addEventListener('change', renderPicker);
+            renderPicker();
+        })();
 
         // ---- CKEditor on rich-content fields ----
         ['body_html', 'challenge_html', 'solution_html', 'why_final_html'].forEach(function (id) {

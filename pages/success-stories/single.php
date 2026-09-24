@@ -162,6 +162,12 @@ if (!empty($story['expert_member_id']) && $pdo) {
     $row = $tm_stmt->fetch();
     if ($row) {
         $row['expertise'] = ss_json($row['expertise_json'] ?? null);
+        // If this story specifies a subset of the member's tags, only show
+        // those (keeping the profile's own order); otherwise show every tag.
+        $expert_expertise_subset = ss_json($story['expert_expertise_json'] ?? null);
+        if (!empty($expert_expertise_subset)) {
+            $row['expertise'] = array_values(array_intersect($row['expertise'], $expert_expertise_subset));
+        }
         $expert_member = $row;
     }
 }
