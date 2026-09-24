@@ -204,6 +204,12 @@ if ($action === 'new' || $action === 'edit') {
                 ['text' => 'resp_text'], [], ['active' => 'resp_active']));
             $cols['future_json'] = json_encode(svc_build_repeater($_POST,
                 ['text' => 'future_text_item'], [], ['active' => 'future_active']));
+            // Capped at 4 to match the frontend section's fixed layout — see
+            // pages/success-stories/single.php's $related_stories fallback.
+            $cols['related_story_ids_json'] = json_encode(array_slice(
+                array_values(array_unique(array_filter(array_map('intval', $_POST['related_story_ids'] ?? [])))),
+                0, 4
+            ));
 
             $bind = [];
             foreach ($cols as $k => $v) $bind[":$k"] = $v;
@@ -291,6 +297,11 @@ if ($action === 'new' || $action === 'edit') {
     $team_members = $pdo->query(
         "SELECT id, name, designation FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, name ASC"
     )->fetchAll();
+    $selected_related_story_ids = array_map('intval', svc_json_decode($story['related_story_ids_json'] ?? null));
+    $other_stories = array_filter(
+        get_success_stories($pdo, ['status' => 'published']),
+        static fn($s) => (int) $s['id'] !== (int) ($f['id'] ?? 0)
+    );
 
     $admin_page_title = $story ? 'Edit Success Story' : 'New Success Story';
     $admin_active     = 'success-stories';
@@ -329,7 +340,7 @@ if ($action === 'new' || $action === 'edit') {
                     'results' => 'Results & Impact', 'deliverables' => 'What We Delivered',
                     'tech' => 'Tech Stack', 'why' => 'Why Choose',
                     'responsibilities' => 'Client Responsibilities', 'future' => 'Future Enhancements',
-                    'expert' => 'Meet the Expert',
+                    'expert' => 'Meet the Expert', 'related_stories' => 'Related Stories',
                     'final_cta' => 'Final CTA', 'seo' => 'SEO',
                 ];
                 foreach ($tabs as $key => $label): ?>
@@ -835,6 +846,28 @@ if ($action === 'new' || $action === 'edit') {
                             </select>
                             <div class="help">Manage the roster in <a href="<?= ADMIN_URL ?>/team-members.php" target="_blank" rel="noopener">Team Members</a>.</div>
                         </div>
+                    </div></div>
+                </div>
+
+                <!-- ============ RELATED STORIES ============ -->
+                <div class="section-tabs__panel" data-panel="related_stories">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <p class="text-muted" style="font-size:13px;margin-top:0;">
+                            Controls the "Success Stories That Transform Businesses" section at the bottom of this
+                            story's page. Pick up to 4 stories to feature there — if none are selected, the 4 most
+                            recently added stories are shown automatically instead.
+                        </p>
+                        <div class="repeater-row__title" style="margin-bottom:10px;">Choose Stories</div>
+                        <?php if (empty($other_stories)): ?>
+                            <p class="text-muted" style="font-size:13px;">No other published stories yet.</p>
+                        <?php endif; ?>
+                        <?php foreach ($other_stories as $os): ?>
+                            <label style="display:block;padding:6px 0;">
+                                <input type="checkbox" name="related_story_ids[]" value="<?= (int) $os['id'] ?>"
+                                    <?= in_array((int) $os['id'], $selected_related_story_ids, true) ? 'checked' : '' ?>>
+                                <?= e($os['title']) ?> <span class="text-muted">(<?= e($os['slug']) ?>)</span>
+                            </label>
+                        <?php endforeach; ?>
                     </div></div>
                 </div>
 

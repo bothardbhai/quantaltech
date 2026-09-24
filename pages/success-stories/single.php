@@ -172,12 +172,16 @@ $final_cta = [
     'desc' => $story['final_cta_desc'],
 ];
 
-// --- More Success Stories: always the 4 most recently added, excluding the current one ---
-$related_stories = array_slice(
-    get_success_stories($pdo, ['status' => 'published', 'exclude_id' => (int) $story['id'], 'order' => 'created_at DESC, id DESC']),
-    0,
-    4
-);
+// --- More Success Stories: manually picked in admin (up to 4), falling
+// back to the 4 most recently added (excluding this one) when none are picked ---
+$related_story_ids = ss_json($story['related_story_ids_json']);
+$related_stories = !empty($related_story_ids)
+    ? get_success_stories_by_ids($pdo, $related_story_ids)
+    : array_slice(
+        get_success_stories($pdo, ['status' => 'published', 'exclude_id' => (int) $story['id'], 'order' => 'created_at DESC, id DESC']),
+        0,
+        4
+    );
 $related_stories = array_map(static function ($s) use ($category_map) {
     return [
         'title' => $s['title'],
