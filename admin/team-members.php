@@ -70,7 +70,7 @@ if ($action === 'new' || $action === 'edit') {
             $cols = [
                 'name'            => $name,
                 'designation'     => trim((string) ($_POST['designation'] ?? '')),
-                'experience_text' => trim((string) ($_POST['experience_text'] ?? '')),
+                'experience_text' => strip_wrapping_p(sanitize_html_fragment((string) ($_POST['experience_text'] ?? ''))),
                 'expertise_json'  => json_encode(tm_expertise_to_array((string) ($_POST['expertise'] ?? ''))),
                 'image'           => trim((string) ($_POST['image'] ?? '')),
                 'profile_url'     => trim((string) ($_POST['profile_url'] ?? '')),
@@ -129,8 +129,8 @@ if ($action === 'new' || $action === 'edit') {
                     <input type="text" id="designation" name="designation" value="<?= attr($f['designation']) ?>" placeholder="Senior AI Engineer and Developer - Quantal AI">
                 </div>
                 <div class="form-row">
-                    <label for="experience_text">Experience</label>
-                    <textarea id="experience_text" name="experience_text" rows="3" placeholder="4+ years of experience across Artificial Intelligence, Machine Learning, NLP..."><?= e($f['experience_text']) ?></textarea>
+                    <label for="experience_text">Experience <span class="text-muted">(HTML allowed — links, bullet/numbered lists)</span></label>
+                    <textarea id="experience_text" name="experience_text" rows="4" placeholder="4+ years of experience across Artificial Intelligence, Machine Learning, NLP..."><?= e($f['experience_text']) ?></textarea>
                 </div>
                 <div class="form-row">
                     <label for="expertise">Expertise Tags <span class="text-muted">(comma separated — shown as pills)</span></label>
@@ -164,6 +164,18 @@ if ($action === 'new' || $action === 'edit') {
             </div>
         </div>
     </form>
+
+    <!-- CKEditor 5 on the Experience field -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+    <script>
+    (function () {
+        var el = document.getElementById('experience_text');
+        if (!el) { return; }
+        ClassicEditor.create(el, {
+            toolbar: ['bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
+        }).catch(function (err) { console.error(err); });
+    })();
+    </script>
 
     <?php
     require __DIR__ . '/_footer.php';

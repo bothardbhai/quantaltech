@@ -43,7 +43,7 @@ if (empty($tm_member)) {
                     <p class="engineer-card__role"><?= e($tm_member['designation']) ?></p>
                 <?php endif; ?>
                 <?php if (!empty($tm_member['experience_text'])): ?>
-                    <p><?= e($tm_member['experience_text']) ?></p>
+                    <div class="engineer-card__experience"><?= $tm_member['experience_text'] /* trusted HTML */ ?></div>
                 <?php endif; ?>
                 <?php if (!empty($tm_member['expertise'])): ?>
                     <div class="engineer-card__skills">
