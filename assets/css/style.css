@@ -28198,8 +28198,8 @@ body {
 @media (max-width: 575.98px) {
     .engineer-card {
         flex-direction: column;
-        align-items: center;
-        text-align: center;
+        /* align-items: center;
+        text-align: center; */
     }
 
     .engineer-card__media {
@@ -28207,7 +28207,7 @@ body {
     }
 
     .engineer-card__header {
-        justify-content: center;
+        /* justify-content: center; */
         text-align: center;
     }
 

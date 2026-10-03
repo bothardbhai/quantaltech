@@ -57,6 +57,14 @@ function unique_slug(PDO $pdo, string $base, ?int $excluding_id = null): string
     }
 }
 
+/** "One tag per line, or comma-separated" -> array of strings. Mirrors
+ * admin/team-members.php's tm_expertise_to_array() for the same UX. */
+function blog_expertise_to_array(string $raw): array
+{
+    $parts = preg_split('/[\n,]+/', $raw) ?: [];
+    return array_values(array_filter(array_map('trim', $parts), static fn(string $s): bool => $s !== ''));
+}
+
 /**
  * Replace all FAQs for a post. Full delete-then-reinsert — simpler than
  * diffing and cheap since a post rarely has more than a handful of FAQs.
@@ -133,6 +141,13 @@ if ($action === 'new' || $action === 'edit') {
         $faq_questions   = is_array($_POST['faq_question'] ?? null) ? $_POST['faq_question'] : [];
         $faq_answers     = is_array($_POST['faq_answer'] ?? null) ? $_POST['faq_answer'] : [];
 
+        $author_image        = trim((string) ($_POST['author_image'] ?? ''));
+        $author_name         = trim((string) ($_POST['author_name'] ?? ''));
+        $author_designation  = trim((string) ($_POST['author_designation'] ?? ''));
+        $author_description  = trim((string) ($_POST['author_description'] ?? ''));
+        $author_linkedin_url = trim((string) ($_POST['author_linkedin_url'] ?? ''));
+        $author_expertise_json = json_encode(blog_expertise_to_array((string) ($_POST['author_expertise'] ?? '')));
+
         // Validations
         $errors = [];
         if ($title === '')      { $errors[] = 'Title is required.'; }
@@ -142,6 +157,9 @@ if ($action === 'new' || $action === 'edit') {
             if (json_last_error() !== JSON_ERROR_NONE) {
                 $errors[] = 'JSON-LD schema is invalid: ' . json_last_error_msg();
             }
+        }
+        if ($author_linkedin_url !== '' && !preg_match('#^https?://#i', $author_linkedin_url)) {
+            $errors[] = 'Author LinkedIn URL must start with http:// or https://.';
         }
 
         if ($errors) {
@@ -167,7 +185,9 @@ if ($action === 'new' || $action === 'edit') {
                        slug = :slug, title = :title, excerpt = :excerpt, body_html = :body,
                        featured_image = :fi, featured_alt = :fa, status = :st, published_at = :pa,
                        meta_title = :mt, meta_description = :md, meta_keywords = :mk,
-                       og_image = :og, schema_json = :sj
+                       og_image = :og, schema_json = :sj,
+                       author_image = :ai, author_name = :an, author_designation = :ad,
+                       author_description = :ades, author_linkedin_url = :alu, author_expertise_json = :aej
                      WHERE id = :id'
                 );
                 $stmt->execute([
@@ -184,6 +204,12 @@ if ($action === 'new' || $action === 'edit') {
                     ':mk'     => $meta_keywords,
                     ':og'     => $og_image,
                     ':sj'     => $schema_json,
+                    ':ai'     => $author_image,
+                    ':an'     => $author_name,
+                    ':ad'     => $author_designation,
+                    ':ades'   => $author_description,
+                    ':alu'    => $author_linkedin_url,
+                    ':aej'    => $author_expertise_json,
                     ':id'     => $post['id'],
                 ]);
                 save_post_faqs($pdo, (int) $post['id'], $faq_questions, $faq_answers);
@@ -195,8 +221,11 @@ if ($action === 'new' || $action === 'edit') {
                 $stmt = $pdo->prepare(
                     'INSERT INTO posts (slug, title, excerpt, body_html, featured_image, featured_alt,
                        author_id, status, published_at, meta_title, meta_description, meta_keywords,
-                       og_image, schema_json)
-                     VALUES (:slug,:title,:excerpt,:body,:fi,:fa,:auth,:st,:pa,:mt,:md,:mk,:og,:sj)'
+                       og_image, schema_json,
+                       author_image, author_name, author_designation, author_description,
+                       author_linkedin_url, author_expertise_json)
+                     VALUES (:slug,:title,:excerpt,:body,:fi,:fa,:auth,:st,:pa,:mt,:md,:mk,:og,:sj,
+                       :ai,:an,:ad,:ades,:alu,:aej)'
                 );
                 $stmt->execute([
                     ':slug'  => $slug,
@@ -213,6 +242,12 @@ if ($action === 'new' || $action === 'edit') {
                     ':mk'    => $meta_keywords,
                     ':og'    => $og_image,
                     ':sj'    => $schema_json,
+                    ':ai'    => $author_image,
+                    ':an'    => $author_name,
+                    ':ad'    => $author_designation,
+                    ':ades'  => $author_description,
+                    ':alu'   => $author_linkedin_url,
+                    ':aej'   => $author_expertise_json,
                 ]);
                 $newId = (int) $pdo->lastInsertId();
                 save_post_faqs($pdo, $newId, $faq_questions, $faq_answers);
@@ -236,7 +271,16 @@ if ($action === 'new' || $action === 'edit') {
         'featured_image' => '', 'featured_alt' => '', 'status' => 'draft',
         'meta_title' => '', 'meta_description' => '', 'meta_keywords' => '',
         'og_image' => '', 'schema_json' => '', 'published_at' => null,
+        'author_image' => '', 'author_name' => '', 'author_designation' => '',
+        'author_description' => '', 'author_linkedin_url' => '', 'author_expertise_json' => null,
     ];
+
+    // Expertise tags input: on a redisplay-after-validation-error, repopulate
+    // from the raw posted text so the admin doesn't lose what they typed;
+    // otherwise decode the stored JSON (same approach as team-members.php).
+    $author_expertise_input = isset($_POST['author_expertise'])
+        ? (string) $_POST['author_expertise']
+        : implode(', ', svc_json_decode($f['author_expertise_json'] ?? null));
 
     $admin_page_title = $post ? 'Edit Post' : 'New Post';
     $admin_active     = 'blog';
@@ -389,6 +433,40 @@ if ($action === 'new' || $action === 'edit') {
                         <div class="form-row" style="margin-top:10px;">
                             <label for="featured_alt">Alt text</label>
                             <input type="text" id="featured_alt" name="featured_alt" maxlength="255" value="<?= attr($f['featured_alt']) ?>">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card__head">Author</div>
+                    <div class="admin-card__body">
+                        <div class="help" style="margin-top:0;margin-bottom:14px;">Shown in an author box on the blog post page, after the content. Leave the name blank to hide the section.</div>
+                        <div class="form-row">
+                            <label for="author_image">Author photo <span class="text-muted">(copy a path from the Media Library, optional)</span></label>
+                            <input type="text" id="author_image" name="author_image" maxlength="500" value="<?= attr($f['author_image']) ?>" placeholder="/uploads/...">
+                        </div>
+                        <?php if (!empty($f['author_image'])): ?>
+                            <img src="<?= attr(media_url($f['author_image'])) ?>" style="max-width:100%;border-radius:4px;border:1px solid var(--admin-border);margin-bottom:10px;" alt="">
+                        <?php endif; ?>
+                        <div class="form-row">
+                            <label for="author_name">Author name</label>
+                            <input type="text" id="author_name" name="author_name" maxlength="150" value="<?= attr($f['author_name']) ?>" placeholder="e.g. Aamesh Gori">
+                        </div>
+                        <div class="form-row">
+                            <label for="author_designation">Designation</label>
+                            <input type="text" id="author_designation" name="author_designation" maxlength="200" value="<?= attr($f['author_designation']) ?>" placeholder="e.g. AI Engineer &amp; Technical Author - Quantal AI">
+                        </div>
+                        <div class="form-row">
+                            <label for="author_description">Description</label>
+                            <textarea id="author_description" name="author_description" rows="4"><?= e($f['author_description']) ?></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label for="author_linkedin_url">LinkedIn URL <span class="text-muted">(optional)</span></label>
+                            <input type="url" id="author_linkedin_url" name="author_linkedin_url" maxlength="500" value="<?= attr($f['author_linkedin_url']) ?>" placeholder="https://www.linkedin.com/in/...">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="author_expertise">Expertise Tags <span class="text-muted">(comma separated — shown as pills)</span></label>
+                            <input type="text" id="author_expertise" name="author_expertise" value="<?= attr($author_expertise_input) ?>" placeholder="AI Automation, Agentic AI, OCR, RAG, LLMs, Python">
                         </div>
                     </div>
                 </div>
