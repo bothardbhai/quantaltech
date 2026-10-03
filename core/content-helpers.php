@@ -8,6 +8,68 @@
 declare(strict_types=1);
 
 /**
+ * services.overview_paragraphs_json holds a JSON-encoded HTML string
+ * (CKEditor output) for rows saved since the rich-paragraphs editor
+ * shipped. Older rows stored a plain JSON array of one-paragraph-per-line
+ * strings — wrap each escaped line in <p> so existing content keeps
+ * rendering unchanged both in the admin form and on the public page.
+ * Shared by admin/services.php (edit form) and pages/services/_service-
+ * dynamic.php (public render).
+ */
+function svc_paragraphs_to_html(?string $raw): string
+{
+    if (!$raw) { return ''; }
+    $decoded = json_decode($raw, true);
+    if (is_string($decoded)) {
+        return $decoded;
+    }
+    if (is_array($decoded)) {
+        $lines = array_filter(array_map('trim', $decoded), static fn(string $l): bool => $l !== '');
+        return implode('', array_map(static fn(string $l): string => '<p>' . e($l) . '</p>', $lines));
+    }
+    return '';
+}
+
+/**
+ * Shared, site-wide section headings (Trusted Clients, Meet Our Founders,
+ * Testimonials, Contact Band) — these render identically on every Services
+ * and Hire Master page, so they're edited once in admin/settings.php
+ * instead of being duplicated per-service/per-hire-page. Returns every key
+ * with a '' fallback so callers never need isset() checks. Statically
+ * cached per-request like seo_site_defaults() in core/seo.php.
+ */
+function get_shared_chrome_settings(): array
+{
+    static $cached = null;
+    if ($cached !== null) {
+        return $cached;
+    }
+
+    $defaults = [
+        'shared_clients_label' => '',
+        'shared_founders_sub' => '', 'shared_founders_title_html' => '', 'shared_founders_intro_html' => '',
+        'shared_testimonials_sub' => '', 'shared_testimonials_title_html' => '', 'shared_testimonials_intro_html' => '',
+        'shared_contact_sub' => '', 'shared_contact_title_html' => '', 'shared_contact_intro_html' => '',
+    ];
+
+    $pdo = db();
+    if ($pdo !== null) {
+        try {
+            $stmt = $pdo->query('SELECT `key`, `value` FROM settings WHERE `key` LIKE \'shared\\_%\'');
+            if ($stmt) {
+                foreach ($stmt->fetchAll() as $row) {
+                    $defaults[$row['key']] = $row['value'];
+                }
+            }
+        } catch (PDOException $e) {
+            // settings table may not exist yet
+        }
+    }
+
+    return $cached = $defaults;
+}
+
+/**
  * Get all webinars with optional filters
  */
 function get_webinars(\PDO $pdo, array $filters = []): array

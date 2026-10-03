@@ -49,6 +49,9 @@ $user = auth_user();
                 <a href="<?= ADMIN_URL ?>/success-story-categories.php"
                     class="<?= $admin_active === 'success-story-categories' ? 'is-active' : '' ?>" data-icon="🏷️">Story
                     Categories</a>
+                <a href="<?= ADMIN_URL ?>/team-members.php"
+                    class="<?= $admin_active === 'team-members' ? 'is-active' : '' ?>" data-icon="🧑‍🔬">Team
+                    Members</a>
                 <a href="<?= ADMIN_URL ?>/newsletter.php"
                     class="<?= $admin_active === 'newsletter' ? 'is-active' : '' ?>" data-icon="📧">Newsletter</a>
                 <a href="<?= ADMIN_URL ?>/contact-submissions.php"

@@ -44,6 +44,7 @@ $hero_tag        = $hire_page['hero_tag'];
 $hero_title_html = $hire_page['hero_title_html'] ?? '';
 $hero_desc       = $hire_page['hero_desc'] ?? '';
 $hero_features   = hire_json($hire_page['hero_features_json']);
+$hero_card_title = $hire_page['hero_card_title'] ?? '';
 
 // --- Impact stats ---
 $impact_stats = hire_json($hire_page['impact_stats_json']);
@@ -51,6 +52,7 @@ $impact_stats = hire_json($hire_page['impact_stats_json']);
 // --- Meet Our Engineers --- (a section of this hire page, not a picker;
 // row shape already includes 'education'/'skills' as decoded string arrays)
 $engineers = hire_json($hire_page['engineers_json']);
+$engineers_title = $hire_page['engineers_title'] ?? '';
 
 // --- Expertise of Our Engineers ---
 $expertise_sub        = $hire_page['expertise_sub'];
@@ -173,7 +175,22 @@ $blog_posts = $pdo
 
 // --- FAQ ---
 $faq_intro = $hire_page['faq_intro'] ?? '';
+$faq_title = $hire_page['faq_title'] ?? '';
 $faqs      = hire_json($hire_page['faqs_json']);
+
+// --- Shared, site-wide section headings (Trusted Clients, Founders, Testimonials, Contact Band) ---
+// Edited once in admin > Settings, not per-hire-page — renders identically on every service/hire page.
+$shared_chrome = get_shared_chrome_settings();
+$shared_clients_label = $shared_chrome['shared_clients_label'];
+$shared_founders_sub = $shared_chrome['shared_founders_sub'];
+$shared_founders_title_html = $shared_chrome['shared_founders_title_html'];
+$shared_founders_intro_html = $shared_chrome['shared_founders_intro_html'];
+$shared_testimonials_sub = $shared_chrome['shared_testimonials_sub'];
+$shared_testimonials_title_html = $shared_chrome['shared_testimonials_title_html'];
+$shared_testimonials_intro_html = $shared_chrome['shared_testimonials_intro_html'];
+$shared_contact_sub = $shared_chrome['shared_contact_sub'];
+$shared_contact_title_html = $shared_chrome['shared_contact_title_html'];
+$shared_contact_intro_html = $shared_chrome['shared_contact_intro_html'];
 
 // --- Final CTA (bottom-of-page band) ---
 $final_cta_title_html = $hire_page['final_cta_title_html'] ?? '';

@@ -44,50 +44,50 @@
  * --- Service overview (2-col: text + feature list) ---
  * $overview_sub          string   eyebrow, e.g. "UNDERSTANDING THE SERVICE"
  * $overview_title_html   string   (html allowed) e.g. 'What Are <span>AI ML Services?</span>'
- * $overview_paragraphs   string[] one or more paragraphs
+ * $overview_paragraphs_html string (html allowed) one or more paragraphs
  * $overview_btn_text     string   e.g. "Talk With Our Experts"
  * $overview_features     array of ['icon' => 'fas fa-brain', 'title' => 'Production AI', 'desc' => '...']
  *
  * --- "Why AI/this service" benefit cards (with Real Example box) ---
  * $benefits_sub         string
  * $benefits_title_html  string (html allowed)
- * $benefits_text        string
+ * $benefits_text        string (html allowed)
  * $benefit_cards        array of ['icon'=>'fas fa-coins','title'=>'...','desc'=>'...','example'=>'...']
  *
  * --- "What We Build" services grid ---
  * $grid_sub         string
  * $grid_title_html  string (html allowed)
- * $grid_text        string
+ * $grid_text        string (html allowed)
  * $grid_services    array of ['icon'=>'fas fa-brain','title'=>'...','desc'=>'...','tags'=>['Python','TensorFlow']]
  *
  * --- "What You Get" numbered benefit cards ---
  * $whatyouget_sub         string
  * $whatyouget_title_html  string (html allowed)
- * $whatyouget_text        string
+ * $whatyouget_text        string (html allowed)
  * $whatyouget_cards       array of ['title'=>'...','desc'=>'...']   (numbered 01, 02... automatically)
  *
  * --- Industries / use cases ---
  * $industries_sub         string
  * $industries_title_html  string (html allowed)
- * $industries_text        string
+ * $industries_text        string (html allowed)
  * $industries             array of ['title'=>'Healthcare','items'=>['Medical imaging & diagnostics', ...]]
  *
  * --- Framework / methodology cards ---
  * $framework_sub         string
  * $framework_title_html  string (html allowed)
- * $framework_text        string
+ * $framework_text        string (html allowed)
  * $framework_steps       array of ['icon'=>'fas fa-brain','title'=>'...','desc'=>'...']
  *
  * --- "Why Quantal" numbered cards ---
  * $why_sub         string
  * $why_title_html  string (html allowed)
- * $why_text        string
+ * $why_text        string (html allowed)
  * $why_cards       array of ['title'=>'...','desc'=>'...']   (numbered 01, 02... automatically)
  *
  * --- Engagement models ---
  * $engagement_sub         string
  * $engagement_title_html  string (html allowed)
- * $engagement_text        string
+ * $engagement_text        string (html allowed)
  * $engagement_models      array of [
  *                            'badge'    => 'Model 01' | 'Most Popular',
  *                            'title'    => 'ML Consulting',
@@ -100,14 +100,14 @@
  * --- Process timeline ---
  * $process_sub         string
  * $process_title_html  string (html allowed)
- * $process_text        string
+ * $process_text        string (html allowed)
  * $process_steps       array of ['title'=>'...','desc'=>'...','tags'=>['Discovery','Strategy']]
  *                       (numbered 01, 02... automatically; tags optional per-step, hidden if empty)
  *
  * --- Mid-page CTA band ---
  * $cta_tag         string  e.g. "READY TO BUILD WITH AI?"
  * $cta_title_html  string  (html allowed)
- * $cta_text        string
+ * $cta_text        string (html allowed)
  *
  * --- Final CTA band (bottom of page) ---
  * $final_cta_title_html  string (html allowed)
@@ -120,37 +120,37 @@
  *     per service) ---
  * $cs_sub         string
  * $cs_title_html  string (html allowed)
- * $cs_text        string
+ * $cs_text        string (html allowed)
  * $case_studies   array of ['title'=>'...','category'=>'...','image'=>'...','url'=>'...']
  *
  * --- Tech stack ---
  * $tech_sub         string
  * $tech_title_html  string (html allowed)
- * $tech_text        string
+ * $tech_text        string (html allowed)
  * $tech_categories  array of ['title'=>'Machine Learning Frameworks','items'=>['PyTorch','TensorFlow', ...]]
  *
  * --- Security & compliance ---
  * $security_sub         string
  * $security_title_html  string (html allowed)
- * $security_text        string
+ * $security_text        string (html allowed)
  * $security_cards       array of ['title'=>'...','desc'=>'...']   (numbered 01, 02... automatically)
  *
  * --- Related services ---
  * $related_sub          string
  * $related_title_html   string (html allowed)
- * $related_text         string
+ * $related_text         string (html allowed)
  * $related_group_title  string  e.g. "Recommended Solutions"
  * $related_items        array of ['label'=>'AI Development','slug'=>'ai-engineering']  slug -> url('/services/'.slug), or ['label'=>..,'href'=>'#'] for external/manual links
  *
  * --- Knowledge hub / blog teasers ---
  * $blog_sub         string
  * $blog_title_html  string (html allowed)
- * $blog_text        string
+ * $blog_text        string (html allowed)
  * $blog_posts       array of ['image'=>'images/blog/blog-1.jpg','category'=>'Machine Learning','title'=>'...','desc'=>'...','link'=>'#']
  *                   (title/desc are truncated to 80/120 chars server-side at render time, see truncate_text())
  *
  * --- FAQ ---
- * $faq_intro   string
+ * $faq_intro   string (html allowed)
  * $faqs        array of [question, answer]   (2nd item auto pre-opened, matching theme behaviour)
  *
  * The brand/clients strip, the client testimonial slider, and the contact
@@ -253,7 +253,7 @@ $service_links ??= [
                         <div class="container">
                             <div class="brand-wrap-2">
                                 <div class="text-box">
-                                    <p>Our Trusted Clients</p>
+                                    <p><?= e($shared_clients_label !== '' ? $shared_clients_label : 'Our Trusted Clients') ?></p>
                                 </div>
                                 <div class="swiper brand-slider2">
                                     <div class="swiper-wrapper">
@@ -294,7 +294,7 @@ $service_links ??= [
                     </div>
 
                     <!-- Service overview -->
-                    <?php if (!empty($overview_paragraphs) || !empty($overview_features)): ?>
+                    <?php if (!empty($overview_paragraphs_html) || !empty($overview_features)): ?>
                         <section class="service-overview pb-100">
                             <div class="container">
                                 <div class="row align-items-center g-5">
@@ -302,9 +302,7 @@ $service_links ??= [
                                         <span class="sub-title"><?= e($overview_sub ?? '') ?></span>
                                         <h2 class="sec-title mb-30"><?= $overview_title_html ?? '' /* trusted HTML */ ?>
                                         </h2>
-                                        <?php foreach (($overview_paragraphs ?? []) as $p): ?>
-                                            <p><?= e($p) ?></p>
-                                        <?php endforeach; ?>
+                                        <?= $overview_paragraphs_html ?? '' /* trusted HTML */ ?>
                                         <a href="<?= url('/contact') ?>" class="theme-btn btn-style-one mt-20">
                                             <span class="btn-title"><?= e($overview_btn_text ?? '') ?></span>
                                         </a>
@@ -340,7 +338,7 @@ $service_links ??= [
                                 <div class="sec-title text-center mb-70">
                                     <span class="sub-title"><?= e($benefits_sub ?? '') ?></span>
                                     <h2><?= $benefits_title_html ?? '' /* trusted HTML */ ?></h2>
-                                    <div class="text"><?= e($benefits_text ?? '') ?></div>
+                                    <div class="text"><?= $benefits_text ?? '' /* trusted HTML */ ?></div>
                                 </div>
                                 <div class="row g-4">
                                     <?php foreach ($benefit_cards as $i => $card): ?>
@@ -437,7 +435,7 @@ $service_links ??= [
                                 <?= $grid_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($grid_text ?? '') ?>
+                                <?= $grid_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="row g-4">
@@ -485,7 +483,7 @@ $service_links ??= [
                                 <?= $whatyouget_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($whatyouget_text ?? '') ?>
+                                <?= $whatyouget_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="swiper what-you-get-slider">
@@ -534,7 +532,7 @@ $service_links ??= [
                                 <?= $industries_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($industries_text ?? '') ?>
+                                <?= $industries_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="row g-4">
@@ -571,7 +569,7 @@ $service_links ??= [
                                 <?= $framework_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($framework_text ?? '') ?>
+                                <?= $framework_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="swiper framework-slider">
@@ -615,7 +613,7 @@ $service_links ??= [
                                 <?= $why_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($why_text ?? '') ?>
+                                <?= $why_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="row g-4">
@@ -651,7 +649,7 @@ $service_links ??= [
                                 <?= $engagement_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($engagement_text ?? '') ?>
+                                <?= $engagement_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="row g-4">
@@ -707,7 +705,7 @@ $service_links ??= [
                                 <?= $process_title_html ?? '' ?>
                             </h2>
                             <div class="text">
-                                <?= e($process_text ?? '') ?>
+                                <?= $process_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
 
@@ -777,7 +775,7 @@ $service_links ??= [
                                 <?= $cta_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <p>
-                                <?= e($cta_text ?? '') ?>
+                                <?= $cta_text ?? '' /* trusted HTML */ ?>
                             </p>
                             <div class="service-btns">
                                 <hr>
@@ -819,10 +817,9 @@ $service_links ??= [
                                                     d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                                     fill="currentColor" />
                                             </svg>
-                                            <span>Featured Projects</span>
+                                            <span><?= e($cs_sub !== '' ? $cs_sub : 'Featured Projects') ?></span>
                                         </div>
-                                        <h2 class="title split-text split-in-right">Success Stories That <span> Transform
-                                                Businesses</span></h2>
+                                        <h2 class="title split-text split-in-right"><?= $cs_title_html !== '' ? $cs_title_html : 'Success Stories That <span> Transform Businesses</span>' /* trusted HTML */ ?></h2>
                                     </div>
                                     <a class="theme-btn-main mb-5 mb-xl-0 wow fadeInUp" data-wow-delay=".3s"
                                         href="<?= url('/success-stories') ?>">
@@ -917,12 +914,14 @@ $service_links ??= [
                                         d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                         fill="currentColor" />
                                 </svg>
-                                <span>Leadership Team</span>
+                                <span><?= e($shared_founders_sub !== '' ? $shared_founders_sub : 'Leadership Team') ?></span>
                             </div>
                             <h2 class="title split-text split-in-right">
-                                Meet Our <br>
-                                <span>Founders</span>
+                                <?= $shared_founders_title_html !== '' ? $shared_founders_title_html : 'Meet Our <br><span>Founders</span>' /* trusted HTML */ ?>
                             </h2>
+                            <?php if (!empty($shared_founders_intro_html)): ?>
+                                <div class="text mt-3"><?= $shared_founders_intro_html /* trusted HTML */ ?></div>
+                            <?php endif; ?>
                         </div>
                         <div class="row team-item-wrapper">
                             <div class="col-xl-2 col-0 wow fadeInUp" data-wow-delay=".3s"></div>
@@ -1017,10 +1016,12 @@ $service_links ??= [
                                                 d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                                 fill="currentColor" />
                                         </svg>
-                                        <span>Client Stories</span>
+                                        <span><?= e($shared_testimonials_sub !== '' ? $shared_testimonials_sub : 'Client Stories') ?></span>
                                     </div>
-                                    <h2 class="title split-text split-in-right">What clients say <span>about
-                                            us.</span></h2>
+                                    <h2 class="title split-text split-in-right"><?= $shared_testimonials_title_html !== '' ? $shared_testimonials_title_html : 'What clients say <span>about us.</span>' /* trusted HTML */ ?></h2>
+                                    <?php if (!empty($shared_testimonials_intro_html)): ?>
+                                        <div class="text mt-3"><?= $shared_testimonials_intro_html /* trusted HTML */ ?></div>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="swiper testimonial-slider">
                                     <div class="swiper-wrapper">
@@ -1104,7 +1105,7 @@ $service_links ??= [
                                 <?= $tech_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($tech_text ?? '') ?>
+                                <?= $tech_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="tech-stack-wrapper row g-4">
@@ -1144,9 +1145,12 @@ $service_links ??= [
                                             d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
                                             fill="currentColor" />
                                     </svg>
-                                    <span>Get in Touch</span>
+                                    <span><?= e($shared_contact_sub !== '' ? $shared_contact_sub : 'Get in Touch') ?></span>
                                 </div>
-                                <h2 class="title split-text split-in-right">Talk to an AI Expert</h2>
+                                <h2 class="title split-text split-in-right"><?= $shared_contact_title_html !== '' ? $shared_contact_title_html : 'Talk to an AI Expert' /* trusted HTML */ ?></h2>
+                                <?php if (!empty($shared_contact_intro_html)): ?>
+                                    <div class="text mt-3"><?= $shared_contact_intro_html /* trusted HTML */ ?></div>
+                                <?php endif; ?>
                             </div>
                             <div id="contact-msg" class="contact-msg" style="display:none;"></div>
                             <form id="contact_form" name="contact_form" action="<?= url('/contact-submit') ?>"
@@ -1247,7 +1251,7 @@ $service_links ??= [
                                 <?= $security_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($security_text ?? '') ?>
+                                <?= $security_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="swiper security-slider">
@@ -1288,7 +1292,7 @@ $service_links ??= [
                                 <?= $related_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($related_text ?? '') ?>
+                                <?= $related_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
 
@@ -1375,7 +1379,7 @@ $service_links ??= [
                                 <?= $blog_title_html ?? '' /* trusted HTML */ ?>
                             </h2>
                             <div class="text">
-                                <?= e($blog_text ?? '') ?>
+                                <?= $blog_text ?? '' /* trusted HTML */ ?>
                             </div>
                         </div>
                         <div class="row g-4">
@@ -1417,9 +1421,9 @@ $service_links ??= [
                 <section class="pb-100 faq-section">
 
                     <div class="container faq-content pt-70">
-                        <h3 class="mb-3">Frequently Asked Questions</h3>
+                        <h3 class="mb-3"><?= e(($faq_title ?? '') !== '' ? $faq_title : 'Frequently Asked Questions') ?></h3>
                         <p class="text">
-                            <?= e($faq_intro ?? '') ?>
+                            <?= $faq_intro ?? '' /* trusted HTML */ ?>
                         </p>
                         <ul class="accordion-box wow fadeInUp p-0 mt-40" data-wow-delay=".3s">
                             <?php foreach ($faqs as $i => $faq):

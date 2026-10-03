@@ -12,18 +12,18 @@
  *   $hero_tag, $hero_title_html*, $hero_desc, $hero_features[{icon,text}]
  *   $impact_stats[{number,title}]
  *   $engineers[{name,role,years_of_experience,image,linkedin_url,education[],skills[]}] - "Meet Our Engineers"
- *   $expertise_sub, $expertise_title_html*, $expertise_text, $expertise_cards[{icon,title,desc}]
- *   $foundation_sub, $foundation_title_html*, $foundation_text, $foundation_cards[{image,title,desc}]
- *   $tech_sub, $tech_title_html*, $tech_text, $tech_categories[{title,items[]}]
- *   $build_sub, $build_title_html*, $build_text, $build_cards[{number,title,desc}]
- *   $engagement_sub, $engagement_title_html*, $engagement_text, $engagement_models[{icon,title,desc,featured}]
- *   $why_sub, $why_title_html*, $why_text, $why_cards[{title,desc}]
- *   $industries_sub, $industries_title_html*, $industries_text, $industries[{icon,title,desc}]
- *   $cta_tag, $cta_title_html*, $cta_text                          - mid-page CTA band
- *   $cs_sub, $cs_title_html*, $cs_text, $case_studies[{title,category,image,url}] - always the latest 4 published Success Stories, not manually picked
- *   $related_sub, $related_title_html*, $related_text, $related_items[{label,title,slug,excerpt,featured_image}]
- *   $blog_sub, $blog_title_html*, $blog_text, $blog_posts[{image,category,title,desc,link}]
- *   $faq_intro, $faqs[{question,answer}]
+ *   $expertise_sub, $expertise_title_html*, $expertise_text*, $expertise_cards[{icon,title,desc}]
+ *   $foundation_sub, $foundation_title_html*, $foundation_text*, $foundation_cards[{image,title,desc}]
+ *   $tech_sub, $tech_title_html*, $tech_text*, $tech_categories[{title,items[]}]
+ *   $build_sub, $build_title_html*, $build_text*, $build_cards[{number,title,desc}]
+ *   $engagement_sub, $engagement_title_html*, $engagement_text*, $engagement_models[{icon,title,desc,featured}]
+ *   $why_sub, $why_title_html*, $why_text*, $why_cards[{title,desc}]
+ *   $industries_sub, $industries_title_html*, $industries_text*, $industries[{icon,title,desc}]
+ *   $cta_tag, $cta_title_html*, $cta_text*                          - mid-page CTA band
+ *   $cs_sub, $cs_title_html*, $cs_text*, $case_studies[{title,category,image,url}] - always the latest 4 published Success Stories, not manually picked
+ *   $related_sub, $related_title_html*, $related_text*, $related_items[{label,title,slug,excerpt,featured_image}]
+ *   $blog_sub, $blog_title_html*, $blog_text*, $blog_posts[{image,category,title,desc,link}]
+ *   $faq_intro*, $faqs[{question,answer}]
  *   $final_cta_title_html*, $final_cta_desc, $final_cta_btn_text, $final_cta_btn_url
  *   (* = trusted HTML, printed raw, not escaped)
  */
@@ -87,7 +87,7 @@
 
 				<div class="contact-card">
 
-					<h3>Let's Build Your AI Team</h3>
+					<h3><?= e(($hero_card_title ?? '') !== '' ? $hero_card_title : "Let's Build Your AI Team") ?></h3>
 
 					<div id="hire-form-msg" class="contact-msg" style="display:none;"></div>
 					<form id="hire_form" class="hire-form" action="<?= url('/hire-submit') ?>" method="post">
@@ -238,7 +238,7 @@
 		<div class="container">
 			<div class="brand-wrap-2">
 				<div class="text-box">
-					<p>Our Trusted Clients</p>
+					<p><?= e($shared_clients_label !== '' ? $shared_clients_label : 'Our Trusted Clients') ?></p>
 				</div>
 
 				<div class="swiper brand-slider2">
@@ -301,7 +301,7 @@
 			</div>
 			<div class="container">
 				<div class="sec-title text-center mb-70">
-					<h2>Meet Our Engineers</h2>
+					<h2><?= e(($engineers_title ?? '') !== '' ? $engineers_title : 'Meet Our Engineers') ?></h2>
 				</div>
 				<div class="row g-4">
 					<?php foreach ($engineers as $i => $eng): ?>
@@ -421,7 +421,7 @@
 
 					<?php if (!empty($expertise_text)): ?>
 						<div class="text">
-							<?= e($expertise_text) ?>
+							<?= $expertise_text ?? '' /* trusted HTML */ ?>
 						</div>
 					<?php endif; ?>
 
@@ -478,7 +478,7 @@
 
 					<?php if (!empty($foundation_text)): ?>
 						<div class="text">
-							<?= e($foundation_text) ?>
+							<?= $foundation_text ?? '' /* trusted HTML */ ?>
 						</div>
 					<?php endif; ?>
 
@@ -524,7 +524,7 @@
 						<?= $tech_title_html ?? '' /* trusted HTML */ ?>
 					</h2>
 					<div class="text">
-						<?= e($tech_text ?? '') ?>
+						<?= $tech_text ?? '' /* trusted HTML */ ?>
 					</div>
 				</div>
 
@@ -722,9 +722,12 @@
 									d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
 									fill="currentColor" />
 							</svg>
-							<span>Get in Touch</span>
+							<span><?= e($shared_contact_sub !== '' ? $shared_contact_sub : 'Get in Touch') ?></span>
 						</div>
-						<h2 class="title split-text split-in-right">Talk to an AI Expert</h2>
+						<h2 class="title split-text split-in-right"><?= $shared_contact_title_html !== '' ? $shared_contact_title_html : 'Talk to an AI Expert' /* trusted HTML */ ?></h2>
+						<?php if (!empty($shared_contact_intro_html)): ?>
+							<div class="text mt-3"><?= $shared_contact_intro_html /* trusted HTML */ ?></div>
+						<?php endif; ?>
 					</div>
 					<div id="contact-msg" class="contact-msg" style="display:none;"></div>
 					<form id="contact_form" name="contact_form" action="<?= url('/contact-submit') ?>" method="post">
@@ -875,7 +878,7 @@
 						<?= $cta_title_html ?? '' /* trusted HTML */ ?>
 					</h2>
 					<p>
-						<?= e($cta_text ?? '') ?>
+						<?= $cta_text ?? '' /* trusted HTML */ ?>
 					</p>
 					<div class="service-btns">
 						<hr>
@@ -917,10 +920,9 @@
 											d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
 											fill="currentColor" />
 									</svg>
-									<span>Featured Projects</span>
+									<span><?= e($cs_sub !== '' ? $cs_sub : 'Featured Projects') ?></span>
 								</div>
-								<h2 class="title split-text split-in-right">Success Stories That <span> Transform
-										Businesses</span></h2>
+								<h2 class="title split-text split-in-right"><?= $cs_title_html !== '' ? $cs_title_html : 'Success Stories That <span> Transform Businesses</span>' /* trusted HTML */ ?></h2>
 							</div>
 							<a class="theme-btn-main mb-5 mb-xl-0 wow fadeInUp" data-wow-delay=".3s"
 								href="<?= url('/success-stories') ?>">
@@ -1013,12 +1015,14 @@
 								d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
 								fill="currentColor" />
 						</svg>
-						<span>Leadership Team</span>
+						<span><?= e($shared_founders_sub !== '' ? $shared_founders_sub : 'Leadership Team') ?></span>
 					</div>
 					<h2 class="title split-text split-in-right">
-						Meet Our <br>
-						<span>Founders</span>
+						<?= $shared_founders_title_html !== '' ? $shared_founders_title_html : 'Meet Our <br><span>Founders</span>' /* trusted HTML */ ?>
 					</h2>
+					<?php if (!empty($shared_founders_intro_html)): ?>
+						<div class="text mt-3"><?= $shared_founders_intro_html /* trusted HTML */ ?></div>
+					<?php endif; ?>
 				</div>
 				<div class="row team-item-wrapper">
 					<div class="col-xl-2 col-0 wow fadeInUp" data-wow-delay=".3s"></div>
@@ -1090,10 +1094,12 @@
 										d="M6.81319 14.6759C6.83947 14.8971 7.16053 14.8971 7.18681 14.6759L7.40705 12.8197C7.69143 10.4229 9.58112 8.53323 11.9779 8.24884L13.834 8.0286C14.0553 8.00233 14.0553 7.68127 13.834 7.65499L11.9779 7.43475C9.58112 7.15036 7.69143 5.26068 7.40705 2.86391L7.18681 1.00776C7.16053 0.786476 6.83947 0.786476 6.81319 1.00776L6.59296 2.86391C6.30857 5.26068 4.41888 7.15036 2.02209 7.43475L0.165943 7.65499C-0.0553144 7.68127 -0.0553144 8.00233 0.165943 8.0286L2.02209 8.24884C4.41888 8.53323 6.30857 10.4229 6.59296 12.8197L6.81319 14.6759Z"
 										fill="currentColor" />
 								</svg>
-								<span>Client Stories</span>
+								<span><?= e($shared_testimonials_sub !== '' ? $shared_testimonials_sub : 'Client Stories') ?></span>
 							</div>
-							<h2 class="title split-text split-in-right">What clients say <span>about
-									us.</span></h2>
+							<h2 class="title split-text split-in-right"><?= $shared_testimonials_title_html !== '' ? $shared_testimonials_title_html : 'What clients say <span>about us.</span>' /* trusted HTML */ ?></h2>
+							<?php if (!empty($shared_testimonials_intro_html)): ?>
+								<div class="text mt-3"><?= $shared_testimonials_intro_html /* trusted HTML */ ?></div>
+							<?php endif; ?>
 						</div>
 						<div class="swiper testimonial-slider">
 							<div class="swiper-wrapper">
@@ -1177,7 +1183,7 @@
 						<?= $related_title_html ?? '' /* trusted HTML */ ?>
 					</h2>
 					<div class="text">
-						<?= e($related_text ?? '') ?>
+						<?= $related_text ?? '' /* trusted HTML */ ?>
 					</div>
 				</div>
 
@@ -1263,7 +1269,7 @@
 						<?= $blog_title_html ?? '' /* trusted HTML */ ?>
 					</h2>
 					<div class="text">
-						<?= e($blog_text ?? '') ?>
+						<?= $blog_text ?? '' /* trusted HTML */ ?>
 					</div>
 				</div>
 				<div class="row g-4">
@@ -1304,9 +1310,9 @@
 		<section class="pb-100 faq-section">
 
 			<div class="container faq-content pt-70">
-				<h3 class="mb-3">Frequently Asked Questions</h3>
+				<h3 class="mb-3"><?= e(($faq_title ?? '') !== '' ? $faq_title : 'Frequently Asked Questions') ?></h3>
 				<p class="text">
-					<?= e($faq_intro ?? '') ?>
+					<?= $faq_intro ?? '' /* trusted HTML */ ?>
 				</p>
 				<ul class="accordion-box wow fadeInUp p-0 mt-40" data-wow-delay=".3s">
 					<?php foreach ($faqs as $i => $faq):

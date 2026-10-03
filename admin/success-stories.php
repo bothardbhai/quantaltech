@@ -135,9 +135,27 @@ if ($action === 'new' || $action === 'edit') {
                 'final_cta_sub', 'final_cta_title',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
                 'featured_image', 'featured_alt',
+                'ourclient_sub', 'ourclient_title',
+                'objectives_sub', 'objectives_title',
+                'architecture_sub', 'architecture_title',
+                'workflow_sub', 'workflow_title',
+                'results_sub', 'results_title',
+                'deliverables_sub', 'deliverables_title',
+                'techstack_sub', 'techstack_title',
+                'why_sub', 'expert_tag', 'expert_title',
+                // NOTE: why_title is deliberately NOT here — the Why Cards
+                // repeater already uses POST field "why_title[]" for each
+                // card's title, so the section heading uses a differently
+                // named POST field ("why_section_title") and is assigned
+                // to $cols['why_title'] explicitly below instead.
             ];
             // Rich-content fields (CKEditor) — sanitized, not escaped.
-            $html_fields = ['body_html', 'challenge_html', 'solution_html', 'why_final_html'];
+            $html_fields = [
+                'body_html', 'challenge_html', 'solution_html', 'why_final_html',
+                'ourclient_intro_html', 'objectives_intro_html', 'architecture_intro_html',
+                'workflow_intro_html', 'results_intro_html', 'deliverables_intro_html',
+                'techstack_intro_html', 'why_intro_html',
+            ];
 
             $cols = [
                 'slug'          => $slug,
@@ -153,6 +171,12 @@ if ($action === 'new' || $action === 'edit') {
                 'featured'      => $is_featured,
                 'author_id'     => $user['id'] ?? null,
                 'final_cta_desc' => trim((string) ($_POST['final_cta_desc'] ?? '')),
+                // Read from "why_section_title", not "why_title" — that POST
+                // key is already the Why Cards repeater's per-card title array.
+                'why_title' => trim((string) ($_POST['why_section_title'] ?? '')),
+                'expert_member_id' => ((int) ($_POST['expert_member_id'] ?? 0)) > 0 ? (int) $_POST['expert_member_id'] : null,
+                'expert_expertise_json' => json_encode(array_values(array_filter(array_map('trim', $_POST['expert_expertise'] ?? [])))),
+                'techstack_display_mode' => ($_POST['techstack_display_mode'] ?? '') === 'pills' ? 'pills' : 'list',
             ];
             foreach ($plain_fields as $fld) {
                 $cols[$fld] = trim((string) ($_POST[$fld] ?? ''));
@@ -181,6 +205,12 @@ if ($action === 'new' || $action === 'edit') {
                 ['text' => 'resp_text'], [], ['active' => 'resp_active']));
             $cols['future_json'] = json_encode(svc_build_repeater($_POST,
                 ['text' => 'future_text_item'], [], ['active' => 'future_active']));
+            // Capped at 4 to match the frontend section's fixed layout — see
+            // pages/success-stories/single.php's $related_stories fallback.
+            $cols['related_story_ids_json'] = json_encode(array_slice(
+                array_values(array_unique(array_filter(array_map('intval', $_POST['related_story_ids'] ?? [])))),
+                0, 4
+            ));
 
             $bind = [];
             foreach ($cols as $k => $v) $bind[":$k"] = $v;
@@ -227,6 +257,16 @@ if ($action === 'new' || $action === 'edit') {
         'responsibilities_sub' => '', 'responsibilities_title' => '', 'responsibilities_text' => '',
         'future_sub' => '', 'future_title' => '', 'future_text' => '',
         'final_cta_sub' => '', 'final_cta_title' => '', 'final_cta_desc' => '',
+        'ourclient_sub' => '', 'ourclient_title' => '', 'ourclient_intro_html' => '',
+        'objectives_sub' => '', 'objectives_title' => '', 'objectives_intro_html' => '',
+        'architecture_sub' => '', 'architecture_title' => '', 'architecture_intro_html' => '',
+        'workflow_sub' => '', 'workflow_title' => '', 'workflow_intro_html' => '',
+        'results_sub' => '', 'results_title' => '', 'results_intro_html' => '',
+        'deliverables_sub' => '', 'deliverables_title' => '', 'deliverables_intro_html' => '',
+        'techstack_sub' => '', 'techstack_title' => '', 'techstack_intro_html' => '',
+        'why_sub' => '', 'why_title' => '', 'why_intro_html' => '',
+        'expert_tag' => '', 'expert_title' => '', 'expert_member_id' => 0, 'expert_expertise_json' => null,
+        'techstack_display_mode' => 'list',
     ], (array) $story);
 
     // JSON-backed data for the JS repeaters (edit mode) — empty arrays for "new"
@@ -255,6 +295,21 @@ if ($action === 'new' || $action === 'edit') {
     }
 
     $categories = get_success_story_categories($pdo, []);
+    $team_members = $pdo->query(
+        "SELECT id, name, designation, expertise_json FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, name ASC"
+    )->fetchAll();
+    // {memberId: [tag, ...]} — for the "Meet the Expert" tab's JS to
+    // rebuild the expertise-subset checkboxes when the picked member changes.
+    $team_members_expertise_map = [];
+    foreach ($team_members as $tm) {
+        $team_members_expertise_map[(int) $tm['id']] = svc_json_decode($tm['expertise_json'] ?? null);
+    }
+    $selected_expert_expertise = array_map('strval', svc_json_decode($story['expert_expertise_json'] ?? null));
+    $selected_related_story_ids = array_map('intval', svc_json_decode($story['related_story_ids_json'] ?? null));
+    $other_stories = array_filter(
+        get_success_stories($pdo, ['status' => 'published']),
+        static fn($s) => (int) $s['id'] !== (int) ($f['id'] ?? 0)
+    );
 
     $admin_page_title = $story ? 'Edit Success Story' : 'New Success Story';
     $admin_active     = 'success-stories';
@@ -293,6 +348,7 @@ if ($action === 'new' || $action === 'edit') {
                     'results' => 'Results & Impact', 'deliverables' => 'What We Delivered',
                     'tech' => 'Tech Stack', 'why' => 'Why Choose',
                     'responsibilities' => 'Client Responsibilities', 'future' => 'Future Enhancements',
+                    'expert' => 'Meet the Expert', 'related_stories' => 'Related Stories',
                     'final_cta' => 'Final CTA', 'seo' => 'SEO',
                 ];
                 foreach ($tabs as $key => $label): ?>
@@ -420,6 +476,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ CONTENT & INFO ============ -->
                 <div class="section-tabs__panel" data-panel="content">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="ourclient_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="ourclient_sub" name="ourclient_sub" value="<?= attr($f['ourclient_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="ourclient_title">Title <span class="text-muted">(optional — defaults to "Our Client")</span></label>
+                            <input type="text" id="ourclient_title" name="ourclient_title" value="<?= attr($f['ourclient_title']) ?>" placeholder="Our Client">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="ourclient_intro_html">Extra Intro <span class="text-muted">(optional — shown above the Short Description below, only if filled in)</span></label>
+                            <textarea id="ourclient_intro_html" name="ourclient_intro_html" rows="3"><?= e($f['ourclient_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <div class="form-row" style="margin-bottom:0;">
                             <label for="body_html">Main Content</label>
                             <textarea id="body_html" name="body_html" rows="8"><?= e($f['body_html']) ?></textarea>
@@ -449,6 +519,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ OBJECTIVES ============ -->
                 <div class="section-tabs__panel" data-panel="objectives">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="objectives_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="objectives_sub" name="objectives_sub" value="<?= attr($f['objectives_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="objectives_title">Title <span class="text-muted">(optional — defaults to "Objectives")</span></label>
+                            <input type="text" id="objectives_title" name="objectives_title" value="<?= attr($f['objectives_title']) ?>" placeholder="Objectives">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="objectives_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="objectives_intro_html" name="objectives_intro_html" rows="3"><?= e($f['objectives_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('objectives', 'Objectives', '+ Add objective',
                             '<div class="form-row"><label>Title</label><input type="text" name="obj_title[]"></div>' .
                             '<div class="form-row"><label>Description <span class="text-muted">(optional)</span></label><textarea name="obj_desc[]" rows="2"></textarea></div>' .
@@ -462,6 +546,20 @@ if ($action === 'new' || $action === 'edit') {
 
                 <!-- ============ ARCHITECTURE ============ -->
                 <div class="section-tabs__panel" data-panel="architecture">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="architecture_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="architecture_sub" name="architecture_sub" value="<?= attr($f['architecture_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="architecture_title">Title <span class="text-muted">(optional — defaults to "Proposed Architecture")</span></label>
+                            <input type="text" id="architecture_title" name="architecture_title" value="<?= attr($f['architecture_title']) ?>" placeholder="Proposed Architecture">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="architecture_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="architecture_intro_html" name="architecture_intro_html" rows="3"><?= e($f['architecture_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <p class="text-muted" style="font-size:13px;margin-top:0;">Each step renders as one node in the Proposed Architecture flow diagram, in the order listed below.</p>
                         <?php svc_repeater_field('architecture', 'Architecture Steps', '+ Add step',
@@ -525,6 +623,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ WORKFLOW ============ -->
                 <div class="section-tabs__panel" data-panel="workflow">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="workflow_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="workflow_sub" name="workflow_sub" value="<?= attr($f['workflow_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="workflow_title">Title <span class="text-muted">(optional — defaults to "Our Workflow")</span></label>
+                            <input type="text" id="workflow_title" name="workflow_title" value="<?= attr($f['workflow_title']) ?>" placeholder="Our Workflow">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="workflow_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="workflow_intro_html" name="workflow_intro_html" rows="3"><?= e($f['workflow_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('workflow', 'Workflow Steps', '+ Add step',
                             '<div class="form-row"><label>Title</label><input type="text" name="wf_title[]"></div>' .
                             '<div class="form-row"><label>Description</label><textarea name="wf_desc[]" rows="3"></textarea></div>' .
@@ -541,6 +653,20 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ RESULTS & IMPACT ============ -->
                 <div class="section-tabs__panel" data-panel="results">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="results_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="results_sub" name="results_sub" value="<?= attr($f['results_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="results_title">Title <span class="text-muted">(optional — defaults to "Results &amp; Impact")</span></label>
+                            <input type="text" id="results_title" name="results_title" value="<?= attr($f['results_title']) ?>" placeholder="Results &amp; Impact">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="results_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="results_intro_html" name="results_intro_html" rows="3"><?= e($f['results_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('results', 'Results & Impact', '+ Add result',
                             '<div class="form-row"><label>Title</label><input type="text" name="res_title[]"></div>' .
                             '<div class="form-row"><label>Description</label><textarea name="res_desc[]" rows="2"></textarea></div>' .
@@ -554,6 +680,20 @@ if ($action === 'new' || $action === 'edit') {
 
                 <!-- ============ WHAT WE DELIVERED ============ -->
                 <div class="section-tabs__panel" data-panel="deliverables">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="deliverables_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="deliverables_sub" name="deliverables_sub" value="<?= attr($f['deliverables_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="deliverables_title">Title <span class="text-muted">(optional — defaults to "What We Delivered")</span></label>
+                            <input type="text" id="deliverables_title" name="deliverables_title" value="<?= attr($f['deliverables_title']) ?>" placeholder="What We Delivered">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="deliverables_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="deliverables_intro_html" name="deliverables_intro_html" rows="3"><?= e($f['deliverables_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('deliverables', 'Deliverables', '+ Add deliverable',
                             '<div class="form-row"><label>Icon</label><input type="text" class="icon-input" name="del_icon[]"></div>' .
@@ -570,10 +710,33 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ TECH STACK ============ -->
                 <div class="section-tabs__panel" data-panel="tech">
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="techstack_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="techstack_sub" name="techstack_sub" value="<?= attr($f['techstack_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="techstack_title">Title <span class="text-muted">(optional — defaults to "Our Technology Stack")</span></label>
+                            <input type="text" id="techstack_title" name="techstack_title" value="<?= attr($f['techstack_title']) ?>" placeholder="Our Technology Stack">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="techstack_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in)</span></label>
+                            <textarea id="techstack_intro_html" name="techstack_intro_html" rows="3"><?= e($f['techstack_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label>Display Style</label>
+                            <div style="display:flex;gap:20px;margin-top:4px;">
+                                <label style="font-weight:normal;"><input type="radio" name="techstack_display_mode" value="list" <?= $f['techstack_display_mode'] !== 'pills' ? 'checked' : '' ?>> Numbered List <span class="text-muted">(icon + name + purpose per row)</span></label>
+                                <label style="font-weight:normal;"><input type="radio" name="techstack_display_mode" value="pills" <?= $f['techstack_display_mode'] === 'pills' ? 'checked' : '' ?>> Simple Pills <span class="text-muted">(name only, no card — for when you don't have icon/purpose for each one)</span></label>
+                            </div>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('tech-stack', 'Technology Stack', '+ Add technology',
-                            '<div class="form-row"><label>Icon</label><input type="text" class="icon-input" name="tech_icon[]"></div>' .
+                            '<div class="form-row"><label>Icon <span class="text-muted">(ignored in Simple Pills mode)</span></label><input type="text" class="icon-input" name="tech_icon[]"></div>' .
                             '<div class="form-row"><label>Name</label><input type="text" name="tech_name[]" placeholder="Apollo"></div>' .
-                            '<div class="form-row"><label>Purpose</label><input type="text" name="tech_purpose[]" placeholder="Lead Database"></div>' .
+                            '<div class="form-row"><label>Purpose <span class="text-muted">(ignored in Simple Pills mode)</span></label><input type="text" name="tech_purpose[]" placeholder="Lead Database"></div>' .
                             '<div class="form-row" style="margin-bottom:0;"><label><input type="checkbox" class="active-checkbox" name="tech_active[]" value="1" checked> Active</label></div>',
                             $repeater_data['tech_stack'],
                             ['input.icon-input' => ['key' => 'icon', 'type' => 'icon'], 'input[name="tech_name[]"]' => 'name',
@@ -584,6 +747,20 @@ if ($action === 'new' || $action === 'edit') {
 
                 <!-- ============ WHY CHOOSE ============ -->
                 <div class="section-tabs__panel" data-panel="why">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="why_sub">Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
+                            <input type="text" id="why_sub" name="why_sub" value="<?= attr($f['why_sub']) ?>">
+                        </div>
+                        <div class="form-row">
+                            <label for="why_section_title">Title <span class="text-muted">(optional — defaults to "Why Choose Our Solution")</span></label>
+                            <input type="text" id="why_section_title" name="why_section_title" value="<?= attr($f['why_title']) ?>" placeholder="Why Choose Our Solution">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="why_intro_html">Intro <span class="text-muted">(optional — only shows on the page if filled in; separate from the closing paragraph below the cards)</span></label>
+                            <textarea id="why_intro_html" name="why_intro_html" rows="3"><?= e($f['why_intro_html']) ?></textarea>
+                        </div>
+                    </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('why-cards', 'Why Choose Our Solution', '+ Add card',
                             '<div class="form-row"><label>Title</label><input type="text" name="why_title[]"></div>' .
@@ -651,6 +828,60 @@ if ($action === 'new' || $action === 'edit') {
                             $repeater_data['future'],
                             ['input[name="future_text_item[]"]' => 'text', 'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
+                    </div></div>
+                </div>
+
+                <!-- ============ MEET THE EXPERT ============ -->
+                <div class="section-tabs__panel" data-panel="expert">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row">
+                            <label for="expert_tag">Eyebrow / Subtitle <span class="text-muted">(optional — defaults to "The Expert Behind This Project")</span></label>
+                            <input type="text" id="expert_tag" name="expert_tag" value="<?= attr($f['expert_tag']) ?>" placeholder="The Expert Behind This Project">
+                        </div>
+                        <div class="form-row">
+                            <label for="expert_title">Title <span class="text-muted">(optional — defaults to "Meet the Expert")</span></label>
+                            <input type="text" id="expert_title" name="expert_title" value="<?= attr($f['expert_title']) ?>" placeholder="Meet the Expert">
+                        </div>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="expert_member_id">Team Member</label>
+                            <select id="expert_member_id" name="expert_member_id">
+                                <option value="">— None (section hidden) —</option>
+                                <?php foreach ($team_members as $tm): ?>
+                                    <option value="<?= (int) $tm['id'] ?>" <?= (int) $f['expert_member_id'] === (int) $tm['id'] ? 'selected' : '' ?>>
+                                        <?= e($tm['name']) ?><?= $tm['designation'] !== '' ? ' — ' . e($tm['designation']) : '' ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="help">Manage the roster in <a href="<?= ADMIN_URL ?>/team-members.php" target="_blank" rel="noopener">Team Members</a>.</div>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label>Expertise Shown on This Story <span class="text-muted">(optional — leave none checked to show every tag from their profile)</span></label>
+                            <div id="expert-expertise-picker" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+                        </div>
+                    </div></div>
+                </div>
+
+                <!-- ============ RELATED STORIES ============ -->
+                <div class="section-tabs__panel" data-panel="related_stories">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <p class="text-muted" style="font-size:13px;margin-top:0;">
+                            Controls the "Success Stories That Transform Businesses" section at the bottom of this
+                            story's page. Pick up to 4 stories to feature there — if none are selected, the 4 most
+                            recently added stories are shown automatically instead.
+                        </p>
+                        <div class="repeater-row__title" style="margin-bottom:10px;">Choose Stories</div>
+                        <?php if (empty($other_stories)): ?>
+                            <p class="text-muted" style="font-size:13px;">No other published stories yet.</p>
+                        <?php endif; ?>
+                        <?php foreach ($other_stories as $os): ?>
+                            <label style="display:block;padding:6px 0;">
+                                <input type="checkbox" name="related_story_ids[]" value="<?= (int) $os['id'] ?>"
+                                    <?= in_array((int) $os['id'], $selected_related_story_ids, true) ? 'checked' : '' ?>>
+                                <?= e($os['title']) ?> <span class="text-muted">(<?= e($os['slug']) ?>)</span>
+                            </label>
+                        <?php endforeach; ?>
                     </div></div>
                 </div>
 
@@ -750,6 +981,37 @@ if ($action === 'new' || $action === 'edit') {
         navBtns.forEach(function (b) { b.addEventListener('click', function () { showTab(b.dataset.tab); }); });
         showTab(navBtns[0] ? navBtns[0].dataset.tab : 'core');
 
+        // ---- Meet the Expert: expertise-subset checkboxes, rebuilt per picked member ----
+        (function () {
+            var TEAM_MEMBER_EXPERTISE = <?= json_encode($team_members_expertise_map, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+            var INITIAL_SELECTED = <?= json_encode($selected_expert_expertise, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+            var memberSelect = document.getElementById('expert_member_id');
+            var picker = document.getElementById('expert-expertise-picker');
+            if (!memberSelect || !picker) return;
+            var usedInitialSelection = false;
+
+            function renderPicker() {
+                var tags = TEAM_MEMBER_EXPERTISE[memberSelect.value] || [];
+                picker.innerHTML = '';
+                if (!memberSelect.value || tags.length === 0) {
+                    picker.innerHTML = '<span class="text-muted" style="font-size:13px;">Pick a team member above to choose which of their tags to show here.</span>';
+                    return;
+                }
+                var preselect = !usedInitialSelection ? INITIAL_SELECTED : [];
+                usedInitialSelection = true;
+                tags.forEach(function (tag) {
+                    var label = document.createElement('label');
+                    label.style.cssText = 'display:inline-flex;align-items:center;gap:5px;border:1px solid #3a3a3a;padding:4px 12px;border-radius:999px;font-weight:normal;font-size:13px;cursor:pointer;';
+                    var checked = preselect.indexOf(tag) !== -1;
+                    label.innerHTML = '<input type="checkbox" name="expert_expertise[]" value="' + tag.replace(/"/g, '&quot;') + '"' + (checked ? ' checked' : '') + '> ' + tag;
+                    picker.appendChild(label);
+                });
+            }
+
+            memberSelect.addEventListener('change', renderPicker);
+            renderPicker();
+        })();
+
         // ---- CKEditor on rich-content fields ----
         ['body_html', 'challenge_html', 'solution_html', 'why_final_html'].forEach(function (id) {
             var el = document.getElementById(id);
@@ -757,6 +1019,32 @@ if ($action === 'new' || $action === 'edit') {
             ClassicEditor.create(el, {
                 toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList',
                           '|', 'blockQuote', '|', 'undo', 'redo', '|', 'sourceEditing']
+            }).catch(function (err) { console.error(err); });
+        });
+
+        // CKEditor 5's default silently maps "Heading 1" -> <h2> etc.
+        // (reserving <h1> for the page's own title); this makes each label
+        // match the tag it names.
+        var CK_HEADING_OPTIONS = {
+            options: [
+                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+            ]
+        };
+
+        // ---- CKEditor on every section's optional "Intro" field (heading/bold/italic/link) ----
+        [
+            'ourclient_intro_html', 'objectives_intro_html', 'architecture_intro_html',
+            'workflow_intro_html', 'results_intro_html', 'deliverables_intro_html',
+            'techstack_intro_html', 'why_intro_html'
+        ].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            ClassicEditor.create(el, {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'undo', 'redo'],
+                heading: CK_HEADING_OPTIONS
             }).catch(function (err) { console.error(err); });
         });
 
