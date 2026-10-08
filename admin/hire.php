@@ -149,6 +149,7 @@ if ($action === 'new' || $action === 'edit') {
                 'tech_sub', 'build_sub',
                 'engagement_sub', 'why_sub',
                 'industries_sub',
+                'hireprocess_sub',
                 'cta_tag', 'cs_sub',
                 'related_sub', 'blog_sub', 'faq_title', 'hero_card_title', 'engineers_title',
                 'final_cta_desc', 'final_cta_btn_text', 'final_cta_btn_url',
@@ -159,10 +160,11 @@ if ($action === 'new' || $action === 'edit') {
             $html_fields = [
                 'hero_title_html', 'expertise_title_html', 'foundation_title_html', 'tech_title_html', 'build_title_html',
                 'engagement_title_html', 'why_title_html', 'industries_title_html',
+                'hireprocess_title_html',
                 'cta_title_html', 'cs_title_html', 'related_title_html', 'blog_title_html',
                 'final_cta_title_html',
                 'expertise_text', 'foundation_text', 'tech_text', 'build_text', 'engagement_text',
-                'why_text', 'industries_text', 'cta_text', 'cs_text', 'related_text', 'blog_text',
+                'why_text', 'industries_text', 'hireprocess_text', 'cta_text', 'cs_text', 'related_text', 'blog_text',
                 'faq_intro',
             ];
 
@@ -175,6 +177,7 @@ if ($action === 'new' || $action === 'edit') {
                 'sort_order' => max(1, (int) $sort_order_raw),
                 'featured_image' => trim((string) ($_POST['featured_image'] ?? '')),
                 'featured_alt' => trim((string) ($_POST['featured_alt'] ?? '')),
+                'hireprocess_image' => trim((string) ($_POST['hireprocess_image'] ?? '')),
                 'schema_json' => $schema_json,
                 'status' => $status,
                 'published_at' => $pub_at,
@@ -211,6 +214,8 @@ if ($action === 'new' || $action === 'edit') {
                 ['title' => 'why_card_title', 'desc' => 'why_card_desc']));
             $data['industries_json'] = json_encode(svc_build_repeater($_POST,
                 ['icon' => 'industry_icon', 'title' => 'industry_title', 'desc' => 'industry_desc']));
+            $data['hireprocess_steps_json'] = json_encode(svc_build_repeater($_POST,
+                ['title' => 'hireprocess_step_title', 'desc' => 'hireprocess_step_desc']));
             $data['faqs_json'] = json_encode(svc_build_repeater($_POST,
                 ['question' => 'faq_question', 'answer' => 'faq_answer']));
 
@@ -248,6 +253,7 @@ if ($action === 'new' || $action === 'edit') {
         'engagement_sub' => '', 'engagement_title_html' => '', 'engagement_text' => '',
         'why_sub' => '', 'why_title_html' => '', 'why_text' => '',
         'industries_sub' => '', 'industries_title_html' => '', 'industries_text' => '',
+        'hireprocess_sub' => '', 'hireprocess_title_html' => '', 'hireprocess_text' => '', 'hireprocess_image' => '',
         'cta_tag' => '', 'cta_title_html' => '', 'cta_text' => '',
         'cs_sub' => '', 'cs_title_html' => '', 'cs_text' => '',
         'related_sub' => '', 'related_title_html' => '', 'related_text' => '',
@@ -268,6 +274,7 @@ if ($action === 'new' || $action === 'edit') {
         'engagement_models' => svc_json_decode($hire_page['engagement_models_json'] ?? null),
         'why_cards' => svc_json_decode($hire_page['why_cards_json'] ?? null),
         'industries' => svc_json_decode($hire_page['industries_json'] ?? null),
+        'hireprocess_steps' => svc_json_decode($hire_page['hireprocess_steps_json'] ?? null),
         'faqs' => svc_json_decode($hire_page['faqs_json'] ?? null),
         'json_ld_schemas' => svc_normalize_schemas($hire_page['schema_json'] ?? null),
     ];
@@ -319,6 +326,7 @@ if ($action === 'new' || $action === 'edit') {
                     'engineers' => 'Meet Our Engineers',
                     'expertise' => 'Expertise', 'foundation' => 'Foundation', 'tech' => 'Our Tech', 'build' => 'What They Build',
                     'engagement' => 'Engagement Models', 'why' => 'Why Hire', 'industries' => 'Industries',
+                    'hireprocess' => 'Hire Process',
                     'cta' => 'Mid CTA', 'final_cta' => 'Final CTA', 'cases' => 'Success Stories',
                     'related' => 'Related', 'blog' => 'Knowledge Hub', 'faq' => 'FAQ', 'seo' => 'SEO',
                 ];
@@ -577,6 +585,29 @@ if ($action === 'new' || $action === 'edit') {
                             '<div class="form-row" style="margin-bottom:0;"><label>Description</label><textarea name="industry_desc[]" rows="2"></textarea></div>',
                             $repeater_data['industries'],
                             ['input.icon-input' => ['key' => 'icon', 'type' => 'icon'], 'input[name="industry_title[]"]' => 'title', 'textarea[name="industry_desc[]"]' => 'desc']
+                        ); ?>
+                    </div></div>
+                </div>
+
+                <!-- ============ HIRE PROCESS ============ -->
+                <div class="section-tabs__panel" data-panel="hireprocess">
+                    <div class="admin-card"><div class="admin-card__body">
+                        <?php hire_section_header('hireprocess', $f, 'How We <span>Hire</span>'); ?>
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label for="hireprocess_image">Section Image</label>
+                            <input type="text" id="hireprocess_image" name="hireprocess_image" value="<?= attr($f['hireprocess_image']) ?>" placeholder="/uploads/hire/...">
+                            <div class="help">Copy a path from the <a href="<?= ADMIN_URL ?>/media.php?category=hire" target="_blank" rel="noopener">Hire Media Library</a>, or paste any URL.</div>
+                            <?php if (!empty($f['hireprocess_image'])): ?>
+                                <img src="<?= attr(media_url($f['hireprocess_image'])) ?>" style="max-width:220px;border-radius:4px;border:1px solid var(--admin-border);margin-top:8px;" alt="">
+                            <?php endif; ?>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <?php svc_repeater_field('hireprocess-steps', 'Process Steps', '+ Add step',
+                            '<div class="form-row"><label>Title</label><input type="text" name="hireprocess_step_title[]"></div>' .
+                            '<div class="form-row" style="margin-bottom:0;"><label>Description</label><textarea name="hireprocess_step_desc[]" rows="2"></textarea></div>',
+                            $repeater_data['hireprocess_steps'],
+                            ['input[name="hireprocess_step_title[]"]' => 'title', 'textarea[name="hireprocess_step_desc[]"]' => 'desc']
                         ); ?>
                     </div></div>
                 </div>

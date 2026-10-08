@@ -34,9 +34,9 @@ AddDefaultCharset UTF-8
     RewriteEngine On
 
     # Force HTTPS and redirect www to non-www
-    RewriteCond %{HTTPS} off [OR]
-    RewriteCond %{HTTP_HOST} ^www\.quantaltech\.ai$ [NC]
-    RewriteRule ^(.*)$ https://quantaltech.ai/$1 [R=301,L]
+    # RewriteCond %{HTTPS} off [OR]
+    # RewriteCond %{HTTP_HOST} ^www\.quantaltech\.ai$ [NC]
+    # RewriteRule ^(.*)$ https://quantaltech.ai/$1 [R=301,L]
 
     # ------------------------------------------------------------------
     # 301 Redirects for old URLs

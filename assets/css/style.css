@@ -23127,6 +23127,16 @@ Sidebar
   border: 1px solid #fecaca;
 }
 
+/* ── Form honeypot (core/recaptcha.php) — kept off-screen, out of the layout ── */
+.qt-hp {
+  position: absolute !important;
+  left: -10000px !important;
+  top: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
 /* ── Blog single post rich-text body ── */
 .rich-text h1,
 .rich-text h2,
@@ -25044,7 +25054,7 @@ AI Benefits
 .process-accordion::before{
     content:"";
     position:absolute;
-    left:35px;
+    left:23px;
     top:20px;
     bottom:20px;
     width:2px;
@@ -25055,7 +25065,7 @@ AI Benefits
     background:none;
     border:0;
     margin:0;
-    padding:0 0 60px 0;
+    padding:0 0 35px 0;
     position:relative;
 }
 
@@ -25076,14 +25086,14 @@ AI Benefits
 }
 
 .step-circle{
-    width:70px;
-    height:70px;
+    width:50px;
+    height:50px;
     border:2px solid #26e5e8;
     border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:28px;
+    font-size:16px;
     font-weight:700;
     color:#26e5e8;
     background:#000;
@@ -25098,7 +25108,7 @@ AI Benefits
 }
 
 .step-heading{
-    font-size:34px;
+    font-size:18px;
     font-weight:700;
     color:#fff;
 }

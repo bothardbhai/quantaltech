@@ -19,6 +19,7 @@
  *   $engagement_sub, $engagement_title_html*, $engagement_text*, $engagement_models[{icon,title,desc,featured}]
  *   $why_sub, $why_title_html*, $why_text*, $why_cards[{title,desc}]
  *   $industries_sub, $industries_title_html*, $industries_text*, $industries[{icon,title,desc}]
+ *   $hireprocess_sub, $hireprocess_title_html*, $hireprocess_text*, $hireprocess_image, $hireprocess_steps[{title,desc}]
  *   $cta_tag, $cta_title_html*, $cta_text*                          - mid-page CTA band
  *   $cs_sub, $cs_title_html*, $cs_text*, $case_studies[{title,category,image,url}] - always the latest 4 published Success Stories, not manually picked
  *   $related_sub, $related_title_html*, $related_text*, $related_items[{label,title,slug,excerpt,featured_image}]
@@ -93,6 +94,7 @@
 					<form id="hire_form" class="hire-form" action="<?= url('/hire-submit') ?>" method="post">
 						<?= csrf_field() ?>
 						<input type="hidden" name="form_botcheck" value="">
+						<?= honeypot_field() ?>
 						<input type="hidden" name="page_url" value="<?= attr(current_url()) ?>">
 
 						<div class="grid-2">
@@ -150,7 +152,8 @@
 						<div class="form-group">
 							<label>Project Requirements</label>
 
-							<textarea rows="3" name="project_details" placeholder="Tell us about your AI project..." required></textarea>
+							<textarea rows="3" name="project_details" placeholder="Tell us about your AI project..."
+								required></textarea>
 						</div>
 
 						<button type="submit" id="hire-form-submit-btn" class="submit-btn">
@@ -158,6 +161,7 @@
 						</button>
 
 					</form>
+					<?= recaptcha_script() ?>
 					<script>
 						(function () {
 							var form = document.getElementById('hire_form');
@@ -171,11 +175,14 @@
 								btn.disabled = true;
 								btn.querySelector('.btn-title').textContent = 'Sending…';
 
-								fetch(form.action, {
-									method: 'POST',
-									body: new FormData(form),
-									headers: { 'X-Requested-With': 'XMLHttpRequest' }
-								})
+								qtRecaptcha(form, 'hire_form')
+									.then(function (fd) {
+										return fetch(form.action, {
+											method: 'POST',
+											body: fd,
+											headers: { 'X-Requested-With': 'XMLHttpRequest' }
+										});
+									})
 									.then(function (r) { return r.json(); })
 									.then(function (data) {
 										msgEl.textContent = data.message;
@@ -724,7 +731,9 @@
 							</svg>
 							<span><?= e($shared_contact_sub !== '' ? $shared_contact_sub : 'Get in Touch') ?></span>
 						</div>
-						<h2 class="title split-text split-in-right"><?= $shared_contact_title_html !== '' ? $shared_contact_title_html : 'Talk to an AI Expert' /* trusted HTML */ ?></h2>
+						<h2 class="title split-text split-in-right">
+							<?= $shared_contact_title_html !== '' ? $shared_contact_title_html : 'Talk to an AI Expert' /* trusted HTML */ ?>
+						</h2>
 						<?php if (!empty($shared_contact_intro_html)): ?>
 							<div class="text mt-3"><?= $shared_contact_intro_html /* trusted HTML */ ?></div>
 						<?php endif; ?>
@@ -762,6 +771,7 @@
 						</div>
 						<div class="mb-5 theme-btn-main">
 							<input name="form_botcheck" type="hidden" value="">
+							<?= honeypot_field() ?>
 							<button type="submit" id="contact-submit-btn"
 								class="theme-btn btn-style-one transform"><span class="btn-title">Send
 									message</span></button>
@@ -769,6 +779,7 @@
 									class="btn-title">Reset</span></button>
 						</div>
 					</form>
+					<?= recaptcha_script() ?>
 					<script>
 						(function () {
 							var form = document.getElementById('contact_form');
@@ -782,11 +793,14 @@
 								btn.disabled = true;
 								btn.querySelector('.btn-title').textContent = 'Sending…';
 
-								fetch(form.action, {
-									method: 'POST',
-									body: new FormData(form),
-									headers: { 'X-Requested-With': 'XMLHttpRequest' }
-								})
+								qtRecaptcha(form, 'contact_form')
+									.then(function (fd) {
+										return fetch(form.action, {
+											method: 'POST',
+											body: fd,
+											headers: { 'X-Requested-With': 'XMLHttpRequest' }
+										});
+									})
 									.then(function (r) { return r.json(); })
 									.then(function (data) {
 										msgEl.textContent = data.message;
@@ -864,6 +878,59 @@
 		</section>
 	<?php endif; ?>
 
+	<!-- Hire Process -->
+	<?php if (!empty($hireprocess_steps)): ?>
+		<section class="process-accordion-section pb-100 section-bg-3">
+			<div class="container">
+
+				<div class="sec-title text-center mb-70">
+					<span class="sub-title"><?= e($hireprocess_sub ?? '') ?></span>
+					<h2><?= $hireprocess_title_html ?? '' /* trusted HTML */ ?></h2>
+					<?php if (!empty($hireprocess_text)): ?>
+						<div class="text"><?= $hireprocess_text ?? '' /* trusted HTML */ ?></div>
+					<?php endif; ?>
+				</div>
+
+				<div class="row g-4 align-items-start">
+
+					<?php if (!empty($hireprocess_image)): ?>
+						<div class="col-lg-6 order-2 order-lg-1 d-flex justify-content-center align-items-start mt-5">
+							<img src="<?= e(media_url($hireprocess_image)) ?>"
+								alt="<?= e($hireprocess_sub ?: 'Our hiring process') ?>" class="img-fluid rounded"
+								loading="lazy">
+						</div>
+					<?php endif; ?>
+
+					<div
+						class="<?= !empty($hireprocess_image) ? 'col-lg-6' : 'col-lg-10 offset-lg-1' ?> order-1 order-lg-2">
+						<div class="accordion process-accordion" id="hireProcessAccordion">
+							<?php foreach ($hireprocess_steps as $i => $step): ?>
+								<div class="accordion-item">
+									<div class="timeline-number">
+										<button class="accordion-button <?= $i ? 'collapsed' : '' ?>" data-bs-toggle="collapse"
+											data-bs-target="#hireStep<?= $i ?>">
+											<span class="step-circle"><?= sprintf('%02d', $i + 1) ?></span>
+											<span class="step-heading"><?= e($step['title'] ?? '') ?></span>
+										</button>
+									</div>
+									<div id="hireStep<?= $i ?>"
+										class="accordion-collapse collapse <?= $i === 0 ? 'show' : '' ?>"
+										data-bs-parent="#hireProcessAccordion">
+										<div class="accordion-body">
+											<p><?= e($step['desc'] ?? '') ?></p>
+										</div>
+									</div>
+								</div>
+							<?php endforeach; ?>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</section>
+	<?php endif; ?>
+
 	<!-- Mid CTA -->
 	<?php if (!empty($cta_tag) || !empty($cta_title_html) || !empty($cta_text)): ?>
 		<section class="mid-cta-section pb-100 section-bg">
@@ -922,7 +989,9 @@
 									</svg>
 									<span><?= e($cs_sub !== '' ? $cs_sub : 'Featured Projects') ?></span>
 								</div>
-								<h2 class="title split-text split-in-right"><?= $cs_title_html !== '' ? $cs_title_html : 'Success Stories That <span> Transform Businesses</span>' /* trusted HTML */ ?></h2>
+								<h2 class="title split-text split-in-right">
+									<?= $cs_title_html !== '' ? $cs_title_html : 'Success Stories That <span> Transform Businesses</span>' /* trusted HTML */ ?>
+								</h2>
 							</div>
 							<a class="theme-btn-main mb-5 mb-xl-0 wow fadeInUp" data-wow-delay=".3s"
 								href="<?= url('/success-stories') ?>">
@@ -1096,7 +1165,9 @@
 								</svg>
 								<span><?= e($shared_testimonials_sub !== '' ? $shared_testimonials_sub : 'Client Stories') ?></span>
 							</div>
-							<h2 class="title split-text split-in-right"><?= $shared_testimonials_title_html !== '' ? $shared_testimonials_title_html : 'What clients say <span>about us.</span>' /* trusted HTML */ ?></h2>
+							<h2 class="title split-text split-in-right">
+								<?= $shared_testimonials_title_html !== '' ? $shared_testimonials_title_html : 'What clients say <span>about us.</span>' /* trusted HTML */ ?>
+							</h2>
 							<?php if (!empty($shared_testimonials_intro_html)): ?>
 								<div class="text mt-3"><?= $shared_testimonials_intro_html /* trusted HTML */ ?></div>
 							<?php endif; ?>

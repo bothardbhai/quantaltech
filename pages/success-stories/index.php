@@ -350,6 +350,7 @@ if ($pdo) {
                         </div>
                         <div class="mb-5 theme-btn-main">
                             <input name="form_botcheck" type="hidden" value="">
+                            <?= honeypot_field() ?>
                             <button type="submit" id="contact-submit-btn"
                                 class="theme-btn btn-style-one transform"><span class="btn-title">Send
                                     message</span></button>
@@ -357,6 +358,7 @@ if ($pdo) {
                                     class="btn-title">Reset</span></button>
                         </div>
                     </form>
+                    <?= recaptcha_script() ?>
                     <script>
                         (function () {
                             var form = document.getElementById('contact_form');
@@ -370,11 +372,14 @@ if ($pdo) {
                                 btn.disabled = true;
                                 btn.querySelector('.btn-title').textContent = 'Sending…';
 
-                                fetch(form.action, {
-                                    method: 'POST',
-                                    body: new FormData(form),
-                                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                                })
+                                qtRecaptcha(form, 'contact_form')
+                                    .then(function (fd) {
+                                        return fetch(form.action, {
+                                            method: 'POST',
+                                            body: fd,
+                                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                        });
+                                    })
                                     .then(function (r) { return r.json(); })
                                     .then(function (data) {
                                         msgEl.textContent = data.message;

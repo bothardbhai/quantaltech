@@ -81,6 +81,7 @@
             <h5 class="get-title">Get the latest AI engineering insights</h5>
             <form id="newsletter-form" action="<?= url('/newsletter') ?>" method="post">
               <?= csrf_field() ?>
+              <?= honeypot_field() ?>
               <input type="email" name="email" id="footer-email" placeholder="Enter your email" required>
               <button type="submit" aria-label="Subscribe">
                 <i class="fa-sharp fa-regular fa-paper-plane"></i>
@@ -165,6 +166,7 @@
 <script>window.QUANTAL_SEARCH_API = <?= json_encode(rtrim(BASE_URL, '/') . '/api/search.php', JSON_UNESCAPED_SLASHES) ?>;</script>
 <script src="<?= asset('js/live-search.js') ?>"></script>
 <script src="<?= asset('js/podcast.js') ?>"></script>
+<?= recaptcha_script() ?>
 <script>
   (function () {
     var form = document.getElementById('newsletter-form');
@@ -176,11 +178,14 @@
       var btn = form.querySelector('button[type=submit]');
       btn.disabled = true;
 
-      fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      })
+      qtRecaptcha(form, 'newsletter_form')
+        .then(function (fd) {
+          return fetch(form.action, {
+            method: 'POST',
+            body: fd,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          });
+        })
         .then(function (r) { return r.json(); })
         .then(function (data) {
           msg.textContent = data.message;
