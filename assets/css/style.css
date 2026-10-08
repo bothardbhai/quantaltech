@@ -23137,6 +23137,11 @@ Sidebar
   overflow: hidden !important;
 }
 
+/* ── reCAPTCHA v3 badge — Google ships it without a z-index, so theme sections paint over it ── */
+.grecaptcha-badge {
+  z-index: 9999 !important;
+}
+
 /* ── Blog single post rich-text body ── */
 .rich-text h1,
 .rich-text h2,
