@@ -162,6 +162,7 @@
 <script src="<?= asset('js/swiper.min.js') ?>"></script>
 <script src="<?= asset('js/mixitup.js') ?>"></script>
 <script src="<?= asset('js/script.js') ?>"></script>
+<script src="<?= asset('js/mega-menu.js') ?>"></script>
 <script src="<?= asset('js/sticky-service-help.js') ?>"></script>
 <script>window.QUANTAL_SEARCH_API = <?= json_encode(rtrim(BASE_URL, '/') . '/api/search.php', JSON_UNESCAPED_SLASHES) ?>;</script>
 <script src="<?= asset('js/live-search.js') ?>"></script>

@@ -42,6 +42,7 @@ if (!isset($page_seo)) {
     <link href="<?= asset('css/style.css') ?>" rel="stylesheet">
     <link href="<?= asset('css/responsive.css') ?>" rel="stylesheet">
     <link href="<?= asset('css/live-search.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/mega-menu.css') ?>" rel="stylesheet">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="<?= asset('images/brain-logo.png') ?>" type="image/x-icon">

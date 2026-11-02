@@ -544,6 +544,12 @@ function get_services(\PDO $pdo, array $filters = []): array
         $where[] = "display_on_home = 1";
     }
 
+    // Optional: services in one service subcategory (services.subcategory_id)
+    if (!empty($filters['subcategory_id'])) {
+        $where[] = "subcategory_id = ?";
+        $params[] = (int) $filters['subcategory_id'];
+    }
+
     $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
     $order = 'service_number ASC';
 
@@ -552,6 +558,117 @@ function get_services(\PDO $pdo, array $filters = []): array
     $stmt->execute($params);
 
     return $stmt->fetchAll() ?: [];
+}
+
+/**
+ * Get service subcategories (the navigation-grouping master managed in
+ * admin/service-subcategories.php). Grouping only — a subcategory never
+ * affects a service's URL/slug/routing.
+ *
+ * Filters: ['status' => 'active'|'inactive']
+ */
+function get_service_subcategories(\PDO $pdo, array $filters = []): array
+{
+    $where = [];
+    $params = [];
+
+    if (!empty($filters['status'])) {
+        $where[] = "status = ?";
+        $params[] = $filters['status'];
+    }
+
+    $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+    $sql = "SELECT * FROM service_subcategories $where_clause ORDER BY sort_order ASC, name ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt->fetchAll() ?: [];
+}
+
+/**
+ * Get a single service subcategory by ID.
+ */
+function get_service_subcategory(\PDO $pdo, int $id): ?array
+{
+    $stmt = $pdo->prepare("SELECT * FROM service_subcategories WHERE id = ? LIMIT 1");
+    $stmt->execute([$id]);
+    $row = $stmt->fetch();
+
+    return $row ?: null;
+}
+
+/**
+ * Active service subcategories, each with its published services — the data
+ * source for the grouped Services mega menu (Stage 2).
+ *
+ * Returns [ [...subcategory row, 'services' => [service rows...]], ... ]
+ *   - subcategories: status = 'active', ordered by sort_order, name
+ *   - services: status = 'published', ordered by service_number, id
+ *   - subcategories with no published services are omitted
+ * Services without a subcategory are not included (they can still be
+ * fetched with get_services()).
+ */
+function get_services_grouped_by_subcategory(\PDO $pdo): array
+{
+    $groups = [];
+    foreach (get_service_subcategories($pdo, ['status' => 'active']) as $sub) {
+        $sub['services'] = [];
+        $groups[(int) $sub['id']] = $sub;
+    }
+    if (!$groups) {
+        return [];
+    }
+
+    $ids = array_keys($groups);
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare(
+        "SELECT * FROM services
+         WHERE status = 'published' AND subcategory_id IN ($placeholders)
+         ORDER BY service_number ASC, id ASC"
+    );
+    $stmt->execute($ids);
+    foreach ($stmt->fetchAll() ?: [] as $svc) {
+        $groups[(int) $svc['subcategory_id']]['services'][] = $svc;
+    }
+
+    return array_values(array_filter($groups, static fn($g) => !empty($g['services'])));
+}
+
+/**
+ * Data for the Services mega menu (partials/nav-menu.php):
+ * get_services_grouped_by_subcategory() plus, when any exist, a final virtual
+ * "Other Services" group holding published services that have no subcategory
+ * or whose subcategory is inactive — so no published service ever drops out
+ * of the navigation.
+ *
+ * Returns [] when there are no real (DB) groups, so the caller can fall back
+ * to the flat dropdown.
+ */
+function get_services_mega_menu(\PDO $pdo): array
+{
+    $groups = get_services_grouped_by_subcategory($pdo);
+    if (!$groups) {
+        return [];
+    }
+
+    $stmt = $pdo->query(
+        "SELECT s.* FROM services s
+         LEFT JOIN service_subcategories c ON c.id = s.subcategory_id
+         WHERE s.status = 'published' AND (c.id IS NULL OR c.status <> 'active')
+         ORDER BY s.service_number ASC, s.id ASC"
+    );
+    $others = $stmt ? ($stmt->fetchAll() ?: []) : [];
+    if ($others) {
+        $groups[] = [
+            'id' => 0,
+            'name' => 'Other Services',
+            'slug' => 'other-services',
+            'description' => null,
+            'services' => $others,
+        ];
+    }
+
+    return $groups;
 }
 
 /**

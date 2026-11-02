@@ -19,7 +19,22 @@ $active = $active_page ?? '';
 // on every single page, so a DB hiccup here must degrade to "no dropdown
 // items" rather than break the whole site's navigation.
 $service_menu_items = [];
+$service_mega_groups = [];
 $pdo = function_exists('db') ? db() : null;
+
+// Services mega menu: subcategory tabs (admin/service-subcategories.php) each
+// holding their published services. Grouping only — every link is still the
+// service's own /services/{slug} URL. If there are no subcategory groups yet
+// (or the lookup fails, e.g. migrations not run), the flat dropdown below is
+// used unchanged.
+if ($pdo && function_exists('get_services_mega_menu')) {
+    try {
+        $service_mega_groups = get_services_mega_menu($pdo);
+    } catch (\Throwable $e) {
+        $service_mega_groups = [];
+    }
+}
+
 if ($pdo) {
     try {
         foreach (get_services($pdo, ['status' => 'published']) as $svc) {
@@ -75,6 +90,7 @@ $menu = [
         'href' => '/services',
         'key' => 'services',
         'children' => $service_menu_items,
+        'mega' => $service_mega_groups,
     ],
     [
         'label' => 'Resources',
@@ -103,10 +119,88 @@ $menu = [
 ];
 
 /**
+ * Render the Services mega menu <li>.
+ *
+ * Child order matters: script.js clones this markup into the mobile and
+ * sticky menus and its mobile toggle uses $(dropdown-btn).prev('ul'), so the
+ * <ul> (mobile list) must stay the LAST child. The .qt-mega panel is the
+ * desktop view (styled in css/mega-menu.css, tabs driven by js/mega-menu.js)
+ * and is hidden inside .mobile-menu.
+ */
+function render_mega_nav_item(array $item, string $active): void
+{
+    $is_active = ($item['key'] ?? '') === $active;
+    $classes = ['dropdown', 'has-mega'];
+    if ($is_active) {
+        array_unshift($classes, 'current');
+    }
+    $all_href = url($item['href'] ?: '/services');
+    ?>
+    <li class="<?= implode(' ', $classes) ?>">
+        <a href="<?= attr($all_href) ?>"><?= e($item['label']) ?></a>
+
+        <div class="qt-mega">
+            <div class="qt-mega__tabs" role="tablist" aria-label="Service categories">
+                <?php foreach ($item['mega'] as $i => $group): ?>
+                    <button type="button" class="qt-mega__tab<?= $i === 0 ? ' is-active' : '' ?>" role="tab"
+                        data-mega-tab="<?= (int) $i ?>" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>"
+                        tabindex="<?= $i === 0 ? '0' : '-1' ?>">
+                        <span><?= e($group['name']) ?></span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            <div class="qt-mega__body">
+                <?php foreach ($item['mega'] as $i => $group): ?>
+                    <div class="qt-mega__panel<?= $i === 0 ? ' is-active' : '' ?>" role="tabpanel" data-mega-panel="<?= (int) $i ?>">
+                        <div class="qt-mega__grid">
+                            <?php foreach ($group['services'] as $svc):
+                                $desc = trim(strip_tags((string) ($svc['excerpt'] ?? '')));
+                                $desc = mb_strimwidth($desc, 0, 120, '…');
+                                ?>
+                                <a class="qt-mega__item" href="<?= attr(url('/services/' . $svc['slug'])) ?>">
+                                    <span class="qt-mega__title"><?= e($svc['name']) ?></span>
+                                    <?php if ($desc !== ''): ?>
+                                        <span class="qt-mega__desc"><?= e($desc) ?></span>
+                                    <?php endif; ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <div class="qt-mega__footer">
+                    <a href="<?= attr($all_href) ?>">View All Services <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <ul class="qt-mega-mobile">
+            <?php foreach ($item['mega'] as $group): ?>
+                <li class="dropdown">
+                    <a><?= e($group['name']) ?></a>
+                    <ul>
+                        <?php foreach ($group['services'] as $svc): ?>
+                            <li><a href="<?= attr(url('/services/' . $svc['slug'])) ?>"><?= e($svc['name']) ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </li>
+            <?php endforeach; ?>
+            <li><a href="<?= attr($all_href) ?>">View All Services</a></li>
+        </ul>
+    </li>
+    <?php
+}
+
+/**
  * Render a single nav <li> recursively.
  */
 function render_nav_item(array $item, string $active): void
 {
+    if (!empty($item['mega'])) {
+        render_mega_nav_item($item, $active);
+        return;
+    }
+
     $is_active = ($item['key'] ?? '') === $active;
     $has_kids = !empty($item['children']);
     $classes = [];

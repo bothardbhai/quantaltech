@@ -132,6 +132,23 @@ if ($action === 'new' || $action === 'edit') {
             $errors[] = 'Display Order must be a number.';
         }
 
+        // Service Subcategory (navigation grouping only — never affects the
+        // slug/URL). Empty = none. Must exist; must be active unless it's the
+        // service's current (already assigned) subcategory being kept as-is.
+        $subcat_raw = trim((string) ($_POST['subcategory_id'] ?? ''));
+        $subcat_id  = null;
+        if ($subcat_raw !== '') {
+            $current_subcat_id = isset($service['subcategory_id']) ? (int) $service['subcategory_id'] : 0;
+            $subcat = ctype_digit($subcat_raw) ? get_service_subcategory($pdo, (int) $subcat_raw) : null;
+            if (!$subcat) {
+                $errors[] = 'Selected service subcategory does not exist.';
+            } elseif ($subcat['status'] !== 'active' && (int) $subcat['id'] !== $current_subcat_id) {
+                $errors[] = 'Service subcategory "' . $subcat['name'] . '" is inactive and cannot be assigned.';
+            } else {
+                $subcat_id = (int) $subcat['id'];
+            }
+        }
+
         // Multiple JSON-LD schema blocks — stored as one JSON array
         // [{label, code}, ...] in the schema_json column (same column,
         // richer contents; jsonld_multi() on the frontend understands both
@@ -207,6 +224,7 @@ if ($action === 'new' || $action === 'edit') {
                 'excerpt' => $excerpt,
                 'icon_class' => trim((string) ($_POST['icon_class'] ?? '')),
                 'service_number' => max(1, (int) $service_number_raw),
+                'subcategory_id' => $subcat_id,
                 'featured_image' => trim((string) ($_POST['featured_image'] ?? '')),
                 'featured_alt' => trim((string) ($_POST['featured_alt'] ?? '')),
                 'schema_json' => $schema_json,
@@ -285,7 +303,7 @@ if ($action === 'new' || $action === 'edit') {
     // ---- Defaults for the form ----
     $f = array_merge([
         'id' => null, 'slug' => '', 'name' => '', 'title' => '', 'excerpt' => '', 'description' => '',
-        'service_number' => 1, 'icon_class' => '', 'featured_image' => '', 'featured_alt' => '',
+        'service_number' => 1, 'subcategory_id' => null, 'icon_class' => '', 'featured_image' => '', 'featured_alt' => '',
         'overview_html' => '', 'features_html' => '', 'use_cases_html' => '', 'benefits_html' => '',
         'meta_title' => '', 'meta_description' => '', 'meta_keywords' => '', 'og_image' => '',
         'canonical' => '', 'robots' => '', 'schema_json' => '', 'status' => 'draft',
@@ -339,6 +357,15 @@ if ($action === 'new' || $action === 'edit') {
     );
     $blog_posts_stmt = $pdo->query("SELECT id, title FROM posts WHERE status = 'published' ORDER BY COALESCE(published_at, updated_at) DESC LIMIT 300");
     $all_blog_posts = $blog_posts_stmt->fetchAll();
+
+    // Service Subcategory dropdown: active subcategories, plus the currently
+    // assigned one if it has since been made inactive (so it stays visible
+    // and selected instead of silently disappearing).
+    $selected_subcat_id = (int) ($f['subcategory_id'] ?? 0);
+    $subcat_options = array_values(array_filter(
+        get_service_subcategories($pdo),
+        static fn($s) => $s['status'] === 'active' || (int) $s['id'] === $selected_subcat_id
+    ));
 
     $admin_page_title = $service ? 'Edit Service' : 'New Service';
     $admin_active     = 'services';
@@ -410,6 +437,21 @@ if ($action === 'new' || $action === 'edit') {
                             <div class="form-row">
                                 <label for="service_number">Display Order</label>
                                 <input type="number" id="service_number" name="service_number" min="1" value="<?= (int) $f['service_number'] ?>">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label for="subcategory_id">Service Subcategory</label>
+                            <select id="subcategory_id" name="subcategory_id">
+                                <option value="">— None —</option>
+                                <?php foreach ($subcat_options as $sc): ?>
+                                    <option value="<?= (int) $sc['id'] ?>" <?= (int) $sc['id'] === $selected_subcat_id ? 'selected' : '' ?>>
+                                        <?= e($sc['name']) ?><?= $sc['status'] !== 'active' ? ' (inactive)' : '' ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="help">
+                                Groups this service in the Services navigation menu only — it does not change the service URL.
+                                <a href="<?= ADMIN_URL ?>/service-subcategories.php" target="_blank" rel="noopener">Manage subcategories</a>
                             </div>
                         </div>
                         <div class="form-row">
@@ -1005,8 +1047,11 @@ if ($action === 'new' || $action === 'edit') {
 // LIST view
 // ===========================================================================
 $rows = $pdo->query(
-    'SELECT id, slug, name, title, service_number, status, display_on_home, updated_at
-     FROM services ORDER BY service_number ASC, id ASC LIMIT 200'
+    'SELECT s.id, s.slug, s.name, s.title, s.service_number, s.status, s.display_on_home, s.updated_at,
+            c.name AS subcategory_name, c.status AS subcategory_status
+     FROM services s
+     LEFT JOIN service_subcategories c ON c.id = s.subcategory_id
+     ORDER BY s.service_number ASC, s.id ASC LIMIT 200'
 )->fetchAll();
 
 $admin_page_title = 'Services';
@@ -1019,7 +1064,10 @@ require __DIR__ . '/_header.php';
         <h1>Services</h1>
         <div class="subtitle"><?= count($rows) ?> service<?= count($rows) === 1 ? '' : 's' ?></div>
     </div>
-    <a href="?action=new" class="admin-btn">New Service</a>
+    <div>
+        <a href="<?= ADMIN_URL ?>/service-subcategories.php" class="admin-btn admin-btn--ghost">Service Subcategories</a>
+        <a href="?action=new" class="admin-btn">New Service</a>
+    </div>
 </div>
 
 <div class="admin-card">
@@ -1029,6 +1077,7 @@ require __DIR__ . '/_header.php';
                 <th>Order</th>
                 <th>Name</th>
                 <th>Title</th>
+                <th>Subcategory</th>
                 <th>Status</th>
                 <th>Homepage</th>
                 <th class="col-actions">Actions</th>
@@ -1036,7 +1085,7 @@ require __DIR__ . '/_header.php';
         </thead>
         <tbody>
             <?php if (empty($rows)): ?>
-                <tr><td colspan="6" class="empty-state">
+                <tr><td colspan="7" class="empty-state">
                     <h3>No services yet</h3>
                     <a href="?action=new" class="admin-btn">New Service</a>
                 </td></tr>
@@ -1046,6 +1095,13 @@ require __DIR__ . '/_header.php';
                     <td><?= (int) $r['service_number'] ?></td>
                     <td><a href="?action=edit&amp;id=<?= (int) $r['id'] ?>"><?= e($r['name']) ?></a></td>
                     <td><?= e($r['title']) ?></td>
+                    <td>
+                        <?php if ($r['subcategory_name'] !== null): ?>
+                            <?= e($r['subcategory_name']) ?><?= $r['subcategory_status'] !== 'active' ? ' <span class="text-muted">(inactive)</span>' : '' ?>
+                        <?php else: ?>
+                            <span class="text-muted">—</span>
+                        <?php endif; ?>
+                    </td>
                     <td><span class="pill pill--<?= attr($r['status']) ?>"><?= e($r['status']) ?></span></td>
                     <td><?= $r['display_on_home'] ? '✓' : '' ?></td>
                     <td class="col-actions">
