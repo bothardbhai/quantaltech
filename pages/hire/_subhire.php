@@ -51,6 +51,14 @@
 
 			<div class="hero-left">
 
+				<p style="opacity:0.75;margin:0 0 20px 0;font-size:14px; ">
+					<a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
+					Hire &nbsp;/&nbsp;
+					<span>
+						<?= e($crumb) ?>
+					</span>
+				</p>
+
 				<?php if (!empty($hero_tag)): ?>
 					<span class="hero-badge">
 						<i class="bi bi-stars"></i>
