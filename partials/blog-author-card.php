@@ -23,6 +23,7 @@ if (empty($post['author_name'])) {
 ?>
 <div class="post-author" style="margin-top:50px;padding-top:30px;border-top:1px solid #eee;">
     <div class="row">
+        <h3 class="post-author__title mb-4">Meet our Author</h3>
         <div class="col-lg-12">
             <div class="engineer-card">
                 <div class="engineer-card__media">
