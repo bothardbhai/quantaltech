@@ -107,6 +107,23 @@ if ($action === 'new' || $action === 'edit') {
         if (!ctype_digit($sort_order_raw) && !is_numeric($sort_order_raw)) {
             $errors[] = 'Display Order must be a number.';
         }
+
+        // Hire Subcategory (navigation grouping only — never affects the
+        // slug/URL). Empty = none. Must exist; must be active unless it's the
+        // page's current (already assigned) subcategory being kept as-is.
+        $subcat_raw = trim((string) ($_POST['subcategory_id'] ?? ''));
+        $subcat_id  = null;
+        if ($subcat_raw !== '') {
+            $current_subcat_id = isset($hire_page['subcategory_id']) ? (int) $hire_page['subcategory_id'] : 0;
+            $subcat = ctype_digit($subcat_raw) ? get_hire_subcategory($pdo, (int) $subcat_raw) : null;
+            if (!$subcat) {
+                $errors[] = 'Selected hire subcategory does not exist.';
+            } elseif ($subcat['status'] !== 'active' && (int) $subcat['id'] !== $current_subcat_id) {
+                $errors[] = 'Hire subcategory "' . $subcat['name'] . '" is inactive and cannot be assigned.';
+            } else {
+                $subcat_id = (int) $subcat['id'];
+            }
+        }
         foreach ($_POST['eng_years'] ?? [] as $eng_idx => $eng_years_raw) {
             $eng_years_raw = trim((string) $eng_years_raw);
             if ($eng_years_raw !== '' && (!is_numeric($eng_years_raw) || (float) $eng_years_raw < 0)) {
@@ -175,6 +192,7 @@ if ($action === 'new' || $action === 'edit') {
                 'excerpt' => $excerpt,
                 'icon_class' => trim((string) ($_POST['icon_class'] ?? '')),
                 'sort_order' => max(1, (int) $sort_order_raw),
+                'subcategory_id' => $subcat_id,
                 'featured_image' => trim((string) ($_POST['featured_image'] ?? '')),
                 'featured_alt' => trim((string) ($_POST['featured_alt'] ?? '')),
                 'hireprocess_image' => trim((string) ($_POST['hireprocess_image'] ?? '')),
@@ -241,7 +259,7 @@ if ($action === 'new' || $action === 'edit') {
     // ---- Defaults for the form ----
     $f = array_merge([
         'id' => null, 'slug' => '', 'name' => '', 'title' => '', 'excerpt' => '', 'role_label' => '',
-        'sort_order' => 1, 'icon_class' => '', 'featured_image' => '', 'featured_alt' => '',
+        'sort_order' => 1, 'subcategory_id' => null, 'icon_class' => '', 'featured_image' => '', 'featured_alt' => '',
         'meta_title' => '', 'meta_description' => '', 'meta_keywords' => '', 'og_image' => '',
         'canonical' => '', 'robots' => '', 'schema_json' => '', 'status' => 'draft',
         'display_on_hub' => 1, 'published_at' => null,
@@ -290,6 +308,15 @@ if ($action === 'new' || $action === 'edit') {
     $other_services = get_services($pdo, ['status' => 'published']);
     $blog_posts_stmt = $pdo->query("SELECT id, title FROM posts WHERE status = 'published' ORDER BY COALESCE(published_at, updated_at) DESC LIMIT 300");
     $all_blog_posts = $blog_posts_stmt->fetchAll();
+
+    // Hire Subcategory dropdown: active subcategories, plus the currently
+    // assigned one if it has since been made inactive (so it stays visible
+    // and selected instead of silently disappearing).
+    $selected_subcat_id = (int) ($f['subcategory_id'] ?? 0);
+    $subcat_options = array_values(array_filter(
+        get_hire_subcategories($pdo),
+        static fn($s) => $s['status'] === 'active' || (int) $s['id'] === $selected_subcat_id
+    ));
 
     $admin_page_title = $hire_page ? 'Edit Hire Page' : 'New Hire Page';
     $admin_active     = 'hire';
@@ -361,6 +388,21 @@ if ($action === 'new' || $action === 'edit') {
                             <div class="form-row">
                                 <label for="sort_order">Display Order</label>
                                 <input type="number" id="sort_order" name="sort_order" min="1" value="<?= (int) $f['sort_order'] ?>">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label for="subcategory_id">Hire Subcategory</label>
+                            <select id="subcategory_id" name="subcategory_id">
+                                <option value="">— None —</option>
+                                <?php foreach ($subcat_options as $sc): ?>
+                                    <option value="<?= (int) $sc['id'] ?>" <?= (int) $sc['id'] === $selected_subcat_id ? 'selected' : '' ?>>
+                                        <?= e($sc['name']) ?><?= $sc['status'] !== 'active' ? ' (inactive)' : '' ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="help">
+                                Groups this page in the "Hire with Us" navigation menu only — it does not change the page URL.
+                                <a href="<?= ADMIN_URL ?>/hire-subcategories.php" target="_blank" rel="noopener">Manage subcategories</a>
                             </div>
                         </div>
                         <div class="form-row">
@@ -891,8 +933,11 @@ if ($action === 'new' || $action === 'edit') {
 // LIST view
 // ===========================================================================
 $rows = $pdo->query(
-    'SELECT id, slug, name, title, sort_order, status, display_on_hub, updated_at
-     FROM hire_pages ORDER BY sort_order ASC, id ASC LIMIT 200'
+    'SELECT h.id, h.slug, h.name, h.title, h.sort_order, h.status, h.display_on_hub, h.updated_at,
+            c.name AS subcategory_name, c.status AS subcategory_status
+     FROM hire_pages h
+     LEFT JOIN hire_subcategories c ON c.id = h.subcategory_id
+     ORDER BY h.sort_order ASC, h.id ASC LIMIT 200'
 )->fetchAll();
 
 $admin_page_title = 'Hire Master';
@@ -905,7 +950,10 @@ require __DIR__ . '/_header.php';
         <h1>Hire Master</h1>
         <div class="subtitle"><?= count($rows) ?> hire page<?= count($rows) === 1 ? '' : 's' ?></div>
     </div>
-    <a href="?action=new" class="admin-btn">New Hire Page</a>
+    <div>
+        <a href="<?= ADMIN_URL ?>/hire-subcategories.php" class="admin-btn admin-btn--ghost">Hire Subcategories</a>
+        <a href="?action=new" class="admin-btn">New Hire Page</a>
+    </div>
 </div>
 
 <div class="admin-card">
@@ -915,6 +963,7 @@ require __DIR__ . '/_header.php';
                 <th>Order</th>
                 <th>Name</th>
                 <th>Title</th>
+                <th>Subcategory</th>
                 <th>Status</th>
                 <th>Hub</th>
                 <th class="col-actions">Actions</th>
@@ -922,7 +971,7 @@ require __DIR__ . '/_header.php';
         </thead>
         <tbody>
             <?php if (empty($rows)): ?>
-                <tr><td colspan="6" class="empty-state">
+                <tr><td colspan="7" class="empty-state">
                     <h3>No hire pages yet</h3>
                     <a href="?action=new" class="admin-btn">New Hire Page</a>
                 </td></tr>
@@ -932,6 +981,13 @@ require __DIR__ . '/_header.php';
                     <td><?= (int) $r['sort_order'] ?></td>
                     <td><a href="?action=edit&amp;id=<?= (int) $r['id'] ?>"><?= e($r['name']) ?></a></td>
                     <td><?= e($r['title']) ?></td>
+                    <td>
+                        <?php if ($r['subcategory_name'] !== null): ?>
+                            <?= e($r['subcategory_name']) ?><?= $r['subcategory_status'] !== 'active' ? ' <span class="text-muted">(inactive)</span>' : '' ?>
+                        <?php else: ?>
+                            <span class="text-muted">—</span>
+                        <?php endif; ?>
+                    </td>
                     <td><span class="pill pill--<?= attr($r['status']) ?>"><?= e($r['status']) ?></span></td>
                     <td><?= $r['display_on_hub'] ? '✓' : '' ?></td>
                     <td class="col-actions">

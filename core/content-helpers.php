@@ -560,37 +560,56 @@ function get_services(\PDO $pdo, array $filters = []): array
     return $stmt->fetchAll() ?: [];
 }
 
+// ===========================================================================
+// Subcategory grouping masters (navigation grouping only — never part of any
+// URL/slug/route):
+//   service_subcategories → services.subcategory_id   (admin/service-subcategories.php)
+//   hire_subcategories    → hire_pages.subcategory_id (admin/hire-subcategories.php)
+// Generic implementation + per-type wrappers below.
+// ===========================================================================
+
 /**
- * Get service subcategories (the navigation-grouping master managed in
- * admin/service-subcategories.php). Grouping only — a subcategory never
- * affects a service's URL/slug/routing.
- *
- * Filters: ['status' => 'active'|'inactive']
+ * Known subcategory → item table pairs, with each item table's display-order
+ * column. Table names are never taken from input; anything else throws.
  */
-function get_service_subcategories(\PDO $pdo, array $filters = []): array
+function subcategory_config(string $sub_table): array
 {
+    $map = [
+        'service_subcategories' => ['items' => 'services',   'order' => 'service_number'],
+        'hire_subcategories'    => ['items' => 'hire_pages', 'order' => 'sort_order'],
+    ];
+    if (!isset($map[$sub_table])) {
+        throw new \InvalidArgumentException("Unknown subcategory table: $sub_table");
+    }
+    return $map[$sub_table];
+}
+
+/**
+ * Subcategory rows ordered by sort_order, name. Filters: ['status' => 'active'|'inactive']
+ */
+function get_subcategories(\PDO $pdo, string $sub_table, array $filters = []): array
+{
+    subcategory_config($sub_table);
     $where = [];
     $params = [];
-
     if (!empty($filters['status'])) {
         $where[] = "status = ?";
         $params[] = $filters['status'];
     }
-
     $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
-    $sql = "SELECT * FROM service_subcategories $where_clause ORDER BY sort_order ASC, name ASC";
-    $stmt = $pdo->prepare($sql);
+    $stmt = $pdo->prepare("SELECT * FROM `$sub_table` $where_clause ORDER BY sort_order ASC, name ASC");
     $stmt->execute($params);
 
     return $stmt->fetchAll() ?: [];
 }
 
 /**
- * Get a single service subcategory by ID.
+ * Single subcategory row by ID.
  */
-function get_service_subcategory(\PDO $pdo, int $id): ?array
+function get_subcategory(\PDO $pdo, string $sub_table, int $id): ?array
 {
-    $stmt = $pdo->prepare("SELECT * FROM service_subcategories WHERE id = ? LIMIT 1");
+    subcategory_config($sub_table);
+    $stmt = $pdo->prepare("SELECT * FROM `$sub_table` WHERE id = ? LIMIT 1");
     $stmt->execute([$id]);
     $row = $stmt->fetch();
 
@@ -598,21 +617,17 @@ function get_service_subcategory(\PDO $pdo, int $id): ?array
 }
 
 /**
- * Active service subcategories, each with its published services — the data
- * source for the grouped Services mega menu (Stage 2).
- *
- * Returns [ [...subcategory row, 'services' => [service rows...]], ... ]
- *   - subcategories: status = 'active', ordered by sort_order, name
- *   - services: status = 'published', ordered by service_number, id
- *   - subcategories with no published services are omitted
- * Services without a subcategory are not included (they can still be
- * fetched with get_services()).
+ * Active subcategories, each with its published items under 'items':
+ *   - subcategories ordered by sort_order, name
+ *   - items ordered by the item table's display order, then id
+ *   - subcategories with no published items are omitted
  */
-function get_services_grouped_by_subcategory(\PDO $pdo): array
+function get_items_grouped_by_subcategory(\PDO $pdo, string $sub_table): array
 {
+    $cfg = subcategory_config($sub_table);
     $groups = [];
-    foreach (get_service_subcategories($pdo, ['status' => 'active']) as $sub) {
-        $sub['services'] = [];
+    foreach (get_subcategories($pdo, $sub_table, ['status' => 'active']) as $sub) {
+        $sub['items'] = [];
         $groups[(int) $sub['id']] = $sub;
     }
     if (!$groups) {
@@ -622,53 +637,112 @@ function get_services_grouped_by_subcategory(\PDO $pdo): array
     $ids = array_keys($groups);
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
     $stmt = $pdo->prepare(
-        "SELECT * FROM services
+        "SELECT * FROM `{$cfg['items']}`
          WHERE status = 'published' AND subcategory_id IN ($placeholders)
-         ORDER BY service_number ASC, id ASC"
+         ORDER BY `{$cfg['order']}` ASC, id ASC"
     );
     $stmt->execute($ids);
-    foreach ($stmt->fetchAll() ?: [] as $svc) {
-        $groups[(int) $svc['subcategory_id']]['services'][] = $svc;
+    foreach ($stmt->fetchAll() ?: [] as $row) {
+        $groups[(int) $row['subcategory_id']]['items'][] = $row;
     }
 
-    return array_values(array_filter($groups, static fn($g) => !empty($g['services'])));
+    return array_values(array_filter($groups, static fn($g) => !empty($g['items'])));
 }
 
 /**
- * Data for the Services mega menu (partials/nav-menu.php):
- * get_services_grouped_by_subcategory() plus, when any exist, a final virtual
- * "Other Services" group holding published services that have no subcategory
- * or whose subcategory is inactive — so no published service ever drops out
- * of the navigation.
- *
- * Returns [] when there are no real (DB) groups, so the caller can fall back
- * to the flat dropdown.
+ * Mega-menu data: get_items_grouped_by_subcategory() plus, when any exist, a
+ * final virtual group ($other_label) holding published items with no
+ * subcategory or an inactive one — so no published page drops out of the
+ * navigation. Returns [] when there are no real groups (caller falls back to
+ * the flat dropdown).
  */
-function get_services_mega_menu(\PDO $pdo): array
+function get_mega_menu_groups(\PDO $pdo, string $sub_table, string $other_label): array
 {
-    $groups = get_services_grouped_by_subcategory($pdo);
+    $cfg = subcategory_config($sub_table);
+    $groups = get_items_grouped_by_subcategory($pdo, $sub_table);
     if (!$groups) {
         return [];
     }
 
     $stmt = $pdo->query(
-        "SELECT s.* FROM services s
-         LEFT JOIN service_subcategories c ON c.id = s.subcategory_id
-         WHERE s.status = 'published' AND (c.id IS NULL OR c.status <> 'active')
-         ORDER BY s.service_number ASC, s.id ASC"
+        "SELECT i.* FROM `{$cfg['items']}` i
+         LEFT JOIN `$sub_table` c ON c.id = i.subcategory_id
+         WHERE i.status = 'published' AND (c.id IS NULL OR c.status <> 'active')
+         ORDER BY i.`{$cfg['order']}` ASC, i.id ASC"
     );
     $others = $stmt ? ($stmt->fetchAll() ?: []) : [];
     if ($others) {
         $groups[] = [
             'id' => 0,
-            'name' => 'Other Services',
-            'slug' => 'other-services',
+            'name' => $other_label,
+            'slug' => strtolower(str_replace(' ', '-', $other_label)),
             'description' => null,
-            'services' => $others,
+            'items' => $others,
         ];
     }
 
     return $groups;
+}
+
+// ---- Services ----
+
+/** Service subcategories. Filters: ['status' => 'active'|'inactive'] */
+function get_service_subcategories(\PDO $pdo, array $filters = []): array
+{
+    return get_subcategories($pdo, 'service_subcategories', $filters);
+}
+
+/** Single service subcategory by ID. */
+function get_service_subcategory(\PDO $pdo, int $id): ?array
+{
+    return get_subcategory($pdo, 'service_subcategories', $id);
+}
+
+/**
+ * Active service subcategories, each with its published services (ordered by
+ * service_number) under both 'services' and 'items'. Empty groups omitted.
+ */
+function get_services_grouped_by_subcategory(\PDO $pdo): array
+{
+    return array_map(static function ($g) {
+        $g['services'] = $g['items'];
+        return $g;
+    }, get_items_grouped_by_subcategory($pdo, 'service_subcategories'));
+}
+
+/** Services mega menu groups (+ "Other Services"); [] → use the flat dropdown. */
+function get_services_mega_menu(\PDO $pdo): array
+{
+    return get_mega_menu_groups($pdo, 'service_subcategories', 'Other Services');
+}
+
+// ---- Hire pages ----
+
+/** Hire subcategories. Filters: ['status' => 'active'|'inactive'] */
+function get_hire_subcategories(\PDO $pdo, array $filters = []): array
+{
+    return get_subcategories($pdo, 'hire_subcategories', $filters);
+}
+
+/** Single hire subcategory by ID. */
+function get_hire_subcategory(\PDO $pdo, int $id): ?array
+{
+    return get_subcategory($pdo, 'hire_subcategories', $id);
+}
+
+/**
+ * Active hire subcategories, each with its published hire pages (ordered by
+ * sort_order) under 'items'. Empty groups omitted.
+ */
+function get_hire_pages_grouped_by_subcategory(\PDO $pdo): array
+{
+    return get_items_grouped_by_subcategory($pdo, 'hire_subcategories');
+}
+
+/** "Hire with Us" mega menu groups (+ "Other Roles"); [] → use the flat dropdown. */
+function get_hire_mega_menu(\PDO $pdo): array
+{
+    return get_mega_menu_groups($pdo, 'hire_subcategories', 'Other Roles');
 }
 
 /**
@@ -835,6 +909,12 @@ function get_hire_pages(\PDO $pdo, array $filters = []): array
 
     if (isset($filters['display_on_hub']) && $filters['display_on_hub']) {
         $where[] = "display_on_hub = 1";
+    }
+
+    // Optional: hire pages in one hire subcategory (hire_pages.subcategory_id)
+    if (!empty($filters['subcategory_id'])) {
+        $where[] = "subcategory_id = ?";
+        $params[] = (int) $filters['subcategory_id'];
     }
 
     $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';

@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Services mega menu (partials/nav-menu.php → render_mega_nav_item())
-   Subcategory tabs on the left, the active tab's services on the right.
+   Mega menus — Services + Hire with Us
+   (partials/nav-menu.php → render_mega_nav_item())
+   Subcategory tabs on the left, the active tab's pages on the right.
    Built only from the theme's existing tokens (style.css :root) so it matches
    the regular dropdowns: black panel, white GT Walsheim links, teal accent.
    Tabs are driven by js/mega-menu.js (which also centres the panel in the

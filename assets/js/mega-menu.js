@@ -1,12 +1,12 @@
 /**
- * Services mega menu — tab switching + panel positioning.
+ * Mega menus (Services, Hire with Us) — tab switching + panel positioning.
  *
  * Markup: partials/nav-menu.php → render_mega_nav_item(). Styles:
  * css/mega-menu.css. script.js clones the desktop nav into the sticky header
  * (and mobile drawer), so every listener here is delegated from `document`
  * and works on all copies.
  *
- * - Hovering, clicking or focusing a subcategory tab shows its services
+ * - Hovering, clicking or focusing a subcategory tab shows its pages
  *   (tabs are <button>s; they never navigate).
  * - ArrowUp/ArrowDown move between tabs.
  * - On open, the panel is shifted so it sits centred in the viewport instead
