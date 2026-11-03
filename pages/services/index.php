@@ -18,21 +18,22 @@ $dynamic_services = $pdo ? get_services($pdo, ['status' => 'published']) : [];
 
 <!-- Start main-content -->
 <section class="page-banner news-banner" style="padding:120px 0 80px;background:#1d2327;color:#fff;text-align:center;">
-    <div class="container">
-        <h1 style="color:#fff;font-size:36px;margin:25px 0 12px;;line-height:1.2;">AI Services</h1>
-        <p style="opacity:0.75;margin:0;font-size:14px;">
-            <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
-            <span>Services</span>
-        </p>
-    </div>
+  <div class="container">
+    <h1 style="color:#fff;font-size:36px;margin:25px 0 12px;;line-height:1.2;">AI Services</h1>
+    <p style="opacity:0.75;margin:0;font-size:14px;">
+      <a href="<?= url('/') ?>" style="color:#72aee6;">Home</a> &nbsp;/&nbsp;
+      <span>Services</span>
+    </p>
+  </div>
 </section>
-<!-- end main-content --> 
+<!-- end main-content -->
 <!-- Services Section -->
 <section class="service-wrapper service-two section-padding section-bg-3">
   <div class="shape">
     <div class="light-shape"></div>
     <h2 class="title-shadow style-2">Services</h2>
-    <img src="<?= asset('images/home-2/service/shape-01.webp') ?>" alt="" class="shape-1 left-to-right-ani d-none d-xl-block">
+    <img src="<?= asset('images/home-2/service/shape-01.webp') ?>" alt=""
+      class="shape-1 left-to-right-ani d-none d-xl-block">
   </div>
   <div class="auto-container">
     <div class="row">
@@ -55,7 +56,7 @@ $dynamic_services = $pdo ? get_services($pdo, ['status' => 'published']) : [];
           </div>
         </div>
       <?php endforeach; ?>
-      <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".6s">
+      <!-- <div class="col-xl-4 col-md-6 wow fadeInUp" data-wow-delay=".6s">
         <div class="service-block-two">
           <div class="head">
             <div class="icon"><i class="flaticon-tech flaticon-tech-interaction-1"></i></div>
@@ -71,11 +72,11 @@ $dynamic_services = $pdo ? get_services($pdo, ['status' => 'published']) : [];
             </a>
           </div>
         </div>
-      </div>
+      </div> -->
 
     </div>
   </div>
 </section>
 <!--End Services Section -->
 
- <!-- Main Footer -->
+<!-- Main Footer -->
