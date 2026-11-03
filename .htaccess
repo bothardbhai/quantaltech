@@ -50,6 +50,8 @@ AddDefaultCharset UTF-8
 
     RewriteRule ^refund-cancellation-policy/?$ https://quantaltech.ai/refund-policy [R=301,L]
 
+    RewriteRule ^hire-ai-engineers/?$ https://quantaltech.ai/hire/hire-ai-engineers [R=301,L]
+
     # Old blogs URLs
     RewriteRule ^blogs/?$ https://quantaltech.ai/blog [R=301,L]
     RewriteRule ^blogs/the-human-touch-of-automation/?$ https://quantaltech.ai/blog [R=301,L]
