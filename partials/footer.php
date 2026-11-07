@@ -9,6 +9,50 @@
  *
  * Closes the page-wrapper that header.php opens (theme leaves dangling).
  */
+
+// Footer link columns "Our Services" and "Hire With Us" are data-driven, the
+// same way the header mega menus are (partials/nav-menu.php): every published
+// Service Master row (`services`, ordered by service_number) and Hire Master
+// row (`hire_pages`, ordered by sort_order) is listed automatically. Add,
+// rename, unpublish or delete one in the admin and the footer follows on the
+// next request. Defensive try/catch: the footer renders on every page, so a
+// DB hiccup must degrade to an empty list rather than break the page.
+$footer_service_links = [];
+$footer_hire_links = [];
+$footer_pdo = function_exists('db') ? db() : null;
+if ($footer_pdo) {
+  try {
+    foreach (get_services($footer_pdo, ['status' => 'published']) as $svc) {
+      $footer_service_links[] = ['label' => $svc['name'], 'href' => '/services/' . $svc['slug']];
+    }
+  } catch (\Throwable $e) {
+    $footer_service_links = [];
+  }
+  try {
+    foreach (get_hire_pages($footer_pdo, ['status' => 'published']) as $hire) {
+      $footer_hire_links[] = ['label' => $hire['name'], 'href' => '/hire/' . $hire['slug']];
+    }
+  } catch (\Throwable $e) {
+    $footer_hire_links = [];
+  }
+}
+
+$footer_quick_links = [
+  ['label' => 'Home', 'href' => '/'],
+  ['label' => 'About Us', 'href' => '/about'],
+  ['label' => 'Services', 'href' => '/services'],
+  ['label' => 'Blogs', 'href' => '/blog'],
+  ['label' => 'Success Stories', 'href' => '/success-stories'],
+  ['label' => 'Podcast', 'href' => '/podcast'],
+  ['label' => 'Hire With Us', 'href' => '#'],
+  ['label' => 'Contact Us', 'href' => '/contact'],
+];
+
+$footer_link_groups = array_filter([
+  'Quick Links' => $footer_quick_links,
+  'Our Services' => $footer_service_links,
+  'Hire With Us' => $footer_hire_links,
+]);
 ?>
 
 <!-- <a href="https://wa.me/13158093225?text=Hello%20Quantal%20AI,%20I%20would%20like%20to%20know%20more%20about%20your%20services."
@@ -52,7 +96,7 @@
       <div class="footer-vec d-none d-xxl-block">
         <img src="<?= asset('images/home-1/footer-vec.png') ?>" alt="img" class="tm-gsap-animate-circle">
       </div>
-      <div class="row g-4 justify-content-between align-items-start align-items-xl-end">
+      <div class="row g-4 justify-content-between align-items-start mt-2">
         <div class="col-xl-5 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".3s">
           <div class="footer-contact-items">
             <h4 class="font-size-24 text-white font-weight-500">Contact Us</h4>
@@ -91,35 +135,20 @@
           </div>
         </div>
         <div class="col-xl-2 d-none d-xl-block"></div>
-        <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".5s">
-          <div class="footer-list-area">
-            <div class="footer-widget-items">
-              <div class="widget-title mb-25">
-                <h4 class="font-size-24 text-white font-weight-500">Quick Link</h4>
+        <div class="col-xl-5 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".5s">
+          <div class="qt-footer-links">
+            <?php foreach ($footer_link_groups as $group_title => $group_links): ?>
+              <div class="qt-footer-links__group">
+                <h4 class="qt-footer-links__title font-size-24 text-white font-weight-500"><?= e($group_title) ?></h4>
+                <ul class="qt-footer-links__list">
+                  <?php foreach ($group_links as $link): ?>
+                    <li><a href="<?= url($link['href']) ?>"><?= e($link['label']) ?></a></li>
+                  <?php endforeach; ?>
+                </ul>
               </div>
-              <ul class="user-links">
-                <li><a href="<?= url('/') ?>">Home</a></li>
-                <li><a href="<?= url('/about') ?>">About</a></li>
-                <li><a href="<?= url('/hire') ?>">Hire with Us</a></li>
-                <li><a href="<?= url('/blog') ?>">Resources</a></li>
-                <li><a href="<?= url('/contact') ?>">Contact Us</a></li>
-              </ul>
-            </div>
-            <div class="footer-widget-items">
-              <div class="widget-title mb-25">
-                <h4 class="font-size-24 text-white font-weight-500">Our Solutions</h4>
-              </div>
-              <ul class="user-links">
-                <li><a href="<?= url('/services') ?>">All Services</a></li>
-                <li><a href="<?= url('/services/voice') ?>">Voice AI</a></li>
-                <li><a href="<?= url('/services/text') ?>">Text AI</a></li>
-                <li><a href="<?= url('/services/image') ?>">Image / Document AI</a></li>
-                <li><a href="<?= url('/services/process-auto') ?>">Process Automation</a></li>
-              </ul>
-            </div>
+            <?php endforeach; ?>
           </div>
         </div>
-        <div class="col-xl-1 d-none d-xl-block"></div>
       </div>
     </div>
     <!--<span style="display:inline-block">GSTIN: 27AACCU9781D1Z0</span>-->

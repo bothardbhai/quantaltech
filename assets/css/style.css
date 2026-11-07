@@ -19615,7 +19615,7 @@ table.tbl-shopping-cart > tfoot > tr > th {
 }
 
 .footer-widget-wrapper {
-  padding-bottom: 100px;
+  padding-bottom: 35px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
 }
@@ -29597,4 +29597,47 @@ body.pd-modal-open {
         width: 34px;
         height: 34px;
     }
+}
+/* ------------------------------------------------------------------
+   Footer link groups (Quick Links / Our Services / Hire With Us)
+   Category heading on top, links laid out horizontally and wrapping.
+   Scoped to .qt-footer-links so the theme's footer rules are untouched.
+------------------------------------------------------------------- */
+.qt-footer-links {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 36px;
+}
+.qt-footer-links__title {
+  margin-bottom: 16px;
+}
+.qt-footer-links__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 26px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.qt-footer-links__list li {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.32px;
+  line-height: 1.4;
+}
+.qt-footer-links__list li a {
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s ease;
+}
+.qt-footer-links__list li a:hover,
+.qt-footer-links__list li a:focus-visible {
+  color: var(--theme-color1);
+}
+@media (max-width: 767.98px) {
+  .qt-footer-links {
+    row-gap: 28px;
+  }
+  .qt-footer-links__list {
+    gap: 10px 20px;
+  }
 }
