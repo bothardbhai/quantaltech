@@ -23165,9 +23165,9 @@ Sidebar
 .rich-text blockquote {
   margin: 24px 0;
   padding: 14px 22px;
-  border-left: 4px solid #1d2327;
-  background: #f6f7fb;
-  font-style: italic;
+  /* border-left: 4px solid #1d2327; */
+  background: #272727;
+  /* font-style: italic; */
 }
 .rich-text img {
   max-width: 100%;
@@ -29603,41 +29603,63 @@ body.pd-modal-open {
    Category heading on top, links laid out horizontally and wrapping.
    Scoped to .qt-footer-links so the theme's footer rules are untouched.
 ------------------------------------------------------------------- */
+/* Footer Link Groups */
 .qt-footer-links {
   display: grid;
   grid-template-columns: 1fr;
   row-gap: 36px;
 }
+
 .qt-footer-links__title {
   margin-bottom: 16px;
 }
+
 .qt-footer-links__list {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 26px;
+  gap: 12px 12px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
+
 .qt-footer-links__list li {
   font-size: 16px;
   font-weight: 400;
   letter-spacing: -0.32px;
   line-height: 1.4;
 }
+
+/* Footer links with underline */
 .qt-footer-links__list li a {
   color: rgba(255, 255, 255, 0.6);
+  text-decoration: underline;
+  text-underline-offset: 4px;
   transition: color 0.3s ease;
 }
+
 .qt-footer-links__list li a:hover,
 .qt-footer-links__list li a:focus-visible {
   color: var(--theme-color1);
 }
+
+/* Pipe separator */
+.qt-footer-links__list li:not(:last-child)::after {
+  content: "|";
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 12px;
+}
+
 @media (max-width: 767.98px) {
   .qt-footer-links {
     row-gap: 28px;
   }
+
   .qt-footer-links__list {
     gap: 10px 20px;
+  }
+
+  .qt-footer-links__list li:not(:last-child)::after {
+    margin-left: 20px;
   }
 }
