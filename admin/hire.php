@@ -700,7 +700,7 @@ if ($action === 'new' || $action === 'edit') {
                             <input type="text" id="final_cta_btn_text" name="final_cta_btn_text" value="<?= attr($f['final_cta_btn_text']) ?>" placeholder="View Case Studies">
                         </div>
                         <div class="form-row" style="margin-bottom:0;">
-                            <label for="final_cta_btn_url">Button URL <span class="text-muted">(optional — defaults to /case-studies)</span></label>
+                            <label for="final_cta_btn_url">Button URL <span class="text-muted">(optional — defaults to /contact)</span></label>
                             <input type="text" id="final_cta_btn_url" name="final_cta_btn_url" value="<?= attr($f['final_cta_btn_url']) ?>" placeholder="/contact">
                         </div>
                     </div></div>
