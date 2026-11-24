@@ -208,6 +208,9 @@ $shared_contact_intro_html = $shared_chrome['shared_contact_intro_html'];
 // --- Final CTA (bottom-of-page band) ---
 $final_cta_title_html = $hire_page['final_cta_title_html'] ?? '';
 $final_cta_desc       = $hire_page['final_cta_desc'] ?? '';
+
+// Optional per-section CTA blocks (see section_cta_html() in core/helpers.php).
+$sec_cta = hire_json($hire_page['section_cta_json'] ?? null);
 $final_cta_btn_text   = $hire_page['final_cta_btn_text'];
 $final_cta_btn_url    = $hire_page['final_cta_btn_url'];
 

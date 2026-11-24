@@ -153,6 +153,11 @@ $future_enhancements = [
 ];
 
 // --- Meet the Expert (optional team_members profile picked in admin) ---
+// Optional per-section CTA blocks (see section_cta_html() in core/helpers.php).
+// (plain json_decode — ss_json() would renumber the section-key array.)
+$sec_cta = json_decode((string) ($story['section_cta_json'] ?? ''), true);
+$sec_cta = is_array($sec_cta) ? $sec_cta : [];
+
 $expert_tag = $story['expert_tag'] ?? '';
 $expert_title = $story['expert_title'] ?? '';
 $expert_member = null;
@@ -352,6 +357,7 @@ $page_robots = $story['robots'];
                     <?php endforeach; ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'objectives') ?>
         </section>
     <?php endif; ?>
 
@@ -413,6 +419,7 @@ $page_robots = $story['robots'];
                     <?php endforeach; ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'architecture') ?>
         </section>
     <?php endif; ?>
 
@@ -443,6 +450,7 @@ $page_robots = $story['robots'];
                     <?= $challenge['text'] ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'challenge') ?>
         </section>
     <?php endif; ?>
 
@@ -473,6 +481,7 @@ $page_robots = $story['robots'];
                     <?= $solution['text'] ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'solution') ?>
         </section>
     <?php endif; ?>
 
@@ -538,6 +547,7 @@ $page_robots = $story['robots'];
                     <?php endforeach; ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'workflow') ?>
         </section>
     <?php endif; ?>
 
@@ -572,6 +582,7 @@ $page_robots = $story['robots'];
                     <?php endforeach; ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'results') ?>
         </section>
     <?php endif; ?>
 
@@ -608,6 +619,7 @@ $page_robots = $story['robots'];
                     <?php endforeach; ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'deliverables') ?>
         </section>
     <?php endif; ?>
 
@@ -656,6 +668,7 @@ $page_robots = $story['robots'];
                     </div>
                 <?php endif; ?>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'techstack') ?>
         </section>
     <?php endif; ?>
 
@@ -700,6 +713,7 @@ $page_robots = $story['robots'];
                     </div>
                 <?php endif; ?>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'why') ?>
         </section>
     <?php endif; ?>
 
@@ -720,6 +734,7 @@ $page_robots = $story['robots'];
                 </div>
                 <?php $tm_member = $expert_member; require PARTIALS_DIR . '/team-member-card.php'; ?>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'expert') ?>
         </section>
     <?php endif; ?>
 
@@ -754,6 +769,7 @@ $page_robots = $story['robots'];
                     <?php endforeach; ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'responsibilities') ?>
         </section>
     <?php endif; ?>
 
@@ -788,6 +804,7 @@ $page_robots = $story['robots'];
                     <?php endforeach; ?>
                 </div>
             </div>
+            <?= section_cta_html($sec_cta ?? [], 'future') ?>
         </section>
     <?php endif; ?>
 

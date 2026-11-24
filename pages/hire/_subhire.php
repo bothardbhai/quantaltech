@@ -391,6 +391,7 @@
 					</div>
 				<?php endif; ?>
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'engineers') ?>
 		</section>
 		<?php if (count($engineers) > 4): ?>
 			<script>
@@ -468,6 +469,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'expertise') ?>
 		</section>
 	<?php endif; ?>
 
@@ -520,6 +522,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'foundation') ?>
 		</section>
 	<?php endif; ?>
 
@@ -568,6 +571,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'tech') ?>
 		</section>
 	<?php endif; ?>
 
@@ -610,6 +614,7 @@
 				</div>
 
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'build') ?>
 		</section>
 	<?php endif; ?>
 
@@ -668,6 +673,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'engagement') ?>
 		</section>
 	<?php endif; ?>
 
@@ -720,6 +726,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'why') ?>
 		</section>
 	<?php endif; ?>
 
@@ -883,6 +890,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'industries') ?>
 		</section>
 	<?php endif; ?>
 
@@ -936,6 +944,7 @@
 				</div>
 
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'hireprocess') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1071,6 +1080,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'cs') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1333,6 +1343,7 @@
 				</div>
 
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'related') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1381,6 +1392,7 @@
 					</a>
 				</div>
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'blog') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1414,6 +1426,7 @@
 					<?php endforeach; ?>
 				</ul>
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'faq') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1433,7 +1446,7 @@
 
 					<?php if (!empty($final_cta_desc)): ?>
 						<p>
-							<?= e($final_cta_desc) ?>
+							<?= $final_cta_desc /* trusted HTML */ ?>
 						</p>
 					<?php endif; ?>
 
