@@ -1493,7 +1493,7 @@ $service_links ??= [
                                 <hr>
 
                                 <?php if (!empty($final_cta_btn_text)): ?>
-                                    <a href="<?= attr(cta_link_url($final_cta_btn_url, '/case-studies')) ?>"
+                                    <a href="<?= attr(cta_link_url($final_cta_btn_url, '/contact')) ?>"
                                         class="theme-btn btn-style-border">
                                         <span class="btn-title">
                                             <?= e($final_cta_btn_text) ?>

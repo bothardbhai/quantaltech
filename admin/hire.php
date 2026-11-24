@@ -701,7 +701,7 @@ if ($action === 'new' || $action === 'edit') {
                         </div>
                         <div class="form-row" style="margin-bottom:0;">
                             <label for="final_cta_btn_url">Button URL <span class="text-muted">(optional — defaults to /case-studies)</span></label>
-                            <input type="text" id="final_cta_btn_url" name="final_cta_btn_url" value="<?= attr($f['final_cta_btn_url']) ?>" placeholder="/case-studies">
+                            <input type="text" id="final_cta_btn_url" name="final_cta_btn_url" value="<?= attr($f['final_cta_btn_url']) ?>" placeholder="/contact">
                         </div>
                     </div></div>
                 </div>
