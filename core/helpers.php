@@ -257,6 +257,28 @@ function section_cta_safe_url(?string $raw): string
 }
 
 /**
+ * href for an admin-typed button link. A site path ("/contact") gets the site
+ * base prepended via url(); a full link (https://…, mailto:, tel:) or an
+ * #anchor is used as-is — wrapping those in url() produces broken addresses
+ * like "https://site.com/https://calendly.com/…". Blank (or an unsafe scheme
+ * such as javascript:) falls back to $default.
+ */
+function cta_link_url(?string $raw, string $default): string
+{
+    $u = trim((string) $raw);
+    if ($u === '') {
+        return url($default);
+    }
+    if (preg_match('#^(https?://|mailto:|tel:|\#)#i', $u)) {
+        return $u;
+    }
+    if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $u)) {
+        return url($default);
+    }
+    return url($u);
+}
+
+/**
  * Optional per-section call-to-action block: text above a button, the button,
  * and text below it — each only if the admin filled it in. Returns '' when the
  * section has nothing set, so untouched pages render exactly as before.

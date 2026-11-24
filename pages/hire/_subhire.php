@@ -1454,7 +1454,7 @@
 						<hr>
 
 						<?php if (!empty($final_cta_btn_text)): ?>
-							<a href="<?= url($final_cta_btn_url ?: '/case-studies') ?>" class="theme-btn btn-style-border">
+							<a href="<?= attr(cta_link_url($final_cta_btn_url, '/case-studies')) ?>" class="theme-btn btn-style-border">
 								<span class="btn-title">
 									<?= e($final_cta_btn_text) ?>
 								</span>
