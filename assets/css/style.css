@@ -19615,7 +19615,7 @@ table.tbl-shopping-cart > tfoot > tr > th {
 }
 
 .footer-widget-wrapper {
-  padding-bottom: 100px;
+  padding-bottom: 35px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
 }
@@ -23127,6 +23127,21 @@ Sidebar
   border: 1px solid #fecaca;
 }
 
+/* ── Form honeypot (core/recaptcha.php) — kept off-screen, out of the layout ── */
+.qt-hp {
+  position: absolute !important;
+  left: -10000px !important;
+  top: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+/* ── reCAPTCHA v3 badge — Google ships it without a z-index, so theme sections paint over it ── */
+.grecaptcha-badge {
+  z-index: 9999 !important;
+}
+
 /* ── Blog single post rich-text body ── */
 .rich-text h1,
 .rich-text h2,
@@ -23150,9 +23165,9 @@ Sidebar
 .rich-text blockquote {
   margin: 24px 0;
   padding: 14px 22px;
-  border-left: 4px solid #1d2327;
-  background: #f6f7fb;
-  font-style: italic;
+  /* border-left: 4px solid #1d2327; */
+  background: #272727;
+  /* font-style: italic; */
 }
 .rich-text img {
   max-width: 100%;
@@ -25044,7 +25059,7 @@ AI Benefits
 .process-accordion::before{
     content:"";
     position:absolute;
-    left:35px;
+    left:23px;
     top:20px;
     bottom:20px;
     width:2px;
@@ -25055,7 +25070,7 @@ AI Benefits
     background:none;
     border:0;
     margin:0;
-    padding:0 0 60px 0;
+    padding:0 0 35px 0;
     position:relative;
 }
 
@@ -25076,14 +25091,14 @@ AI Benefits
 }
 
 .step-circle{
-    width:70px;
-    height:70px;
+    width:50px;
+    height:50px;
     border:2px solid #26e5e8;
     border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:28px;
+    font-size:16px;
     font-weight:700;
     color:#26e5e8;
     background:#000;
@@ -25098,7 +25113,7 @@ AI Benefits
 }
 
 .step-heading{
-    font-size:34px;
+    font-size:18px;
     font-weight:700;
     color:#fff;
 }
@@ -28198,8 +28213,8 @@ body {
 @media (max-width: 575.98px) {
     .engineer-card {
         flex-direction: column;
-        align-items: center;
-        text-align: center;
+        /* align-items: center;
+        text-align: center; */
     }
 
     .engineer-card__media {
@@ -28207,7 +28222,7 @@ body {
     }
 
     .engineer-card__header {
-        justify-content: center;
+        /* justify-content: center; */
         text-align: center;
     }
 
@@ -29582,4 +29597,69 @@ body.pd-modal-open {
         width: 34px;
         height: 34px;
     }
+}
+/* ------------------------------------------------------------------
+   Footer link groups (Quick Links / Our Services / Hire With Us)
+   Category heading on top, links laid out horizontally and wrapping.
+   Scoped to .qt-footer-links so the theme's footer rules are untouched.
+------------------------------------------------------------------- */
+/* Footer Link Groups */
+.qt-footer-links {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 36px;
+}
+
+.qt-footer-links__title {
+  margin-bottom: 16px;
+}
+
+.qt-footer-links__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.qt-footer-links__list li {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.32px;
+  line-height: 1.4;
+}
+
+/* Footer links with underline */
+.qt-footer-links__list li a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.3s ease;
+}
+
+.qt-footer-links__list li a:hover,
+.qt-footer-links__list li a:focus-visible {
+  color: var(--theme-color1);
+}
+
+/* Pipe separator */
+.qt-footer-links__list li:not(:last-child)::after {
+  content: "|";
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 12px;
+}
+
+@media (max-width: 767.98px) {
+  .qt-footer-links {
+    row-gap: 28px;
+  }
+
+  .qt-footer-links__list {
+    gap: 10px 20px;
+  }
+
+  .qt-footer-links__list li:not(:last-child)::after {
+    margin-left: 20px;
+  }
 }

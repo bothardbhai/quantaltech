@@ -96,6 +96,13 @@ $industries_title_html = $hire_page['industries_title_html'] ?? '';
 $industries_text       = $hire_page['industries_text'] ?? '';
 $industries            = hire_json($hire_page['industries_json']);
 
+// --- Hire Process ---
+$hireprocess_sub        = $hire_page['hireprocess_sub'];
+$hireprocess_title_html = $hire_page['hireprocess_title_html'] ?? '';
+$hireprocess_text       = $hire_page['hireprocess_text'] ?? '';
+$hireprocess_image      = $hire_page['hireprocess_image'] ?? '';
+$hireprocess_steps      = hire_json($hire_page['hireprocess_steps_json']);
+
 // --- Mid CTA ---
 $cta_tag        = $hire_page['cta_tag'];
 $cta_title_html = $hire_page['cta_title_html'] ?? '';

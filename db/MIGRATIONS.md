@@ -45,6 +45,24 @@ The migrations are organized by creation date and purpose:
    - Same object-repeater shape as `impact_stats_json`/`expertise_cards_json`: a JSON array of row objects `[{image, name, role, years_of_experience, linkedin_url, education: [...], skills: [...]}, ...]`
    - `education`/`skills` are flat string-array sub-fields within each row, same "list" field type already used by `services.grid_services_json`'s `tags` sub-field (see `admin/services.php`)
 
+9. **2026-11-02-001-create-service-subcategories.sql**
+   - Creates the `service_subcategories` table, the grouping master for Services. It is used for admin organization and the frontend navigation/mega menu only.
+   - Seeds **Build AI**, **AI Consulting** and **AI Applications** with `INSERT IGNORE`, so the seed is idempotent.
+
+10. **2026-11-02-002-add-subcategory-to-services.sql**
+    - Adds a nullable `services.subcategory_id` FK with `ON DELETE RESTRICT`. A subcategory that still has services assigned cannot be deleted.
+    - Assigns the 14 existing services by **slug** (ids differ per environment). Unknown slugs are skipped and already-assigned rows are untouched.
+    - Subcategories never affect service slugs, URLs, canonicals or routing. Services remain at `/services/{slug}`.
+
+11. **2026-11-02-003-create-hire-subcategories.sql**
+    - Creates the `hire_subcategories` table, the grouping master for Hire Master pages and the counterpart of `service_subcategories`. It is used for admin organization and the "Hire with Us" mega menu only.
+    - Seeds **AI & ML Engineers** and **Specialized AI Engineers** with `INSERT IGNORE`.
+
+12. **2026-11-02-004-add-subcategory-to-hire-pages.sql**
+    - Adds a nullable `hire_pages.subcategory_id` FK with `ON DELETE RESTRICT`.
+    - Assigns the 7 existing hire pages by **slug**. Unknown slugs are skipped and already-assigned rows are untouched.
+    - Subcategories never affect hire slugs, URLs, canonicals or routing. Pages remain at `/hire/{slug}`.
+
 ## Running Migrations
 
 ### Automatic (Recommended)
@@ -161,6 +179,7 @@ Stores AI service offering details.
 | excerpt | TEXT | Short description |
 | description | MEDIUMTEXT | Full description |
 | service_number | INT UNSIGNED | Display order |
+| subcategory_id | INT UNSIGNED | FK -> `service_subcategories.id`, nullable, ON DELETE RESTRICT. Navigation grouping only; never part of the URL |
 | features_json | JSON | Array of feature objects |
 | status | ENUM | draft, published, archived |
 | display_on_home | TINYINT(1) | Show on homepage |
@@ -198,6 +217,25 @@ Filter/taxonomy master for Success Stories.
 | status | ENUM | active, inactive |
 | sort_order | INT UNSIGNED | Display order |
 
+### service_subcategories
+
+Grouping master for Services (Build AI, AI Consulting, AI Applications), managed in `/admin/service-subcategories.php`.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | INT UNSIGNED | Primary Key |
+| name | VARCHAR(100) | Display name (mega menu column heading) |
+| slug | VARCHAR(120) | Unique internal identifier, auto-generated from the name. **Never** used in service URLs |
+| description | TEXT | Optional short description |
+| sort_order | INT UNSIGNED | Display order |
+| status | ENUM | active, inactive. Inactive subcategories can't be newly assigned and are hidden from the frontend helper |
+
+### hire_subcategories
+
+Grouping master for Hire Master pages, managed in `/admin/hire-subcategories.php`. It has the same columns as `service_subcategories`. Hire pages reference it through `hire_pages.subcategory_id` (nullable, ON DELETE RESTRICT).
+
+Both admin pages share one implementation: `admin/_subcategory-master.php`.
+
 ## Helper Functions
 
 All helper functions are in `/core/content-helpers.php`:
@@ -232,6 +270,14 @@ get_service($pdo, 123);
 get_service($pdo, 'voice-ai');
 save_service($pdo, $data);
 delete_service($pdo, $id);
+get_services($pdo, ['status' => 'published', 'subcategory_id' => 2]);
+
+// Service subcategories
+get_service_subcategories($pdo, ['status' => 'active']); // ordered by sort_order, name
+get_service_subcategory($pdo, 2);
+// Mega-menu data: active subcategories, each with 'services' => its published
+// services ordered by service_number; empty groups omitted
+get_services_grouped_by_subcategory($pdo);
 ```
 
 ### Hire Pages
@@ -243,7 +289,27 @@ get_hire_page($pdo, 'python-developer');
 save_hire_page($pdo, $data);
 delete_hire_page($pdo, $id);
 get_hire_pages_by_ids($pdo, [3, 7, 9]);
+get_hire_pages($pdo, ['status' => 'published', 'subcategory_id' => 1]);
+
+// Hire subcategories
+get_hire_subcategories($pdo, ['status' => 'active']);
+get_hire_subcategory($pdo, 1);
+get_hire_pages_grouped_by_subcategory($pdo); // active groups, each with 'items' => published hire pages by sort_order
+get_hire_mega_menu($pdo);                    // the same, plus an "Other Roles" group for unassigned pages
 ```
+
+### Subcategory internals
+
+The per-type functions above wrap generic helpers. Their `$sub_table` argument is whitelisted, either `service_subcategories` or `hire_subcategories`:
+
+```php
+get_subcategories($pdo, $sub_table, $filters);
+get_subcategory($pdo, $sub_table, $id);
+get_items_grouped_by_subcategory($pdo, $sub_table);
+get_mega_menu_groups($pdo, $sub_table, $other_label);
+```
+
+The Services and Hire mega menus both come from `partials/nav-menu.php` → `render_mega_nav_item()`, with styles in `assets/css/mega-menu.css` and behaviour in `assets/js/mega-menu.js`.
 
 ## Admin Pages
 

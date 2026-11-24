@@ -37,8 +37,14 @@ $user = auth_user();
                     data-icon="📝">Blog</a>
                 <a href="<?= ADMIN_URL ?>/services.php"
                     class="<?= $admin_active === 'services' ? 'is-active' : '' ?>" data-icon="⚡">Services</a>
+                <a href="<?= ADMIN_URL ?>/service-subcategories.php"
+                    class="<?= $admin_active === 'service-subcategories' ? 'is-active' : '' ?>" data-icon="🗂️">Service
+                    Subcategories</a>
                 <a href="<?= ADMIN_URL ?>/hire.php" class="<?= $admin_active === 'hire' ? 'is-active' : '' ?>"
                     data-icon="🧑‍💻">Hire Master</a>
+                <a href="<?= ADMIN_URL ?>/hire-subcategories.php"
+                    class="<?= $admin_active === 'hire-subcategories' ? 'is-active' : '' ?>" data-icon="🗂️">Hire
+                    Subcategories</a>
                 <a href="<?= ADMIN_URL ?>/webinars.php"
                     class="<?= $admin_active === 'webinars' ? 'is-active' : '' ?>" data-icon="🎓">Webinars</a>
                 <a href="<?= ADMIN_URL ?>/podcasts.php"

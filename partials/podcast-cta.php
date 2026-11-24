@@ -94,10 +94,12 @@
                     </div>
                     <div class="mb-5 theme-btn-main">
                         <input name="form_botcheck" type="hidden" value="">
+                        <?= honeypot_field() ?>
                         <button type="submit" id="pd-contact-submit-btn"
                             class="theme-btn btn-style-one transform"><span class="btn-title">Submit</span></button>
                     </div>
                 </form>
+                <?= recaptcha_script() ?>
                 <script>
                     (function () {
                         var form = document.getElementById('pd_contact_form');
@@ -111,11 +113,14 @@
                             btn.disabled = true;
                             btn.querySelector('.btn-title').textContent = 'Sending…';
 
-                            fetch(form.action, {
-                                method: 'POST',
-                                body: new FormData(form),
-                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                            })
+                            qtRecaptcha(form, 'contact_form')
+                                .then(function (fd) {
+                                    return fetch(form.action, {
+                                        method: 'POST',
+                                        body: fd,
+                                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                    });
+                                })
                                 .then(function (r) { return r.json(); })
                                 .then(function (data) {
                                     msgEl.textContent = data.message;

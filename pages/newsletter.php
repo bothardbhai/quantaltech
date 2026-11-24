@@ -22,11 +22,24 @@ if (!$expected || !is_string($submitted) || !hash_equals($expected, $submitted))
     exit;
 }
 
+// Honeypot — silently accept bots so they think the form worked
+if (honeypot_tripped()) {
+    echo json_encode(['success' => true, 'message' => 'Thank you!']);
+    exit;
+}
+
 $email = trim($_POST['email'] ?? '');
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422);
     echo json_encode(['success' => false, 'message' => 'Please enter a valid email address.']);
+    exit;
+}
+
+// reCAPTCHA v3 — verified server-side before anything is saved or emailed
+if (!recaptcha_verify('newsletter_form')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Please verify your submission and try again.']);
     exit;
 }
 

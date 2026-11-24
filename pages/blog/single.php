@@ -6,6 +6,18 @@
  * Per-post SEO overrides flow through $page_seo so seo-head.php picks them up.
  * Falls back to title/excerpt when meta_title / meta_description are blank.
  */
+/**
+ * Decode a JSON column into an array, tolerating null/invalid JSON.
+ */
+function post_json(?string $raw): array
+{
+    if (!$raw) {
+        return [];
+    }
+    $decoded = json_decode($raw, true);
+    return is_array($decoded) ? $decoded : [];
+}
+
 $slug = $GLOBALS['blog_slug'] ?? '';
 $active_page = 'blog';
 
@@ -14,8 +26,11 @@ $pdo = db();
 
 if ($pdo && $slug !== '') {
     try {
+        // u.display_name is aliased to author_display_name (not author_name)
+        // so it can't collide with posts.author_name (the per-post Author
+        // section's own name field) once p.* is merged into the same row.
         $stmt = $pdo->prepare(
-            "SELECT p.*, u.display_name AS author_name
+            "SELECT p.*, u.display_name AS author_display_name
              FROM posts p
              LEFT JOIN users u ON u.id = p.author_id
              WHERE p.slug = :slug AND p.status = 'published'
@@ -55,6 +70,12 @@ if ($pdo) {
         $faqs = [];
     }
 }
+
+// Author box (optional per-post fields on posts; see
+// db/migrations/2026-10-03-001-add-author-fields-to-posts.sql). Only shown
+// once a name has been filled in for this post.
+$has_author = !empty(trim((string) ($post['author_name'] ?? '')));
+$author_expertise = post_json($post['author_expertise_json'] ?? null);
 
 $toc = [];
 
@@ -188,9 +209,9 @@ $page_seo['schema_json'] = $post['schema_json'];
                                 <?= e(date('F j, Y', strtotime((string) $post['published_at']))) ?>
                             </li>
                         <?php endif; ?>
-                        <?php if (!empty($post['author_name'])): ?>
+                        <?php if (!empty($post['author_display_name'])): ?>
                             <li>
-                                <i class="fa-light fa-user"></i> <?= e($post['author_name']) ?>
+                                <i class="fa-light fa-user"></i> <?= e($post['author_display_name']) ?>
                             </li>
                         <?php endif; ?>
                     </ul>
@@ -204,6 +225,10 @@ $page_seo['schema_json'] = $post['schema_json'];
                     <div class="news-content rich-text disc">
                         <?= $post['body_html'] /* sanitized at save-time */ ?>
                     </div>
+
+                    <?php if ($has_author): ?>
+                        <?php include PARTIALS_DIR . '/blog-author-card.php'; ?>
+                    <?php endif; ?>
 
                     <?php if (!empty($faqs)): ?>
                         <div class="post-faqs" style="margin-top:50px;padding-top:30px;border-top:1px solid #eee;">

@@ -27,7 +27,7 @@ if (!$expected || !is_string($submitted) || !hash_equals($expected, $submitted))
 }
 
 // Honeypot — silently accept bots so they think the form worked
-if (!empty($_POST['form_botcheck'])) {
+if (!empty($_POST['form_botcheck']) || honeypot_tripped()) {
     echo json_encode(['success' => true, 'message' => 'Thank you!']);
     exit;
 }
@@ -59,6 +59,13 @@ if (mb_strlen($message) < 10)
 if ($errors) {
     http_response_code(422);
     echo json_encode(['success' => false, 'message' => implode(' ', $errors)]);
+    exit;
+}
+
+// reCAPTCHA v3 — verified server-side before anything is saved or emailed
+if (!recaptcha_verify('contact_form')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Please verify your submission and try again.']);
     exit;
 }
 
