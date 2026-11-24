@@ -289,9 +289,12 @@ function section_cta_html(array $all, string $key, bool $container = true): stri
     }
     if ($has_button) {
         $link = $href[0] === '/' ? url($href) : $href;
-        $out .= '<a class="theme-btn btn-style-one" href="' . attr($link) . '"'
+        // Same arrow-button markup the rest of the site uses (.theme-btn-main).
+        $out .= '<a class="theme-btn-main" href="' . attr($link) . '"'
             . (!empty($c['new_tab']) ? ' target="_blank" rel="noopener"' : '')
-            . '><span class="btn-title">' . e($label) . '</span></a>';
+            . '><span class="theme-btn-arrow-left"><i class="far fa-long-arrow-right"></i></span>'
+            . '<span class="theme-btn">' . e($label) . '</span>'
+            . '<span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span></a>';
     }
     if ($after !== '') {
         $out .= '<div class="section-cta__text section-cta__text--after" style="margin-top:20px;">' . $after . '</div>';
