@@ -133,12 +133,18 @@ $cs_sub        = $service['cs_sub'];
 $cs_title_html = $service['cs_title_html'] ?? '';
 $cs_text       = $service['cs_text'] ?? '';
 $case_studies  = [];
-if ($pdo) {
+// Admin can hide the section (cs_hidden) or hand-pick up to 4 stories
+// (cs_story_ids_json); with neither, it's the latest 4 as before.
+if ($pdo && empty($service['cs_hidden'])) {
     $cs_category_map = [];
     foreach (get_success_story_categories($pdo, []) as $cs_cat) {
         $cs_category_map[(int) $cs_cat['id']] = $cs_cat['name'];
     }
-    foreach (array_slice(get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']), 0, 4) as $cs_story) {
+    $cs_stories = get_success_stories_by_ids($pdo, array_slice(svc_json($service['cs_story_ids_json'] ?? null), 0, 4));
+    if (empty($cs_stories)) {
+        $cs_stories = array_slice(get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']), 0, 4);
+    }
+    foreach ($cs_stories as $cs_story) {
         $case_studies[] = [
             'title'    => $cs_story['title'],
             'category' => $cs_category_map[(int) ($cs_story['category_id'] ?? 0)] ?? '',

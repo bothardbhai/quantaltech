@@ -110,12 +110,18 @@ $cs_text       = $hire_page['cs_text'] ?? '';
 // always the 4 most recently published Success Stories (see
 // admin/success-stories.php, the single source of truth for these).
 $case_studies = [];
-if ($pdo) {
+// Admin can hide the section (cs_hidden) or hand-pick up to 4 stories
+// (cs_story_ids_json); with neither, it's the latest 4 as before.
+if ($pdo && empty($hire_page['cs_hidden'])) {
     $cs_category_map = [];
     foreach (get_success_story_categories($pdo, []) as $cs_cat) {
         $cs_category_map[(int) $cs_cat['id']] = $cs_cat['name'];
     }
-    foreach (array_slice(get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']), 0, 4) as $cs_story) {
+    $cs_stories = get_success_stories_by_ids($pdo, array_slice(hire_json($hire_page['cs_story_ids_json'] ?? null), 0, 4));
+    if (empty($cs_stories)) {
+        $cs_stories = array_slice(get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']), 0, 4);
+    }
+    foreach ($cs_stories as $cs_story) {
         $case_studies[] = [
             'title'    => $cs_story['title'],
             'category' => $cs_category_map[(int) ($cs_story['category_id'] ?? 0)] ?? '',

@@ -69,6 +69,56 @@ function svc_json_decode(?string $raw): array
 }
 
 /**
+ * Admin UI for a page's "Success Stories" teaser section (services + hire
+ * pages): a "hide section" toggle and an optional hand-picked story list.
+ * Posts `cs_hidden` and `cs_story_ids[]` — see save handlers in
+ * admin/services.php / admin/hire.php and the frontend resolve in
+ * pages/{services,hire}/_*-dynamic.php (no picks = latest 4 stories).
+ *
+ * @param array $stories   published success_stories rows (id, title, slug)
+ * @param int[] $selected  currently picked story IDs
+ */
+function svc_case_study_picker(array $stories, array $selected, bool $hidden): void
+{
+    ?>
+    <div class="admin-card"><div class="admin-card__body">
+        <label style="display:block;padding:0 0 12px;">
+            <input type="checkbox" name="cs_hidden" value="1" <?= $hidden ? 'checked' : '' ?>>
+            <strong>Hide this section entirely</strong>
+            <span class="text-muted">(nothing is shown on the page)</span>
+        </label>
+        <p class="text-muted" style="font-size:13px;margin-top:0;">
+            Pick up to 4
+            <a href="<?= ADMIN_URL ?>/success-stories.php" target="_blank" rel="noopener">Success Stories</a>
+            to show here. If none are picked, the 4 most recently published stories are shown automatically.
+        </p>
+        <div class="repeater-row__title" style="margin-bottom:10px;">Choose Stories</div>
+        <?php if (empty($stories)): ?>
+            <p class="text-muted" style="font-size:13px;">No published stories yet.</p>
+        <?php endif; ?>
+        <?php foreach ($stories as $st): ?>
+            <label style="display:block;padding:6px 0;">
+                <input type="checkbox" name="cs_story_ids[]" value="<?= (int) $st['id'] ?>"
+                    <?= in_array((int) $st['id'], $selected, true) ? 'checked' : '' ?>>
+                <?= e($st['title']) ?> <span class="text-muted">(<?= e($st['slug']) ?>)</span>
+            </label>
+        <?php endforeach; ?>
+    </div></div>
+    <?php
+}
+
+/**
+ * Cleaned posted value for a page's `cs_story_ids_json` column (max 4 IDs).
+ */
+function svc_case_study_ids_from_post(array $post): string
+{
+    return json_encode(array_slice(
+        array_values(array_unique(array_filter(array_map('intval', $post['cs_story_ids'] ?? [])))),
+        0, 4
+    ));
+}
+
+/**
  * Normalize a *_schema_json-style column for the edit form's repeater: rows
  * may already be the new [{type, label, code}, ...] shape (type is optional
  * — only the Pages module's dropdown uses it), or (pre-existing rows) the

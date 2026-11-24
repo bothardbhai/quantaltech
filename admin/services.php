@@ -265,6 +265,8 @@ if ($action === 'new' || $action === 'edit') {
                 ['question' => 'faq_question', 'answer' => 'faq_answer']));
 
             // Pickers (store IDs only; frontend resolves to URL/content)
+            $data['cs_story_ids_json'] = svc_case_study_ids_from_post($_POST);
+            $data['cs_hidden'] = !empty($_POST['cs_hidden']) ? 1 : 0;
             $data['related_service_ids_json'] = json_encode(array_values(array_filter(array_map('intval', $_POST['related_service_ids'] ?? []))));
             $data['blog_post_ids_json'] = json_encode(array_values(array_filter(array_map('intval', $_POST['blog_post_ids'] ?? []))));
 
@@ -301,7 +303,7 @@ if ($action === 'new' || $action === 'edit') {
         'engagement_sub' => '', 'engagement_title_html' => '', 'engagement_text' => '',
         'process_sub' => '', 'process_title_html' => '', 'process_text' => '',
         'cta_tag' => '', 'cta_title_html' => '', 'cta_text' => '',
-        'cs_sub' => '', 'cs_title_html' => '', 'cs_text' => '',
+        'cs_sub' => '', 'cs_title_html' => '', 'cs_text' => '', 'cs_hidden' => 0,
         'tech_sub' => '', 'tech_title_html' => '', 'tech_text' => '',
         'security_sub' => '', 'security_title_html' => '', 'security_text' => '',
         'related_sub' => '', 'related_title_html' => '', 'related_text' => '', 'related_group_title' => '',
@@ -331,6 +333,8 @@ if ($action === 'new' || $action === 'edit') {
     ];
     $selected_related_ids = array_map('intval', svc_json_decode($service['related_service_ids_json'] ?? null));
     $selected_blog_ids = array_map('intval', svc_json_decode($service['blog_post_ids_json'] ?? null));
+    $selected_cs_story_ids = array_map('intval', svc_json_decode($service['cs_story_ids_json'] ?? null));
+    $cs_story_options = $pdo->query("SELECT id, title, slug FROM success_stories WHERE status = 'published' ORDER BY created_at DESC, id DESC")->fetchAll();
 
     // Pickers: other published services, published blog posts
     $other_services = array_filter(
@@ -717,13 +721,7 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ SUCCESS STORIES ============ -->
                 <div class="section-tabs__panel" data-panel="cases">
                     <div class="admin-card"><div class="admin-card__body"><?php svc_section_header('cs', $f, 'Case Studies <span>&amp; Success Stories</span>'); ?></div></div>
-                    <div class="admin-card"><div class="admin-card__body">
-                        <p class="text-muted" style="font-size:13px;margin:0;">
-                            This section now shows the 4 most recently published entries from the
-                            <a href="<?= ADMIN_URL ?>/success-stories.php" target="_blank" rel="noopener">Success Stories</a> master automatically —
-                            manually picking individual case studies here has been removed. Add or edit Success Stories there to control what appears.
-                        </p>
-                    </div></div>
+                    <?php svc_case_study_picker($cs_story_options, $selected_cs_story_ids, !empty($f['cs_hidden'])); ?>
                 </div>
 
                 <!-- ============ TECH STACK ============ -->

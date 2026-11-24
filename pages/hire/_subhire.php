@@ -20,7 +20,7 @@
  *   $why_sub, $why_title_html*, $why_text*, $why_cards[{title,desc}]
  *   $industries_sub, $industries_title_html*, $industries_text*, $industries[{icon,title,desc}]
  *   $cta_tag, $cta_title_html*, $cta_text*                          - mid-page CTA band
- *   $cs_sub, $cs_title_html*, $cs_text*, $case_studies[{title,category,image,url}] - always the latest 4 published Success Stories, not manually picked
+ *   $cs_sub, $cs_title_html*, $cs_text*, $case_studies[{title,category,image,url}] - admin-picked (max 4) or, by default, the latest 4 published Success Stories; empty when hidden
  *   $related_sub, $related_title_html*, $related_text*, $related_items[{label,title,slug,excerpt,featured_image}]
  *   $blog_sub, $blog_title_html*, $blog_text*, $blog_posts[{image,category,title,desc,link}]
  *   $faq_intro*, $faqs[{question,answer}]
