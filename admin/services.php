@@ -86,6 +86,7 @@ function svc_section_header(string $prefix, array $f, string $titlePlaceholder =
         <textarea id="<?= $prefix ?>_text" name="<?= $prefix ?>_text" rows="2"><?= e($f[$prefix . '_text']) ?></textarea>
     </div>
     <?php
+    svc_section_cta_fields($prefix);
 }
 
 // ===========================================================================
@@ -199,7 +200,7 @@ if ($action === 'new' || $action === 'edit') {
                 'cta_tag', 'cs_sub', 'tech_sub',
                 'security_sub', 'related_sub', 'related_group_title',
                 'blog_sub', 'faq_title',
-                'final_cta_desc', 'final_cta_btn_text', 'final_cta_btn_url',
+                'final_cta_btn_text', 'final_cta_btn_url',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
                 'overview_html', 'features_html', 'use_cases_html', 'benefits_html',
                 'description',
@@ -211,7 +212,7 @@ if ($action === 'new' || $action === 'edit') {
                 'whatyouget_title_html', 'industries_title_html', 'framework_title_html', 'why_title_html',
                 'engagement_title_html', 'process_title_html', 'cta_title_html', 'cs_title_html',
                 'tech_title_html', 'security_title_html', 'related_title_html', 'blog_title_html',
-                'final_cta_title_html',
+                'final_cta_title_html', 'final_cta_desc',
                 'benefits_text', 'grid_text', 'whatyouget_text', 'industries_text', 'framework_text',
                 'why_text', 'engagement_text', 'process_text', 'cta_text', 'cs_text', 'tech_text',
                 'security_text', 'related_text', 'blog_text', 'faq_intro',
@@ -283,6 +284,11 @@ if ($action === 'new' || $action === 'edit') {
                 ['question' => 'faq_question', 'answer' => 'faq_answer']));
 
             // Pickers (store IDs only; frontend resolves to URL/content)
+            $cta_warnings = [];
+            $data['section_cta_json'] = svc_section_cta_from_post($_POST, $cta_warnings);
+            foreach ($cta_warnings as $w) { flash('error', $w); }
+            $data['cs_story_ids_json'] = svc_case_study_ids_from_post($_POST);
+            $data['cs_hidden'] = !empty($_POST['cs_hidden']) ? 1 : 0;
             $data['related_service_ids_json'] = json_encode(array_values(array_filter(array_map('intval', $_POST['related_service_ids'] ?? []))));
             $data['blog_post_ids_json'] = json_encode(array_values(array_filter(array_map('intval', $_POST['blog_post_ids'] ?? []))));
 
@@ -319,7 +325,7 @@ if ($action === 'new' || $action === 'edit') {
         'engagement_sub' => '', 'engagement_title_html' => '', 'engagement_text' => '',
         'process_sub' => '', 'process_title_html' => '', 'process_text' => '',
         'cta_tag' => '', 'cta_title_html' => '', 'cta_text' => '',
-        'cs_sub' => '', 'cs_title_html' => '', 'cs_text' => '',
+        'cs_sub' => '', 'cs_title_html' => '', 'cs_text' => '', 'cs_hidden' => 0,
         'tech_sub' => '', 'tech_title_html' => '', 'tech_text' => '',
         'security_sub' => '', 'security_title_html' => '', 'security_text' => '',
         'related_sub' => '', 'related_title_html' => '', 'related_text' => '', 'related_group_title' => '',
@@ -349,6 +355,9 @@ if ($action === 'new' || $action === 'edit') {
     ];
     $selected_related_ids = array_map('intval', svc_json_decode($service['related_service_ids_json'] ?? null));
     $selected_blog_ids = array_map('intval', svc_json_decode($service['blog_post_ids_json'] ?? null));
+    svc_section_cta_store(svc_json_decode($service['section_cta_json'] ?? null));
+    $selected_cs_story_ids = array_map('intval', svc_json_decode($service['cs_story_ids_json'] ?? null));
+    $cs_story_options = $pdo->query("SELECT id, title, slug FROM success_stories WHERE status = 'published' ORDER BY created_at DESC, id DESC")->fetchAll();
 
     // Pickers: other published services, published blog posts
     $other_services = array_filter(
@@ -578,6 +587,7 @@ if ($action === 'new' || $action === 'edit') {
                             <label for="overview_btn_text">Button Text</label>
                             <input type="text" id="overview_btn_text" name="overview_btn_text" value="<?= attr($f['overview_btn_text']) ?>" placeholder="Talk With Our Experts">
                         </div>
+                        <?php svc_section_cta_fields('overview'); ?>
                     </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field(
@@ -759,13 +769,7 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ SUCCESS STORIES ============ -->
                 <div class="section-tabs__panel" data-panel="cases">
                     <div class="admin-card"><div class="admin-card__body"><?php svc_section_header('cs', $f, 'Case Studies <span>&amp; Success Stories</span>'); ?></div></div>
-                    <div class="admin-card"><div class="admin-card__body">
-                        <p class="text-muted" style="font-size:13px;margin:0;">
-                            This section now shows the 4 most recently published entries from the
-                            <a href="<?= ADMIN_URL ?>/success-stories.php" target="_blank" rel="noopener">Success Stories</a> master automatically —
-                            manually picking individual case studies here has been removed. Add or edit Success Stories there to control what appears.
-                        </p>
-                    </div></div>
+                    <?php svc_case_study_picker($cs_story_options, $selected_cs_story_ids, !empty($f['cs_hidden'])); ?>
                 </div>
 
                 <!-- ============ TECH STACK ============ -->
@@ -849,6 +853,7 @@ if ($action === 'new' || $action === 'edit') {
                             <label for="faq_intro">Intro Text</label>
                             <textarea id="faq_intro" name="faq_intro" rows="2"><?= e($f['faq_intro']) ?></textarea>
                         </div>
+                        <?php svc_section_cta_fields('faq'); ?>
                     </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('faqs', 'Questions', '+ Add FAQ',
@@ -968,7 +973,8 @@ if ($action === 'new' || $action === 'edit') {
         if (iconField) initIconPicker(iconField);
 
         // ---- CKEditor on every "_title_html" field (short inline fragments: bold/italic/link) ----
-        document.querySelectorAll('textarea[id$="_title_html"]').forEach(function (el) {
+        // Also the per-section CTA "text above/below the button" boxes and the Final CTA description.
+        document.querySelectorAll('textarea[id$="_title_html"], textarea.js-seccta-rich, #final_cta_desc').forEach(function (el) {
             ClassicEditor.create(el, { toolbar: ['bold', 'italic', 'link', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
         });
 

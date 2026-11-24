@@ -69,6 +69,158 @@ function svc_json_decode(?string $raw): array
 }
 
 /**
+ * Admin UI for a page's "Success Stories" teaser section (services + hire
+ * pages): a "hide section" toggle and an optional hand-picked story list.
+ * Posts `cs_hidden` and `cs_story_ids[]` — see save handlers in
+ * admin/services.php / admin/hire.php and the frontend resolve in
+ * pages/{services,hire}/_*-dynamic.php (no picks = latest 4 stories).
+ *
+ * @param array $stories   published success_stories rows (id, title, slug)
+ * @param int[] $selected  currently picked story IDs
+ */
+function svc_case_study_picker(array $stories, array $selected, bool $hidden): void
+{
+    ?>
+    <div class="admin-card"><div class="admin-card__body">
+        <label style="display:block;padding:0 0 12px;">
+            <input type="checkbox" name="cs_hidden" value="1" <?= $hidden ? 'checked' : '' ?>>
+            <strong>Hide this section entirely</strong>
+            <span class="text-muted">(nothing is shown on the page)</span>
+        </label>
+        <p class="text-muted" style="font-size:13px;margin-top:0;">
+            Pick up to 4
+            <a href="<?= ADMIN_URL ?>/success-stories.php" target="_blank" rel="noopener">Success Stories</a>
+            to show here. If none are picked, the 4 most recently published stories are shown automatically.
+        </p>
+        <div class="repeater-row__title" style="margin-bottom:10px;">Choose Stories</div>
+        <?php if (empty($stories)): ?>
+            <p class="text-muted" style="font-size:13px;">No published stories yet.</p>
+        <?php endif; ?>
+        <?php foreach ($stories as $st): ?>
+            <label style="display:block;padding:6px 0;">
+                <input type="checkbox" name="cs_story_ids[]" value="<?= (int) $st['id'] ?>"
+                    <?= in_array((int) $st['id'], $selected, true) ? 'checked' : '' ?>>
+                <?= e($st['title']) ?> <span class="text-muted">(<?= e($st['slug']) ?>)</span>
+            </label>
+        <?php endforeach; ?>
+    </div></div>
+    <?php
+}
+
+/**
+ * Holder for the page being edited's decoded `section_cta_json`, so the
+ * section-header helpers (which only receive a prefix) can pre-fill their CTA
+ * fields without threading another argument through ~30 call sites.
+ */
+function svc_section_cta_store(?array $set = null): array
+{
+    static $data = [];
+    if ($set !== null) {
+        $data = $set;
+    }
+    return $data;
+}
+
+/**
+ * Admin fields for one section's optional CTA block (text above a button, the
+ * button, text below it). Posts sec_cta[<key>][before|btn_text|btn_url|new_tab|after];
+ * the rich-text boxes are upgraded by each page's `.js-seccta-rich` CKEditor
+ * init. Pass $card = true to wrap in its own admin-card (for sections that
+ * don't render through a header helper). All blank = nothing on the page.
+ */
+function svc_section_cta_fields(string $key, bool $card = false): void
+{
+    $c = svc_section_cta_store()[$key] ?? [];
+    $name = 'sec_cta[' . $key . ']';
+    $id = 'seccta_' . $key;
+    if ($card) {
+        echo '<div class="admin-card"><div class="admin-card__body">';
+    }
+    ?>
+    <div style="border-top:1px solid #3a3a3a;margin:18px 0 14px;padding-top:14px;">
+        <div class="repeater-row__title" style="margin-bottom:4px;">Call to Action <span class="text-muted">(optional — shown at the bottom of this section only if filled in)</span></div>
+        <div class="form-row">
+            <label for="<?= attr($id) ?>_before">Text above the button</label>
+            <textarea id="<?= attr($id) ?>_before" class="js-seccta-rich" name="<?= attr($name) ?>[before]" rows="2"><?= e($c['before'] ?? '') ?></textarea>
+        </div>
+        <div class="form-row">
+            <label for="<?= attr($id) ?>_label">Button Text</label>
+            <input type="text" id="<?= attr($id) ?>_label" name="<?= attr($name) ?>[btn_text]" value="<?= attr($c['btn_text'] ?? '') ?>" placeholder="Book a Free Scoping Call">
+        </div>
+        <div class="form-row">
+            <label for="<?= attr($id) ?>_url">Button URL <span class="text-muted">(a site path like /contact, an #anchor, or a full https:// link — the button only shows when both text and URL are set)</span></label>
+            <input type="text" id="<?= attr($id) ?>_url" name="<?= attr($name) ?>[btn_url]" value="<?= attr($c['btn_url'] ?? '') ?>" placeholder="/contact">
+            <label style="display:block;margin-top:6px;font-weight:normal;">
+                <input type="checkbox" name="<?= attr($name) ?>[new_tab]" value="1" <?= !empty($c['new_tab']) ? 'checked' : '' ?>> Open in a new tab
+            </label>
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+            <label for="<?= attr($id) ?>_after">Text below the button</label>
+            <textarea id="<?= attr($id) ?>_after" class="js-seccta-rich" name="<?= attr($name) ?>[after]" rows="2"><?= e($c['after'] ?? '') ?></textarea>
+        </div>
+    </div>
+    <?php
+    if ($card) {
+        echo '</div></div>';
+    }
+}
+
+/**
+ * JSON for a page's `section_cta_json` column from the posted sec_cta[] fields.
+ * Sections with nothing meaningful are dropped; a button needs both a label
+ * and a valid URL (see section_cta_safe_url) — a label with a bad URL is
+ * reported via $warnings so the caller can flash it.
+ *
+ * @param string[] $warnings
+ */
+function svc_section_cta_from_post(array $post, array &$warnings = []): string
+{
+    $clean_rich = static function ($v): string {
+        $v = trim(sanitize_html_fragment((string) $v));
+        $plain = trim(str_replace(['&nbsp;', "\xC2\xA0"], ' ', strip_tags($v)));
+        return ($plain === '' && stripos($v, '<img') === false) ? '' : $v;
+    };
+
+    $out = [];
+    foreach (($post['sec_cta'] ?? []) as $key => $c) {
+        if (!is_array($c) || !preg_match('/^[a-z0-9_]+$/', (string) $key)) {
+            continue;
+        }
+        $label = trim(strip_tags((string) ($c['btn_text'] ?? '')));
+        $raw_url = trim((string) ($c['btn_url'] ?? ''));
+        $url = section_cta_safe_url($raw_url);
+        if ($label !== '' && $url === '') {
+            $warnings[] = 'The CTA button for "' . $key . '" was not saved: its URL must start with /, #, http://, https://, mailto: or tel:.';
+            $label = '';
+        } elseif ($label === '') {
+            $url = '';
+        }
+        $entry = [
+            'before'   => $clean_rich($c['before'] ?? ''),
+            'btn_text' => $label,
+            'btn_url'  => $url,
+            'new_tab'  => !empty($c['new_tab']) ? 1 : 0,
+            'after'    => $clean_rich($c['after'] ?? ''),
+        ];
+        if ($entry['before'] !== '' || $entry['after'] !== '' || $entry['btn_text'] !== '') {
+            $out[(string) $key] = $entry;
+        }
+    }
+    return json_encode($out, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
+/**
+ * Cleaned posted value for a page's `cs_story_ids_json` column (max 4 IDs).
+ */
+function svc_case_study_ids_from_post(array $post): string
+{
+    return json_encode(array_slice(
+        array_values(array_unique(array_filter(array_map('intval', $post['cs_story_ids'] ?? [])))),
+        0, 4
+    ));
+}
+
+/**
  * Normalize a *_schema_json-style column for the edit form's repeater: rows
  * may already be the new [{type, label, code}, ...] shape (type is optional
  * — only the Pages module's dropdown uses it), or (pre-existing rows) the

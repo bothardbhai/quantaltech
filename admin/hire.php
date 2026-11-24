@@ -62,6 +62,7 @@ function hire_section_header(string $prefix, array $f, string $titlePlaceholder 
         <textarea id="<?= $prefix ?>_text" name="<?= $prefix ?>_text" rows="2"><?= e($f[$prefix . '_text']) ?></textarea>
     </div>
     <?php
+    svc_section_cta_fields($prefix);
 }
 
 // ===========================================================================
@@ -169,7 +170,7 @@ if ($action === 'new' || $action === 'edit') {
                 'hireprocess_sub',
                 'cta_tag', 'cs_sub',
                 'related_sub', 'blog_sub', 'faq_title', 'hero_card_title', 'engineers_title',
-                'final_cta_desc', 'final_cta_btn_text', 'final_cta_btn_url',
+                'final_cta_btn_text', 'final_cta_btn_url',
                 'meta_title', 'meta_description', 'meta_keywords', 'og_image', 'canonical', 'robots',
             ];
             // Fields that allow trusted inline HTML (CKEditor) — sanitized +
@@ -179,7 +180,7 @@ if ($action === 'new' || $action === 'edit') {
                 'engagement_title_html', 'why_title_html', 'industries_title_html',
                 'hireprocess_title_html',
                 'cta_title_html', 'cs_title_html', 'related_title_html', 'blog_title_html',
-                'final_cta_title_html',
+                'final_cta_title_html', 'final_cta_desc',
                 'expertise_text', 'foundation_text', 'tech_text', 'build_text', 'engagement_text',
                 'why_text', 'industries_text', 'hireprocess_text', 'cta_text', 'cs_text', 'related_text', 'blog_text',
                 'faq_intro',
@@ -238,6 +239,11 @@ if ($action === 'new' || $action === 'edit') {
                 ['question' => 'faq_question', 'answer' => 'faq_answer']));
 
             // Pickers (store IDs only; frontend resolves to URL/content)
+            $cta_warnings = [];
+            $data['section_cta_json'] = svc_section_cta_from_post($_POST, $cta_warnings);
+            foreach ($cta_warnings as $w) { flash('error', $w); }
+            $data['cs_story_ids_json'] = svc_case_study_ids_from_post($_POST);
+            $data['cs_hidden'] = !empty($_POST['cs_hidden']) ? 1 : 0;
             $data['related_hire_ids_json'] = json_encode(array_values(array_filter(array_map('intval', $_POST['related_hire_ids'] ?? []))));
             $data['related_service_ids_json'] = json_encode(array_values(array_filter(array_map('intval', $_POST['related_service_ids'] ?? []))));
             $data['blog_post_ids_json'] = json_encode(array_values(array_filter(array_map('intval', $_POST['blog_post_ids'] ?? []))));
@@ -273,7 +279,7 @@ if ($action === 'new' || $action === 'edit') {
         'industries_sub' => '', 'industries_title_html' => '', 'industries_text' => '',
         'hireprocess_sub' => '', 'hireprocess_title_html' => '', 'hireprocess_text' => '', 'hireprocess_image' => '',
         'cta_tag' => '', 'cta_title_html' => '', 'cta_text' => '',
-        'cs_sub' => '', 'cs_title_html' => '', 'cs_text' => '',
+        'cs_sub' => '', 'cs_title_html' => '', 'cs_text' => '', 'cs_hidden' => 0,
         'related_sub' => '', 'related_title_html' => '', 'related_text' => '',
         'blog_sub' => '', 'blog_title_html' => '', 'blog_text' => '', 'faq_intro' => '', 'faq_title' => '',
         'hero_card_title' => '', 'engineers_title' => '',
@@ -299,6 +305,9 @@ if ($action === 'new' || $action === 'edit') {
     $selected_related_hire_ids = array_map('intval', svc_json_decode($hire_page['related_hire_ids_json'] ?? null));
     $selected_related_service_ids = array_map('intval', svc_json_decode($hire_page['related_service_ids_json'] ?? null));
     $selected_blog_ids = array_map('intval', svc_json_decode($hire_page['blog_post_ids_json'] ?? null));
+    svc_section_cta_store(svc_json_decode($hire_page['section_cta_json'] ?? null));
+    $selected_cs_story_ids = array_map('intval', svc_json_decode($hire_page['cs_story_ids_json'] ?? null));
+    $cs_story_options = $pdo->query("SELECT id, title, slug FROM success_stories WHERE status = 'published' ORDER BY created_at DESC, id DESC")->fetchAll();
 
     // Pickers: other published hire pages, published services, published blog posts
     $other_hire_pages = array_filter(
@@ -508,6 +517,7 @@ if ($action === 'new' || $action === 'edit') {
                             <label for="engineers_title">Section Heading <span class="text-muted">(optional — defaults to "Meet Our Engineers")</span></label>
                             <input type="text" id="engineers_title" name="engineers_title" value="<?= attr($f['engineers_title']) ?>" placeholder="Meet Our Engineers">
                         </div>
+                        <?php svc_section_cta_fields('engineers'); ?>
                     </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field(
@@ -690,8 +700,8 @@ if ($action === 'new' || $action === 'edit') {
                             <input type="text" id="final_cta_btn_text" name="final_cta_btn_text" value="<?= attr($f['final_cta_btn_text']) ?>" placeholder="View Case Studies">
                         </div>
                         <div class="form-row" style="margin-bottom:0;">
-                            <label for="final_cta_btn_url">Button URL <span class="text-muted">(optional — defaults to /case-studies)</span></label>
-                            <input type="text" id="final_cta_btn_url" name="final_cta_btn_url" value="<?= attr($f['final_cta_btn_url']) ?>" placeholder="/case-studies">
+                            <label for="final_cta_btn_url">Button URL <span class="text-muted">(optional — defaults to /contact)</span></label>
+                            <input type="text" id="final_cta_btn_url" name="final_cta_btn_url" value="<?= attr($f['final_cta_btn_url']) ?>" placeholder="/contact">
                         </div>
                     </div></div>
                 </div>
@@ -699,13 +709,7 @@ if ($action === 'new' || $action === 'edit') {
                 <!-- ============ SUCCESS STORIES ============ -->
                 <div class="section-tabs__panel" data-panel="cases">
                     <div class="admin-card"><div class="admin-card__body"><?php hire_section_header('cs', $f, 'AI Teams That <span>Delivered</span>'); ?></div></div>
-                    <div class="admin-card"><div class="admin-card__body">
-                        <p class="text-muted" style="font-size:13px;margin:0;">
-                            This section now shows the 4 most recently published entries from the
-                            <a href="<?= ADMIN_URL ?>/success-stories.php" target="_blank" rel="noopener">Success Stories</a> master automatically —
-                            manually picking individual case studies here has been removed. Add or edit Success Stories there to control what appears.
-                        </p>
-                    </div></div>
+                    <?php svc_case_study_picker($cs_story_options, $selected_cs_story_ids, !empty($f['cs_hidden'])); ?>
                 </div>
 
                 <!-- ============ RELATED ============ -->
@@ -772,6 +776,7 @@ if ($action === 'new' || $action === 'edit') {
                             <label for="faq_intro">Intro Text</label>
                             <textarea id="faq_intro" name="faq_intro" rows="2"><?= e($f['faq_intro']) ?></textarea>
                         </div>
+                        <?php svc_section_cta_fields('faq'); ?>
                     </div></div>
                     <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('faqs', 'Questions', '+ Add FAQ',
@@ -865,7 +870,8 @@ if ($action === 'new' || $action === 'edit') {
         if (iconField) initIconPicker(iconField);
 
         // ---- CKEditor on every "_title_html" field (short inline fragments: bold/italic/link) ----
-        document.querySelectorAll('textarea[id$="_title_html"]').forEach(function (el) {
+        // Also the per-section CTA "text above/below the button" boxes and the Final CTA description.
+        document.querySelectorAll('textarea[id$="_title_html"], textarea.js-seccta-rich, #final_cta_desc').forEach(function (el) {
             ClassicEditor.create(el, { toolbar: ['bold', 'italic', 'link', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
         });
 

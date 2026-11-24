@@ -328,6 +328,7 @@ $service_links ??= [
                                     </div>
                                 </div>
                             </div>
+                            <?= section_cta_html($sec_cta ?? [], 'overview', false) ?>
                         </section>
                     <?php endif; ?>
 
@@ -358,6 +359,7 @@ $service_links ??= [
                                     <?php endforeach; ?>
                                 </div>
                             </div>
+                            <?= section_cta_html($sec_cta ?? [], 'benefits', false) ?>
                         </section>
                     <?php endif; ?>
 
@@ -461,6 +463,7 @@ $service_links ??= [
                             <?php endforeach; ?>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'grid') ?>
                 </section>
             <?php endif; ?>
 
@@ -513,6 +516,7 @@ $service_links ??= [
                             <div class="swiper-pagination"></div>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'whatyouget') ?>
                 </section>
             <?php endif; ?>
 
@@ -554,6 +558,7 @@ $service_links ??= [
                             <?php endforeach; ?>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'industries') ?>
                 </section>
             <?php endif; ?>
 
@@ -594,6 +599,7 @@ $service_links ??= [
                             <div class="swiper-pagination"></div>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'framework') ?>
                 </section>
             <?php endif; ?>
 
@@ -634,6 +640,7 @@ $service_links ??= [
                             <?php endforeach; ?>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'why') ?>
                 </section>
             <?php endif; ?>
 
@@ -682,6 +689,7 @@ $service_links ??= [
                             <?php endforeach; ?>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'engagement') ?>
                 </section>
             <?php endif; ?>
 
@@ -758,6 +766,7 @@ $service_links ??= [
                         </div>
 
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'process') ?>
                 </section>
             <?php endif; ?>
 
@@ -892,6 +901,7 @@ $service_links ??= [
 
                     </div>
 
+                    <?= section_cta_html($sec_cta ?? [], 'cs') ?>
                 </section>
             <?php endif; ?>
 
@@ -1129,6 +1139,7 @@ $service_links ??= [
                             <?php endforeach; ?>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'tech') ?>
                 </section>
             <?php endif; ?>
 
@@ -1281,6 +1292,7 @@ $service_links ??= [
                             <div class="swiper-pagination"></div>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'security') ?>
                 </section>
             <?php endif; ?>
 
@@ -1369,6 +1381,7 @@ $service_links ??= [
                         </div>
 
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'related') ?>
                 </section>
             <?php endif; ?>
 
@@ -1418,6 +1431,7 @@ $service_links ??= [
                             </a>
                         </div>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'blog') ?>
                 </section>
             <?php endif; ?>
 
@@ -1451,6 +1465,7 @@ $service_links ??= [
                             <?php endforeach; ?>
                         </ul>
                     </div>
+                    <?= section_cta_html($sec_cta ?? [], 'faq') ?>
                 </section>
             <?php endif; ?>
 
@@ -1470,7 +1485,7 @@ $service_links ??= [
 
                             <?php if (!empty($final_cta_desc)): ?>
                                 <p>
-                                    <?= e($final_cta_desc) ?>
+                                    <?= $final_cta_desc /* trusted HTML */ ?>
                                 </p>
                             <?php endif; ?>
 
@@ -1478,7 +1493,7 @@ $service_links ??= [
                                 <hr>
 
                                 <?php if (!empty($final_cta_btn_text)): ?>
-                                    <a href="<?= url($final_cta_btn_url ?: '/case-studies') ?>"
+                                    <a href="<?= attr(cta_link_url($final_cta_btn_url, '/contact')) ?>"
                                         class="theme-btn btn-style-border">
                                         <span class="btn-title">
                                             <?= e($final_cta_btn_text) ?>

@@ -207,6 +207,9 @@ if ($action === 'new' || $action === 'edit') {
                 ['text' => 'future_text_item'], [], ['active' => 'future_active']));
             // Capped at 4 to match the frontend section's fixed layout — see
             // pages/success-stories/single.php's $related_stories fallback.
+            $cta_warnings = [];
+            $cols['section_cta_json'] = svc_section_cta_from_post($_POST, $cta_warnings);
+            foreach ($cta_warnings as $w) { flash('error', $w); }
             $cols['related_story_ids_json'] = json_encode(array_slice(
                 array_values(array_unique(array_filter(array_map('intval', $_POST['related_story_ids'] ?? [])))),
                 0, 4
@@ -306,6 +309,7 @@ if ($action === 'new' || $action === 'edit') {
     }
     $selected_expert_expertise = array_map('strval', svc_json_decode($story['expert_expertise_json'] ?? null));
     $selected_related_story_ids = array_map('intval', svc_json_decode($story['related_story_ids_json'] ?? null));
+    svc_section_cta_store(svc_json_decode($story['section_cta_json'] ?? null));
     $other_stories = array_filter(
         get_success_stories($pdo, ['status' => 'published']),
         static fn($s) => (int) $s['id'] !== (int) ($f['id'] ?? 0)
@@ -542,6 +546,7 @@ if ($action === 'new' || $action === 'edit') {
                              'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <?php svc_section_cta_fields('objectives', true); ?>
                 </div>
 
                 <!-- ============ ARCHITECTURE ============ -->
@@ -574,6 +579,7 @@ if ($action === 'new' || $action === 'edit') {
                              'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <?php svc_section_cta_fields('architecture', true); ?>
                 </div>
 
                 <!-- ============ CHALLENGE ============ -->
@@ -596,6 +602,7 @@ if ($action === 'new' || $action === 'edit') {
                             <input type="text" id="challenge_image" name="challenge_image" value="<?= attr($f['challenge_image']) ?>">
                         </div>
                     </div></div>
+                    <?php svc_section_cta_fields('challenge', true); ?>
                 </div>
 
                 <!-- ============ SOLUTION ============ -->
@@ -618,6 +625,7 @@ if ($action === 'new' || $action === 'edit') {
                             <input type="text" id="solution_image" name="solution_image" value="<?= attr($f['solution_image']) ?>">
                         </div>
                     </div></div>
+                    <?php svc_section_cta_fields('solution', true); ?>
                 </div>
 
                 <!-- ============ WORKFLOW ============ -->
@@ -648,6 +656,7 @@ if ($action === 'new' || $action === 'edit') {
                              'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <?php svc_section_cta_fields('workflow', true); ?>
                 </div>
 
                 <!-- ============ RESULTS & IMPACT ============ -->
@@ -676,6 +685,7 @@ if ($action === 'new' || $action === 'edit') {
                              'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <?php svc_section_cta_fields('results', true); ?>
                 </div>
 
                 <!-- ============ WHAT WE DELIVERED ============ -->
@@ -705,6 +715,7 @@ if ($action === 'new' || $action === 'edit') {
                              'textarea[name="del_desc[]"]' => 'desc', 'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <?php svc_section_cta_fields('deliverables', true); ?>
                 </div>
 
                 <!-- ============ TECH STACK ============ -->
@@ -743,6 +754,7 @@ if ($action === 'new' || $action === 'edit') {
                              'input[name="tech_purpose[]"]' => 'purpose', 'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <?php svc_section_cta_fields('techstack', true); ?>
                 </div>
 
                 <!-- ============ WHY CHOOSE ============ -->
@@ -777,6 +789,7 @@ if ($action === 'new' || $action === 'edit') {
                             <textarea id="why_final_html" name="why_final_html" rows="4"><?= e($f['why_final_html']) ?></textarea>
                         </div>
                     </div></div>
+                    <?php svc_section_cta_fields('why', true); ?>
                 </div>
 
                 <!-- ============ CLIENT RESPONSIBILITIES ============ -->
@@ -803,6 +816,7 @@ if ($action === 'new' || $action === 'edit') {
                             ['input[name="resp_text[]"]' => 'text', 'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <?php svc_section_cta_fields('responsibilities', true); ?>
                 </div>
 
                 <!-- ============ FUTURE ENHANCEMENTS ============ -->
@@ -829,6 +843,7 @@ if ($action === 'new' || $action === 'edit') {
                             ['input[name="future_text_item[]"]' => 'text', 'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>
                     </div></div>
+                    <?php svc_section_cta_fields('future', true); ?>
                 </div>
 
                 <!-- ============ MEET THE EXPERT ============ -->
@@ -861,6 +876,7 @@ if ($action === 'new' || $action === 'edit') {
                             <div id="expert-expertise-picker" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
                         </div>
                     </div></div>
+                    <?php svc_section_cta_fields('expert', true); ?>
                 </div>
 
                 <!-- ============ RELATED STORIES ============ -->
@@ -1046,6 +1062,11 @@ if ($action === 'new' || $action === 'edit') {
                 toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'undo', 'redo'],
                 heading: CK_HEADING_OPTIONS
             }).catch(function (err) { console.error(err); });
+        });
+
+        // ---- CKEditor on each section's CTA "text above/below the button" boxes (bold/italic/link) ----
+        document.querySelectorAll('textarea.js-seccta-rich').forEach(function (el) {
+            ClassicEditor.create(el, { toolbar: ['bold', 'italic', 'link', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
         });
 
         // ---- Slug auto-generation ----

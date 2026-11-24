@@ -117,12 +117,18 @@ $cs_text       = $hire_page['cs_text'] ?? '';
 // always the 4 most recently published Success Stories (see
 // admin/success-stories.php, the single source of truth for these).
 $case_studies = [];
-if ($pdo) {
+// Admin can hide the section (cs_hidden) or hand-pick up to 4 stories
+// (cs_story_ids_json); with neither, it's the latest 4 as before.
+if ($pdo && empty($hire_page['cs_hidden'])) {
     $cs_category_map = [];
     foreach (get_success_story_categories($pdo, []) as $cs_cat) {
         $cs_category_map[(int) $cs_cat['id']] = $cs_cat['name'];
     }
-    foreach (array_slice(get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']), 0, 4) as $cs_story) {
+    $cs_stories = get_success_stories_by_ids($pdo, array_slice(hire_json($hire_page['cs_story_ids_json'] ?? null), 0, 4));
+    if (empty($cs_stories)) {
+        $cs_stories = array_slice(get_success_stories($pdo, ['status' => 'published', 'order' => 'created_at DESC, id DESC']), 0, 4);
+    }
+    foreach ($cs_stories as $cs_story) {
         $case_studies[] = [
             'title'    => $cs_story['title'],
             'category' => $cs_category_map[(int) ($cs_story['category_id'] ?? 0)] ?? '',
@@ -202,6 +208,9 @@ $shared_contact_intro_html = $shared_chrome['shared_contact_intro_html'];
 // --- Final CTA (bottom-of-page band) ---
 $final_cta_title_html = $hire_page['final_cta_title_html'] ?? '';
 $final_cta_desc       = $hire_page['final_cta_desc'] ?? '';
+
+// Optional per-section CTA blocks (see section_cta_html() in core/helpers.php).
+$sec_cta = hire_json($hire_page['section_cta_json'] ?? null);
 $final_cta_btn_text   = $hire_page['final_cta_btn_text'];
 $final_cta_btn_url    = $hire_page['final_cta_btn_url'];
 

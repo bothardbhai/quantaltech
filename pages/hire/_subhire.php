@@ -21,7 +21,7 @@
  *   $industries_sub, $industries_title_html*, $industries_text*, $industries[{icon,title,desc}]
  *   $hireprocess_sub, $hireprocess_title_html*, $hireprocess_text*, $hireprocess_image, $hireprocess_steps[{title,desc}]
  *   $cta_tag, $cta_title_html*, $cta_text*                          - mid-page CTA band
- *   $cs_sub, $cs_title_html*, $cs_text*, $case_studies[{title,category,image,url}] - always the latest 4 published Success Stories, not manually picked
+ *   $cs_sub, $cs_title_html*, $cs_text*, $case_studies[{title,category,image,url}] - admin-picked (max 4) or, by default, the latest 4 published Success Stories; empty when hidden
  *   $related_sub, $related_title_html*, $related_text*, $related_items[{label,title,slug,excerpt,featured_image}]
  *   $blog_sub, $blog_title_html*, $blog_text*, $blog_posts[{image,category,title,desc,link}]
  *   $faq_intro*, $faqs[{question,answer}]
@@ -391,6 +391,7 @@
 					</div>
 				<?php endif; ?>
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'engineers') ?>
 		</section>
 		<?php if (count($engineers) > 4): ?>
 			<script>
@@ -468,6 +469,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'expertise') ?>
 		</section>
 	<?php endif; ?>
 
@@ -520,6 +522,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'foundation') ?>
 		</section>
 	<?php endif; ?>
 
@@ -568,6 +571,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'tech') ?>
 		</section>
 	<?php endif; ?>
 
@@ -610,6 +614,7 @@
 				</div>
 
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'build') ?>
 		</section>
 	<?php endif; ?>
 
@@ -668,6 +673,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'engagement') ?>
 		</section>
 	<?php endif; ?>
 
@@ -720,6 +726,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'why') ?>
 		</section>
 	<?php endif; ?>
 
@@ -883,6 +890,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'industries') ?>
 		</section>
 	<?php endif; ?>
 
@@ -936,6 +944,7 @@
 				</div>
 
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'hireprocess') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1071,6 +1080,7 @@
 
 			</div>
 
+			<?= section_cta_html($sec_cta ?? [], 'cs') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1333,6 +1343,7 @@
 				</div>
 
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'related') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1381,6 +1392,7 @@
 					</a>
 				</div>
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'blog') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1414,6 +1426,7 @@
 					<?php endforeach; ?>
 				</ul>
 			</div>
+			<?= section_cta_html($sec_cta ?? [], 'faq') ?>
 		</section>
 	<?php endif; ?>
 
@@ -1433,7 +1446,7 @@
 
 					<?php if (!empty($final_cta_desc)): ?>
 						<p>
-							<?= e($final_cta_desc) ?>
+							<?= $final_cta_desc /* trusted HTML */ ?>
 						</p>
 					<?php endif; ?>
 
@@ -1441,7 +1454,7 @@
 						<hr>
 
 						<?php if (!empty($final_cta_btn_text)): ?>
-							<a href="<?= url($final_cta_btn_url ?: '/case-studies') ?>" class="theme-btn btn-style-border">
+							<a href="<?= attr(cta_link_url($final_cta_btn_url, '/contact')) ?>" class="theme-btn btn-style-border">
 								<span class="btn-title">
 									<?= e($final_cta_btn_text) ?>
 								</span>

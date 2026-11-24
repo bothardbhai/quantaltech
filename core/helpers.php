@@ -237,3 +237,89 @@ function strip_wrapping_p(string $html): string
     }
     return $html;
 }
+
+/**
+ * Validate a CTA button URL typed in the admin. Returns the cleaned value, or
+ * '' if it isn't an allowed kind: a site path ("/contact"), an anchor ("#form"),
+ * http(s)://, mailto: or tel:. Anything else (javascript:, data:, bare words)
+ * is rejected rather than rendered.
+ */
+function section_cta_safe_url(?string $raw): string
+{
+    $u = trim((string) $raw);
+    if ($u === '') {
+        return '';
+    }
+    if (preg_match('#^(/(?!/)|\#|https?://|mailto:|tel:)#i', $u)) {
+        return $u;
+    }
+    return '';
+}
+
+/**
+ * href for an admin-typed button link. A site path ("/contact") gets the site
+ * base prepended via url(); a full link (https://…, mailto:, tel:) or an
+ * #anchor is used as-is — wrapping those in url() produces broken addresses
+ * like "https://site.com/https://calendly.com/…". Blank (or an unsafe scheme
+ * such as javascript:) falls back to $default.
+ */
+function cta_link_url(?string $raw, string $default): string
+{
+    $u = trim((string) $raw);
+    if ($u === '') {
+        return url($default);
+    }
+    if (preg_match('#^(https?://|mailto:|tel:|\#)#i', $u)) {
+        return $u;
+    }
+    if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $u)) {
+        return url($default);
+    }
+    return url($u);
+}
+
+/**
+ * Optional per-section call-to-action block: text above a button, the button,
+ * and text below it — each only if the admin filled it in. Returns '' when the
+ * section has nothing set, so untouched pages render exactly as before.
+ *
+ * $all is the page's decoded section_cta_json ({sectionKey: {before, btn_text,
+ * btn_url, new_tab, after}}); call it just before a section's closing
+ * </section>. before/after are sanitized at save time (trusted HTML); the URL
+ * is re-validated here.
+ */
+function section_cta_html(array $all, string $key, bool $container = true): string
+{
+    $c = $all[$key] ?? null;
+    if (!is_array($c)) {
+        return '';
+    }
+    $before = trim((string) ($c['before'] ?? ''));
+    $after  = trim((string) ($c['after'] ?? ''));
+    $label  = trim((string) ($c['btn_text'] ?? ''));
+    $href   = section_cta_safe_url($c['btn_url'] ?? '');
+    $has_button = $label !== '' && $href !== '';
+    if ($before === '' && $after === '' && !$has_button) {
+        return '';
+    }
+
+    // $container = false for sections already nested inside a Bootstrap
+    // container/column (e.g. the Overview + Benefits blocks of a service page).
+    $out = ($container ? '<div class="container">' : '') . '<div class="section-cta" style="text-align:center;margin-top:40px;">';
+    if ($before !== '') {
+        $out .= '<div class="section-cta__text section-cta__text--before" style="margin-bottom:20px;">' . $before . '</div>';
+    }
+    if ($has_button) {
+        $link = $href[0] === '/' ? url($href) : $href;
+        // Same arrow-button markup the rest of the site uses (.theme-btn-main).
+        $out .= '<a class="theme-btn-main" href="' . attr($link) . '"'
+            . (!empty($c['new_tab']) ? ' target="_blank" rel="noopener"' : '')
+            . '><span class="theme-btn-arrow-left"><i class="far fa-long-arrow-right"></i></span>'
+            . '<span class="theme-btn">' . e($label) . '</span>'
+            . '<span class="theme-btn-arrow-right"><i class="far fa-long-arrow-right"></i></span></a>';
+    }
+    if ($after !== '') {
+        $out .= '<div class="section-cta__text section-cta__text--after" style="margin-top:20px;">' . $after . '</div>';
+    }
+    return $out . '</div>' . ($container ? '</div>' : '');
+}
