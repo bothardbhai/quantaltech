@@ -23,6 +23,16 @@ $user = auth_user();
          Root-relative on purpose: browsers block @font-face files fetched cross-origin, so an absolute BASE_URL host
          that differs from the host the admin is opened on (www vs non-www, localhost vs 127.0.0.1) would break the icons. -->
     <link rel="stylesheet" href="<?= attr(rtrim((string) parse_url(BASE_URL, PHP_URL_PATH), '/')) ?>/assets/css/fontawesome.css">
+    <!-- Browsers only fetch a font when something first uses it, so the picker would show empty boxes for its first
+         moments after opening. Ask for the two icon fonts up front (cached afterwards) so they're ready by then. -->
+    <script>
+        window.addEventListener('load', function () {
+            if (document.fonts && document.fonts.load) {
+                document.fonts.load('900 14px "Font Awesome 6 Pro"');
+                document.fonts.load('400 14px "Font Awesome 6 Brands"');
+            }
+        });
+    </script>
 </head>
 
 <body>
