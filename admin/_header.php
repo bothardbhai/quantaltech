@@ -19,6 +19,10 @@ $user = auth_user();
     <meta name="robots" content="noindex,nofollow">
     <title><?= e($admin_page_title) ?> — Admin</title>
     <link rel="stylesheet" href="<?= ADMIN_URL ?>/assets/css/admin.css">
+    <!-- Site Font Awesome (Pro, bundled in /assets/fonts) so the icon pickers and their previews actually draw icons.
+         Root-relative on purpose: browsers block @font-face files fetched cross-origin, so an absolute BASE_URL host
+         that differs from the host the admin is opened on (www vs non-www, localhost vs 127.0.0.1) would break the icons. -->
+    <link rel="stylesheet" href="<?= attr(rtrim((string) parse_url(BASE_URL, PHP_URL_PATH), '/')) ?>/assets/css/fontawesome.css">
 </head>
 
 <body>
