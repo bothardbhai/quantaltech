@@ -386,7 +386,7 @@ if ($action === 'new' || $action === 'edit') {
          initRepeater()/populateRepeaterRow()/initIconPicker() as soon as
          they're parsed, so these must already be defined by then. -->
     <script src="<?= ADMIN_URL ?>/assets/js/repeater.js"></script>
-    <script src="<?= ADMIN_URL ?>/assets/js/fa-icons.js"></script>
+    <script src="<?= ADMIN_URL ?>/assets/js/fa-icons.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/fa-icons.js') ?>"></script>
     <script src="<?= ADMIN_URL ?>/assets/js/icon-picker.js"></script>
 
     <div class="admin-page-header">
