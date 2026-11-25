@@ -303,9 +303,34 @@ function section_cta_html(array $all, string $key, bool $container = true): stri
         return '';
     }
 
+    // Scoped styles for the rich text above/below the button, emitted once per
+    // page (only when a CTA exists). The theme resets lists (no bullets/padding)
+    // and sizes <h2> as a page title, so restore sensible list markers and use
+    // heading sizes suited to a call-out; bullets stay left-aligned inside the
+    // centred block.
+    static $styled = false;
+    $out = '';
+    if (!$styled) {
+        $styled = true;
+        $out .= '<style>'
+            . '.section-cta__text{max-width:860px;margin-left:auto;margin-right:auto;}'
+            . '.section-cta__text h2,.section-cta__text h3,.section-cta__text h4{line-height:1.25;margin:0 0 14px;}'
+            . '.section-cta__text h2{font-size:clamp(26px,3vw,36px);}'
+            . '.section-cta__text h3{font-size:clamp(22px,2.4vw,28px);}'
+            . '.section-cta__text h4{font-size:20px;}'
+            . '.section-cta__text p{margin:0 0 12px;}'
+            . '.section-cta__text ul,.section-cta__text ol{display:inline-block;text-align:left;margin:0 0 14px;padding-left:1.4em;}'
+            . '.section-cta__text ul,.section-cta__text ul li{list-style:disc;}'
+            . '.section-cta__text ol,.section-cta__text ol li{list-style:decimal;}'
+            . '.section-cta__text li{margin-bottom:6px;}'
+            . '.section-cta__text blockquote{display:inline-block;max-width:100%;text-align:left;margin:0 0 14px;padding:4px 16px;border-left:3px solid #2fe7d9;}'
+            . '.section-cta__text>:last-child{margin-bottom:0;}'
+            . '</style>';
+    }
+
     // $container = false for sections already nested inside a Bootstrap
     // container/column (e.g. the Overview + Benefits blocks of a service page).
-    $out = ($container ? '<div class="container">' : '') . '<div class="section-cta" style="text-align:center;margin-top:40px;">';
+    $out .= ($container ? '<div class="container">' : '') . '<div class="section-cta" style="text-align:center;margin-top:40px;">';
     if ($before !== '') {
         $out .= '<div class="section-cta__text section-cta__text--before" style="margin-bottom:20px;">' . $before . '</div>';
     }

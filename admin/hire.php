@@ -870,8 +870,8 @@ if ($action === 'new' || $action === 'edit') {
         if (iconField) initIconPicker(iconField);
 
         // ---- CKEditor on every "_title_html" field (short inline fragments: bold/italic/link) ----
-        // Also the per-section CTA "text above/below the button" boxes and the Final CTA description.
-        document.querySelectorAll('textarea[id$="_title_html"], textarea.js-seccta-rich, #final_cta_desc').forEach(function (el) {
+        // Also the Final CTA description.
+        document.querySelectorAll('textarea[id$="_title_html"], #final_cta_desc').forEach(function (el) {
             ClassicEditor.create(el, { toolbar: ['bold', 'italic', 'link', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
         });
 
@@ -886,6 +886,15 @@ if ($action === 'new' || $action === 'edit') {
                 { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
             ]
         };
+
+        // ---- CKEditor on each section's CTA "text above/below the button" boxes (heading/bold/italic/link/lists/quote) ----
+        document.querySelectorAll('textarea.js-seccta-rich').forEach(function (el) {
+            ClassicEditor.create(el, {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList',
+                          '|', 'blockQuote', '|', 'undo', 'redo'],
+                heading: CK_HEADING_OPTIONS
+            }).catch(function (err) { console.error(err); });
+        });
 
         // ---- CKEditor on every "Intro Text" field (short section intro/description: heading/bold/italic/link) ----
         document.querySelectorAll('textarea[id$="_text"], #faq_intro').forEach(function (el) {

@@ -1064,9 +1064,13 @@ if ($action === 'new' || $action === 'edit') {
             }).catch(function (err) { console.error(err); });
         });
 
-        // ---- CKEditor on each section's CTA "text above/below the button" boxes (bold/italic/link) ----
+        // ---- CKEditor on each section's CTA "text above/below the button" boxes (heading/bold/italic/link/lists/quote) ----
         document.querySelectorAll('textarea.js-seccta-rich').forEach(function (el) {
-            ClassicEditor.create(el, { toolbar: ['bold', 'italic', 'link', '|', 'undo', 'redo'] }).catch(function (err) { console.error(err); });
+            ClassicEditor.create(el, {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList',
+                          '|', 'blockQuote', '|', 'undo', 'redo'],
+                heading: CK_HEADING_OPTIONS
+            }).catch(function (err) { console.error(err); });
         });
 
         // ---- Slug auto-generation ----
