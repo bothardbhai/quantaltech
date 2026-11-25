@@ -259,23 +259,23 @@ $service_links ??= [
                                     <div class="swiper-wrapper">
                                         <?php
                                         $clients = [
-                                            ['icici.png', 'ICICI'],
-                                            ['waterfield.png', 'Waterfield'],
-                                            ['grip.png', 'Grip'],
-                                            ['armstrong.png', 'Armstrong'],
-                                            ['elunic.jpg', 'Elunic'],
-                                            ['nortmaq.png', 'Nortmaq'],
-                                            ['xanevo.jpg', 'Xanevo'],
-                                            ['ackuity.jpg', 'Ackuity'],
-                                            ['benow_logo.png', 'Benow'],
-                                            ['brandtrust.jpg', 'Brand Trust'],
-                                            ['civiq.png', 'Civiq'],
-                                            ['corsano.png', 'Corsano'],
-                                            ['desert_recovery_center.png', 'Desert Recovery Center'],
+                                            ['icici.webp', 'ICICI'],
+                                            ['waterfield.webp', 'Waterfield'],
+                                            ['grip.webp', 'Grip'],
+                                            ['armstrong.webp', 'Armstrong'],
+                                            ['elunic.webp', 'Elunic'],
+                                            ['nortmaq.webp', 'Nortmaq'],
+                                            ['xanevo.webp', 'Xanevo'],
+                                            ['ackuity.webp', 'Ackuity'],
+                                            ['benow_logo.webp', 'Benow'],
+                                            ['brandtrust.webp', 'Brand Trust'],
+                                            ['civiq.webp', 'Civiq'],
+                                            ['corsano.webp', 'Corsano'],
+                                            ['desert_recovery_center.webp', 'Desert Recovery Center'],
                                             ['northwell-health.png', 'Northwell Health'],
-                                            ['osteopathic_healing_hands.png', 'Osteopathic Healing Hands'],
-                                            ['sanofi.png', 'Sanofi'],
-                                            ['street.png', 'Street'],
+                                            ['osteopathic_healing_hands.webp', 'Osteopathic Healing Hands'],
+                                            ['sanofi.webp', 'Sanofi'],
+                                            ['street.webp', 'Street'],
                                             ['tbl.webp', 'TBL'],
                                         ];
                                         foreach ($clients as $client):
@@ -525,7 +525,7 @@ $service_links ??= [
                 <section class="industries-section pb-100 dark-bg">
                     <div class="decor-glow decor-glow--left decor-glow--top" aria-hidden="true"></div>
                     <div class="object-shape tm-gsap-animate-circle d-none d-xl-block" aria-hidden="true">
-                        <img src="<?= asset('images/home-1/skills/object-shape.png') ?>" alt="img">
+                        <img src="<?= asset('images/home-1/skills/object-shape.webp') ?>" alt="img">
                     </div>
                     <div class="container">
                         <div class="sec-title text-center mb-70">
@@ -607,7 +607,7 @@ $service_links ??= [
             <?php if (!empty($why_cards)): ?>
                 <section class="why-quantal-section pb-100 section-bg">
                     <div class="about-vector tm-gsap-animate-circle">
-                        <img src="<?= asset('images/home-1/about/about-vector.png') ?>" alt="img">
+                        <img src="<?= asset('images/home-1/about/about-vector.webp') ?>" alt="img">
                     </div>
                     <div class="decor-glow decor-glow--right decor-glow--bottom" aria-hidden="true"></div>
                     <div class="container">

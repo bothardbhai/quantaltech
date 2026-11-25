@@ -2,6 +2,7 @@
 /** About - based on theme's page-about.html, content swapped to Quantal AI. */
 $page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'About - Quantal AI';
 $active_page = 'about';
+$needs_fancybox = true; // page has a data-fancybox video link (partials/footer.php loads fancybox only when set)
 
 // Services section below — every published Service Master entry becomes a
 // card automatically (service_number order), capped at 5 to fit the section's
@@ -55,7 +56,7 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 <!-- end main-content --> 
 <!-- About Section -->
 <section class="about-section section-padding fix">
-<div class="about-vector tm-gsap-animate-circle d-none d-xxl-block"><img src="<?= asset('images/home-1/about/about-vector.png') ?>" alt="img"></div>
+<div class="about-vector tm-gsap-animate-circle d-none d-xxl-block"><img src="<?= asset('images/home-1/about/about-vector.webp') ?>" alt="img"></div>
 <div class="about-shape d-none d-xxl-block"><img src="<?= asset('images/home-1/about/about-shape.png') ?>" alt="img"></div>
 <div class="light-bg d-none d-xxl-block"><img src="<?= asset('images/home-1/about/light-bg.png') ?>" alt="img"></div>
 <h2 class="stoke-title">About Quantal</h2>
@@ -109,7 +110,7 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 				data-video-src="<?= asset('/video/quantal-ai-upwork-final.mp4') ?>"
 				aria-label="Play brand explainer video">
 
-					<img src="<?= asset('images/home-1/about-image.jpg') ?>"
+					<img src="<?= asset('images/home-1/about-image.webp') ?>"
 						alt="Brand Explainer Video">
 
 					<span class="play-btn">
@@ -128,7 +129,7 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 	</div>
 	<?php if (!isset($active_page)) { ?>
 	<div class="about-image-video zoom-effect-style">
-    	<div class="about-video bg-cover tm-gsap-img-parallax mt-100" style="background-image: url('<?= asset('images/home-1/about-image.jpg') ?>');"></div>
+    	<div class="about-video bg-cover tm-gsap-img-parallax mt-100" style="background-image: url('<?= asset('images/home-1/about-image.webp') ?>');"></div>
     	<div class="video-outer">
     		<a href="https://www.youtube.com/watch?v=Fvae8nxzVz4" class="play-now" data-fancybox="gallery" data-caption="">
     		<i class="icon fa-solid fa-play"></i>
@@ -403,7 +404,7 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 <!--End Services Section -->
 <div class="multiple-section section-bg-2 section-padding pb-0">
 	<div class="inner section-bg section-padding">
-		<div class="bg-image bg-cover" style="background-image: url('<?= asset('images/home-1/multiple-sec-bg.jpg') ?>');"> </div>
+		<div class="bg-image bg-cover" style="background-image: url('<?= asset('images/home-1/multiple-sec-bg.webp') ?>');"> </div>
 		<div class="shape d-none d-xxl-block">
 		<img src="<?= asset('images/home-1/multiple-sec-shape-01.webp') ?>" alt="AI engineering process illustration - Quantal AI step-by-step production AI development" class="shape-1 tm-gsap-animate-circle">
 		<div class="light-shape"></div>

@@ -676,7 +676,7 @@ $page_robots = $story['robots'];
     <?php if (!empty($why_cards) || !empty($why_final_html)): ?>
         <section class="why-quantal-section pb-100 dark-bg">
             <div class="about-vector tm-gsap-animate-circle">
-                <img src="<?= asset('images/home-1/about/about-vector.png') ?>" alt="">
+                <img src="<?= asset('images/home-1/about/about-vector.webp') ?>" alt="">
             </div>
             <div class="decor-glow decor-glow--right decor-glow--bottom" aria-hidden="true"></div>
             <div class="container">

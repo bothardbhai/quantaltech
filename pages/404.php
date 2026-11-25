@@ -14,7 +14,7 @@ $active_page = $active_page ?? '';
 						<div class="col-xl-12">
 							<div class="error-page__inner theme-btn-main">
 								<div class="error-page__title-box">
-									<img src="<?= url('/assets/images/resource/404.png') ?>" alt="">
+									<img src="<?= url('/assets/images/resource/404.webp') ?>" alt="">
 									<h3 class="error-page__sub-title mt-50">Page not found!</h3>
 								</div>
 								<p class="error-page__text">Sorry we can't find that page! The page you are looking <br> for was never existed.</p>

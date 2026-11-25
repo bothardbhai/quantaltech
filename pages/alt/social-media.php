@@ -5,6 +5,7 @@
  */
 $page_title  = $page_title  ?? 'Social Media - Quantal AI';
 $active_page = $active_page ?? 'home';
+$needs_fancybox = true; // has a data-fancybox video link
 ?>
 
 <!--End Main Header -->

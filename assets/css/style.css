@@ -37,21 +37,6 @@ License: copyright commercial
 29. Clients Section
 30. Main Footer
 **********************************************/
-@import url("animate.css");
-@import url("swiper.min.css");
-@import url("slick.css");
-@import url("jquery.fancybox.min.css");
-@import url("nice-select.css");
-@import url("jquery-ui.css");
-@import url("linear.css");
-@import url("magnific-popup.css");
-@import url("fontawesome-free.css");
-@import url("fontawesome.css");
-@import url("flaticon.css");
-@import url("flaticon-tech.css");
-@import url("flaticon-set-business.css");
-@import url("tm-bs-mp.css");
-@import url("tm-utility-classes.css");
 @property --gradient-angle {
   syntax: "<angle>";
   initial-value: 360deg;

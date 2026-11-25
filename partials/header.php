@@ -36,9 +36,31 @@ if (!isset($page_seo)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <?php require PARTIALS_DIR . '/seo-head.php'; ?>
+    <?php if (!empty($preload_image)): ?>
+    <link rel="preload" as="image" href="<?= attr($preload_image) ?>" fetchpriority="high">
+    <?php endif; ?>
 
     <!-- Stylesheets -->
     <link href="<?= asset('css/bootstrap.min.css') ?>" rel="stylesheet">
+    <?php /* These 15 files used to be @import-ed at the top of style.css, which made the browser download
+             style.css first and only then discover them (a serial chain that held up first paint for
+             seconds). Linking them here lets them download in parallel; the order is unchanged, so the
+             cascade is identical. */ ?>
+    <link href="<?= asset('css/animate.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/swiper.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/slick.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/jquery.fancybox.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/nice-select.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/jquery-ui.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/linear.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/magnific-popup.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/fontawesome-free.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/fontawesome.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/flaticon.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/flaticon-tech.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/flaticon-set-business.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/tm-bs-mp.css') ?>" rel="stylesheet">
+    <link href="<?= asset('css/tm-utility-classes.css') ?>" rel="stylesheet">
     <link href="<?= asset('css/style.css') ?>" rel="stylesheet">
     <link href="<?= asset('css/responsive.css') ?>" rel="stylesheet">
     <link href="<?= asset('css/live-search.css') ?>" rel="stylesheet">

@@ -497,7 +497,7 @@ $final_cta_btn_url = '/case-studies';
 			<img src="<?= asset('images/home-1/skills/light-bg.png') ?>" alt="">
 		</div>
 		<div class="object-shape tm-gsap-animate-circle d-none d-xl-block" aria-hidden="true">
-			<img src="<?= asset('images/home-1/skills/object-shape.png') ?>" alt="">
+			<img src="<?= asset('images/home-1/skills/object-shape.webp') ?>" alt="">
 		</div>
 
 		<div class="container">
@@ -852,7 +852,7 @@ $final_cta_btn_url = '/case-studies';
 	<section class="why-quantal-section pb-100 section-bg-3">
 
 		<div class="about-vector tm-gsap-animate-circle">
-			<img src="<?= asset('images/home-1/about/about-vector.png') ?>" alt="">
+			<img src="<?= asset('images/home-1/about/about-vector.webp') ?>" alt="">
 		</div>
 		<div class="decor-glow decor-glow--right decor-glow--bottom" aria-hidden="true"></div>
 

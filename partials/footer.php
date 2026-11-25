@@ -169,11 +169,14 @@ $footer_link_groups = array_filter([
 <script src="<?= asset('js/jquery.js') ?>"></script>
 <script src="<?= asset('js/popper.min.js') ?>"></script>
 <script src="<?= asset('js/bootstrap.min.js') ?>"></script>
+<?php /* Page-weight trims (files stay in /assets/js, just not sent to every visitor):
+         - jquery-ui.js, three.js, hover-effect.umd.js: nothing on the site uses them (no .tp--hover-item /
+           .price-range-slider elements; script.js/gsap-custom.js guard those blocks behind a .length check).
+         - jquery.fancybox.js: only pages with a data-fancybox video link (set $needs_fancybox = true there). */ ?>
+<?php if (!empty($needs_fancybox)): ?>
 <script src="<?= asset('js/jquery.fancybox.js') ?>"></script>
-<script src="<?= asset('js/jquery-ui.js') ?>"></script>
-<script src="<?= asset('js/three.js') ?>"></script>
+<?php endif; ?>
 <script src="<?= asset('js/gsap.js') ?>"></script>
-<script src="<?= asset('js/hover-effect.umd.js') ?>"></script>
 <script src="<?= asset('js/gsap-scroll-to-plugin.js') ?>"></script>
 <script src="<?= asset('js/gsap-scroll-smoother.js') ?>"></script>
 <script src="<?= asset('js/gsap-scroll-trigger.js') ?>"></script>

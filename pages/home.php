@@ -6,6 +6,8 @@
  */
 $page_title = !empty($page_seo['title']) ? $page_seo['title'] : 'Quantal AI - Enterprise AI Solutions & Intelligent Automation';
 $active_page = $active_page ?? 'home';
+// Largest-above-the-fold image: partials/header.php emits a high-priority <link rel="preload"> for it.
+$preload_image = asset('images/quantal/services/hero_banner.webp');
 
 // "AI Services Built for Your Real Operations" slider — every published
 // Service Master entry becomes a slide automatically (service_number order).
@@ -32,7 +34,7 @@ if ($pdo) {
 ?>
 
 <section class="hero-section fix hero-1 bg-cover"
-  style="background-image: url('<?= asset('images/home-1/hero/hero-bg.jpg') ?>');">
+  style="background-image: url('<?= asset('images/home-1/hero/hero-bg.webp') ?>');">
   <div class="line-shape-animation cus-z-1 first w-100 h-100">
     <span></span>
     <span></span>
@@ -75,7 +77,7 @@ if ($pdo) {
       <div class="col-xl-3">
         <div class="hero-image">
           <div class="image fix">
-            <img data-speed=".7" src="<?= asset('images/quantal/services/hero_banner.webp') ?>" alt="img">
+            <img data-speed=".7" src="<?= asset('images/quantal/services/hero_banner.webp') ?>" alt="img" width="536" height="662" fetchpriority="high" decoding="async">
           </div>
           <div class="shape-1 float-bob-x">
             <img src="<?= asset('images/home-1/hero/shape1.png') ?>" alt="img">
@@ -142,7 +144,7 @@ if ($pdo) {
 </div>
 <section class="about-section section-padding fix">
   <div class="about-vector tm-gsap-animate-circle d-none d-xxl-block"><img
-      src="<?= asset('images/home-1/about/about-vector.png') ?>" alt="img"></div>
+      src="<?= asset('images/home-1/about/about-vector.webp') ?>" alt="img"></div>
   <div class="about-shape d-none d-xxl-block"><img src="<?= asset('images/home-1/about/about-shape.png') ?>" alt="img">
   </div>
   <div class="light-bg d-none d-xxl-block"><img src="<?= asset('images/home-1/about/light-bg.png') ?>" alt="img"></div>
@@ -206,7 +208,7 @@ if ($pdo) {
     </div>
     <div class="about-image-video zoom-effect-style">
       <div class="about-video bg-cover tm-gsap-img-parallax mt-100"
-        style="background-image: url('<?= asset('images/home-1/about-image.jpg') ?>');"></div>
+        style="background-image: url('<?= asset('images/home-1/about-image.webp') ?>');"></div>
       <div class="video-outer">
         <a href="<?= url('contact') ?>" class="play-now">
           <i class="icon fa-solid fa-arrow-right"></i>
@@ -488,7 +490,7 @@ if ($pdo) {
     <img src="<?= asset('images/home-1/skills/light-bg.png') ?>" alt="img">
   </div>
   <div class="object-shape d-none d-xl-block tm-gsap-animate-circle">
-    <img src="<?= asset('images/home-1/skills/object-shape.png') ?>" alt="img">
+    <img src="<?= asset('images/home-1/skills/object-shape.webp') ?>" alt="img">
   </div>
   <div class="container">
     <div class="row g-4">
@@ -868,7 +870,7 @@ if ($pdo) {
 
 <div class="multiple-section section-bg-2 section-padding pb-0">
   <div class="inner section-bg section-padding">
-    <div class="bg-image bg-cover" style="background-image: url(<?= asset('images/home-1/multiple-sec-bg.jpg') ?>);">
+    <div class="bg-image bg-cover" style="background-image: url(<?= asset('images/home-1/multiple-sec-bg.webp') ?>);">
     </div>
     <div class="shape d-none d-xxl-block">
       <img src="<?= asset('images/home-1/multiple-sec-shape-01.webp') ?>"

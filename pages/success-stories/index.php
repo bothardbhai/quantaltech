@@ -30,14 +30,14 @@ foreach (get_success_story_categories($pdo, ['status' => 'active']) as $ss_cat) 
 
 // --- Client logos (static per project instructions) ------------------------
 $ss_client_logos = [
-    ['file' => 'icici.png', 'alt' => 'ICICI'],
-    ['file' => 'waterfield.png', 'alt' => 'Waterfield'],
-    ['file' => 'grip.png', 'alt' => 'Grip'],
-    ['file' => 'armstrong.png', 'alt' => 'Armstrong'],
-    ['file' => 'elunic.jpg', 'alt' => 'Elunic'],
-    ['file' => 'nortmaq.png', 'alt' => 'Nortmaq'],
-    ['file' => 'xanevo.jpg', 'alt' => 'Xanevo'],
-    ['file' => 'ackuity.jpg', 'alt' => 'Ackuity'],
+    ['file' => 'icici.webp', 'alt' => 'ICICI'],
+    ['file' => 'waterfield.webp', 'alt' => 'Waterfield'],
+    ['file' => 'grip.webp', 'alt' => 'Grip'],
+    ['file' => 'armstrong.webp', 'alt' => 'Armstrong'],
+    ['file' => 'elunic.webp', 'alt' => 'Elunic'],
+    ['file' => 'nortmaq.webp', 'alt' => 'Nortmaq'],
+    ['file' => 'xanevo.webp', 'alt' => 'Xanevo'],
+    ['file' => 'ackuity.webp', 'alt' => 'Ackuity'],
 ];
 
 // --- Featured project: the one published story with `featured = 1` --------

@@ -205,7 +205,7 @@ $page_robots = $episode['robots'];
                 <img src="<?= asset('images/home-1/skills/light-bg.png') ?>" alt="">
             </div>
             <div class="object-shape tm-gsap-animate-circle d-none d-xl-block" aria-hidden="true">
-                <img src="<?= asset('images/home-1/skills/object-shape.png') ?>" alt="">
+                <img src="<?= asset('images/home-1/skills/object-shape.webp') ?>" alt="">
             </div>
             <div class="container">
                 <div class="section-title text-center mb-70">

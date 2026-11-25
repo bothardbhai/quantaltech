@@ -5,9 +5,10 @@
  */
 $page_title  = $page_title  ?? 'Digital Marketing - Quantal AI';
 $active_page = $active_page ?? 'home';
+$needs_fancybox = true; // has a data-fancybox video link
 ?>
 
-<section class="hero-section fix hero-1 bg-cover" style="background-image: url('/assets/images/home-1/hero/hero-bg.jpg');">
+<section class="hero-section fix hero-1 bg-cover" style="background-image: url('/assets/images/home-1/hero/hero-bg.webp');">
     <div class="line-shape-animation cus-z-1 first w-100 h-100">
         <span></span>
         <span></span>
@@ -108,7 +109,7 @@ $active_page = $active_page ?? 'home';
       </div>
     </div>
 </div><section class="about-section section-padding fix">
-    <div class="about-vector tm-gsap-animate-circle d-none d-xxl-block"><img src="/assets/images/home-1/about/about-vector.png" alt="img"></div>
+    <div class="about-vector tm-gsap-animate-circle d-none d-xxl-block"><img src="/assets/images/home-1/about/about-vector.webp" alt="img"></div>
     <div class="about-shape d-none d-xxl-block"><img src="/assets/images/home-1/about/about-shape.png" alt="img"></div>
     <div class="light-bg d-none d-xxl-block"><img src="/assets/images/home-1/about/light-bg.png" alt="img"></div>
     <h2 class="stoke-title">About</h2>
@@ -163,7 +164,7 @@ $active_page = $active_page ?? 'home';
         </div>
       </div>
       <div class="about-image-video zoom-effect-style">
-        <div class="about-video bg-cover tm-gsap-img-parallax mt-100" style="background-image: url('/assets/images/home-1/about-image.jpg');"></div>
+        <div class="about-video bg-cover tm-gsap-img-parallax mt-100" style="background-image: url('/assets/images/home-1/about-image.webp');"></div>
         <div class="video-outer">
           <a href="https://www.youtube.com/watch?v=Fvae8nxzVz4" class="play-now" data-fancybox="gallery" data-caption="">
             <i class="icon fa-solid fa-play"></i>
@@ -358,7 +359,7 @@ $active_page = $active_page ?? 'home';
       <img src="/assets/images/home-1/skills/light-bg.png" alt="img">
     </div>
     <div class="object-shape d-none d-xl-block tm-gsap-animate-circle">
-      <img src="/assets/images/home-1/skills/object-shape.png" alt="img">
+      <img src="/assets/images/home-1/skills/object-shape.webp" alt="img">
     </div>
     <div class="container">
       <div class="row g-4">
@@ -877,7 +878,7 @@ $active_page = $active_page ?? 'home';
     </div>
 </section><div class="multiple-section section-bg-2 section-padding pb-0">
     <div class="inner section-bg section-padding">
-        <div class="bg-image bg-cover" style="background-image: url(/assets/images/home-1/multiple-sec-bg.jpg);"> </div>
+        <div class="bg-image bg-cover" style="background-image: url(/assets/images/home-1/multiple-sec-bg.webp);"> </div>
         <div class="shape d-none d-xxl-block">
             <img src="/assets/images/home-1/multiple-sec-shape-01.png" alt="" class="shape-1 tm-gsap-animate-circle">
             <div class="light-shape"></div>
