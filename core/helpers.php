@@ -319,6 +319,8 @@ function section_cta_html(array $all, string $key, bool $container = true): stri
             . '.section-cta__text h3{font-size:clamp(22px,2.4vw,28px);}'
             . '.section-cta__text h4{font-size:20px;}'
             . '.section-cta__text p{margin:0 0 12px;}'
+            // The theme sets b/strong to dark grey (#333), which vanishes on dark sections.
+            . '.section-cta__text strong,.section-cta__text b{color:inherit;}'
             . '.section-cta__text ul,.section-cta__text ol{display:inline-block;text-align:left;margin:0 0 14px;padding-left:1.4em;}'
             . '.section-cta__text ul,.section-cta__text ul li{list-style:disc;}'
             . '.section-cta__text ol,.section-cta__text ol li{list-style:decimal;}'
