@@ -72,7 +72,7 @@ $footer_link_groups = array_filter([
         <div class="col-6 logo-section">
           <div>
             <a href="<?= url('/') ?>" class="footer-logo wow fadeInUp brand-logo" data-wow-delay=".3s">
-              <img class="img-fluid" src="<?= asset('images/brain-logo.png') ?>" alt="<?= attr(SITE_NAME) ?>">
+              <img class="img-fluid" src="<?= asset('images/brain-logo.webp') ?>" alt="<?= attr(SITE_NAME) ?>">
               <span class="brand-title">Quantal AI</span>
             </a>
           </div>

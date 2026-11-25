@@ -144,42 +144,42 @@
                                     <div class="swiper-wrapper">
                                         <div class="swiper-slide">
                                             <div class="brand-img2 image-fluid">
-                                                <img src="<?= asset('images/quantal/clients/icici.png') ?>" alt="ICICI">
+                                                <img src="<?= asset('images/quantal/clients/icici.webp') ?>" alt="ICICI">
                                             </div>
                                         </div>
                                         <div class="swiper-slide">
                                             <div class="brand-img2 image-fluid">
-                                                <img src="<?= asset('images/quantal/clients/waterfield.png') ?>" alt="Waterfield">
+                                                <img src="<?= asset('images/quantal/clients/waterfield.webp') ?>" alt="Waterfield">
                                             </div>
                                         </div>
                                         <div class="swiper-slide">
                                             <div class="brand-img2 image-fluid">
-                                                <img src="<?= asset('images/quantal/clients/grip.png') ?>" alt="Grip">
+                                                <img src="<?= asset('images/quantal/clients/grip.webp') ?>" alt="Grip">
                                             </div>
                                         </div>
                                         <div class="swiper-slide">
                                             <div class="brand-img2 image-fluid">
-                                                <img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="Armstrong">
+                                                <img src="<?= asset('images/quantal/clients/armstrong.webp') ?>" alt="Armstrong">
                                             </div>
                                         </div>
                                         <div class="swiper-slide">
                                             <div class="brand-img2 image-fluid">
-                                                <img src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Elunic">
+                                                <img src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Elunic">
                                             </div>
                                         </div>
                                         <div class="swiper-slide">
                                             <div class="brand-img2 image-fluid">
-                                                <img src="<?= asset('images/quantal/clients/nortmaq.png') ?>" alt="Nortmaq">
+                                                <img src="<?= asset('images/quantal/clients/nortmaq.webp') ?>" alt="Nortmaq">
                                             </div>
                                         </div>
                                         <div class="swiper-slide">
                                             <div class="brand-img2 image-fluid">
-                                                <img src="<?= asset('images/quantal/clients/xanevo.jpg') ?>" alt="Xanevo">
+                                                <img src="<?= asset('images/quantal/clients/xanevo.webp') ?>" alt="Xanevo">
                                             </div>
                                         </div>
                                         <div class="swiper-slide">
                                             <div class="brand-img2 image-fluid">
-                                                <img src="<?= asset('images/quantal/clients/ackuity.jpg') ?>" alt="Ackuity">
+                                                <img src="<?= asset('images/quantal/clients/ackuity.webp') ?>" alt="Ackuity">
                                             </div>
                                         </div>
                                     </div>
@@ -1748,7 +1748,7 @@
                                         <p class="text">&ldquo;Quantal AI and Team are EXPERTS at building ANY AI functionality you&rsquo;re seeking! We&rsquo;ve hired them for 2 projects already &mdash; each completed ON TIME and UNDER BUDGET. Highly Recommended!&rdquo;</p>
                                         <div class="infu">
                                         <div class="image">
-                                            <img src="<?= asset('images/quantal/clients/myhomecarebiz.jpg') ?>" alt="Melissa C">
+                                            <img src="<?= asset('images/quantal/clients/myhomecarebiz.webp') ?>" alt="Melissa C">
                                         </div>
                                         <div class="name-info">
                                             <h5 class="name">Melissa C</h5>
@@ -1762,7 +1762,7 @@
                                         <p class="text">&ldquo;Working with Quantal AI team has been an absolute pleasure. Their technical aptitude is outstanding &mdash; they&rsquo;re not only highly competent but also creative, thoughtful, and reliable. They built a complex integration for our wine business connecting PhotoRoom, Google Cloud, AWS, and Shopify, and it works beautifully.&rdquo;</p>
                                         <div class="infu">
                                         <div class="image">
-                                            <img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="David F">
+                                            <img src="<?= asset('images/quantal/clients/armstrong.webp') ?>" alt="David F">
                                         </div>
                                         <div class="name-info">
                                             <h5 class="name">David F</h5>
@@ -1776,7 +1776,7 @@
                                         <p class="text">&ldquo;It was a pleasure working with Quantal AI team. Communication was smooth, deadlines were respected, and the overall collaboration was professional and efficient. I would definitely consider working together again in the future. Recommended!&rdquo;</p>
                                         <div class="infu">
                                         <div class="image">
-                                            <img src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Ivana M">
+                                            <img src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Ivana M">
                                         </div>
                                         <div class="name-info">
                                             <h5 class="name">Ivana M</h5>

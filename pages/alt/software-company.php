@@ -77,7 +77,7 @@ $active_page = $active_page ?? 'home';
       </div>
       <div class="row g-4">
         <div class="col-lg-6">
-          <div id="rotatable-image" class="feature-image-1 appear_left"><img src="/assets/images/home-1/features/feature-image.png" alt="img"></div>
+          <div id="rotatable-image" class="feature-image-1 appear_left"><img src="/assets/images/home-1/features/feature-image.webp" alt="img"></div>
         </div>
         <div class="col-lg-6">
           <ul class="feature-list-items wow fadeInUp" data-wow-delay=".3s">

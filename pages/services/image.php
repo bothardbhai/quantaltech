@@ -9,7 +9,7 @@ $active_page = 'services';
 $current_slug = 'image';
 $page_label   = 'Image / Document AI';
 $crumb        = 'Image / Doc AI';
-$hero_image   = 'images/quantal/services/image_ai.png';
+$hero_image   = 'images/quantal/services/image_ai.webp';
 
 $overview_h   = 'Service Overview';
 $overview_p1  = 'KYC verification, fraud detection, signature verification, and intelligent document processing powered by computer vision and modern OCR pipelines. Our image and document AI is deployed at financial-services and recruiting clients where accuracy, audit trails, and compliance are non-negotiable.';

@@ -125,7 +125,7 @@ if (!isset($page_seo)) {
                         <div class="header-left">
                             <div class="logo">
                                 <a href="<?= attr(BASE_URL) ?>" title="<?= attr(SITE_NAME) ?>" class="brand-logo">
-                                    <img src="<?= asset('images/brain-logo.png') ?>" alt="<?= attr(SITE_NAME) ?>"
+                                    <img src="<?= asset('images/brain-logo.webp') ?>" alt="<?= attr(SITE_NAME) ?>"
                                         title="<?= attr(SITE_NAME) ?>" style="max-height:46px;width:auto;">
                                     <span class="brand-title">Quantal AI</span>
                                 </a>
@@ -164,7 +164,7 @@ if (!isset($page_seo)) {
                     <div class="upper-box">
                         <div class="nav-logo">
                             <a href="<?= attr(BASE_URL) ?>" class="brand-logo"><img
-                                    src="<?= asset('images/brain-logo.png') ?>" alt="<?= attr(SITE_NAME) ?>"
+                                    src="<?= asset('images/brain-logo.webp') ?>" alt="<?= attr(SITE_NAME) ?>"
                                     style="max-height:42px;"><span class="brand-title">Quantal AI</span></a>
                         </div>
                         <div class="close-btn"><i class="icon fa fa-times"></i></div>
@@ -230,7 +230,7 @@ if (!isset($page_seo)) {
                     <div class="inner-container">
                         <div class="logo">
                             <a href="<?= attr(BASE_URL) ?>" title="<?= attr(SITE_NAME) ?>" class="brand-logo">
-                                <img src="<?= asset('images/brain-logo.png') ?>" alt="<?= attr(SITE_NAME) ?>"
+                                <img src="<?= asset('images/brain-logo.webp') ?>" alt="<?= attr(SITE_NAME) ?>"
                                     title="<?= attr(SITE_NAME) ?>" style="max-height:42px;width:auto;">
                                 <span class="brand-title">Quantal AI</span>
                             </a>

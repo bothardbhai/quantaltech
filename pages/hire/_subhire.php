@@ -260,42 +260,42 @@
 					<div class="swiper-wrapper">
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/icici.png') ?>" alt="ICICI">
+								<img src="<?= asset('images/quantal/clients/icici.webp') ?>" alt="ICICI">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/waterfield.png') ?>" alt="Waterfield">
+								<img src="<?= asset('images/quantal/clients/waterfield.webp') ?>" alt="Waterfield">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/grip.png') ?>" alt="Grip">
+								<img src="<?= asset('images/quantal/clients/grip.webp') ?>" alt="Grip">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="Armstrong">
+								<img src="<?= asset('images/quantal/clients/armstrong.webp') ?>" alt="Armstrong">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Elunic">
+								<img src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Elunic">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/nortmaq.png') ?>" alt="Nortmaq">
+								<img src="<?= asset('images/quantal/clients/nortmaq.webp') ?>" alt="Nortmaq">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/xanevo.jpg') ?>" alt="Xanevo">
+								<img src="<?= asset('images/quantal/clients/xanevo.webp') ?>" alt="Xanevo">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/ackuity.jpg') ?>" alt="Ackuity">
+								<img src="<?= asset('images/quantal/clients/ackuity.webp') ?>" alt="Ackuity">
 							</div>
 						</div>
 					</div>
@@ -1034,7 +1034,7 @@
 										<?php
 										$cs_image = !empty($cs['image'])
 											? media_url($cs['image'])
-											: asset('images/quantal/case-studies/recruitment.png');
+											: asset('images/quantal/case-studies/recruitment.webp');
 										$cs_alt = !empty($cs['title']) ? $cs['title'] : 'Success story';
 										$cs_url = !empty($cs['url']) ? $cs['url'] : url('/success-stories');
 										?>
@@ -1128,7 +1128,7 @@
 								<img class="image-shape" src="<?= asset('images/home-1/team/image-shape.webp') ?>"
 									alt="">
 								<div class="image">
-									<img src="<?= asset('images/quantal/founders/shailesh-jain.png') ?>"
+									<img src="<?= asset('images/quantal/founders/shailesh-jain.webp') ?>"
 										alt="Shailesh Jain">
 								</div>
 							</div>
@@ -1153,7 +1153,7 @@
 								<img class="image-shape" src="<?= asset('images/home-1/team/image-shape.png') ?>"
 									alt="">
 								<div class="image">
-									<img src="<?= asset('images/quantal/founders/nirav-shah.png') ?>" alt="Nirav Shah">
+									<img src="<?= asset('images/quantal/founders/nirav-shah.webp') ?>" alt="Nirav Shah">
 								</div>
 							</div>
 							<div class="social-icon">
@@ -1201,7 +1201,7 @@
 											Recommended!&rdquo;</p>
 										<div class="infu">
 											<div class="image"><img
-													src="<?= asset('images/quantal/clients/myhomecarebiz.jpg') ?>"
+													src="<?= asset('images/quantal/clients/myhomecarebiz.webp') ?>"
 													alt="Melissa C"></div>
 											<div class="name-info">
 												<h5 class="name">Melissa C</h5>
@@ -1221,7 +1221,7 @@
 											beautifully.&rdquo;</p>
 										<div class="infu">
 											<div class="image"><img
-													src="<?= asset('images/quantal/clients/osteopathic_healing_hands.png') ?>"
+													src="<?= asset('images/quantal/clients/osteopathic_healing_hands.webp') ?>"
 													alt="David F"></div>
 											<div class="name-info">
 												<h5 class="name">David F</h5><span>Osteopathic Healing
@@ -1239,7 +1239,7 @@
 											again in the future. Recommended!&rdquo;</p>
 										<div class="infu">
 											<div class="image"><img
-													src="<?= asset('images/quantal/clients/elunic.jpg') ?>"
+													src="<?= asset('images/quantal/clients/elunic.webp') ?>"
 													alt="Ivana M"></div>
 											<div class="name-info">
 												<h5 class="name">Ivana M</h5><span>Elunic AG</span>
@@ -1285,7 +1285,7 @@
 							$svc_url = !empty($item['slug']) ? url('/' . $item['slug']) : '#';
 							$svc_image = !empty($item['featured_image'])
 								? media_url($item['featured_image'])
-								: asset('images/quantal/services/image_ai.png');
+								: asset('images/quantal/services/image_ai.webp');
 							?>
 
 							<div class="swiper-slide">

@@ -1122,7 +1122,7 @@ li {
   background-size: contain;
   -webkit-animation: pulse 1s infinite linear;
   animation: pulse 1s infinite linear;
-  background-image: url(../images/quantal/brand/logo.png);
+  background-image: url(../images/quantal/brand/logo.webp);
   content: "";
 }
 .preloader:before {

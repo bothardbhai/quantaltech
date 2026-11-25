@@ -65,9 +65,9 @@ if ($pdo) {
 	}
 }
 $blog_placeholders = [
-	['title' => 'How to Structure an AI Engineering Engagement', 'excerpt' => 'Dedicated hire vs team extension vs project delivery, and how to pick the right model for your roadmap.', 'featured_image' => asset('images/quantal/blog/Blog2-1.jpeg')],
-	['title' => 'What to Vet For When Hiring an LLM Engineer', 'excerpt' => 'The interview signals that actually predict production-grade Generative AI work.', 'featured_image' => asset('images/quantal/blog/Blog3-1.jpeg')],
-	['title' => 'MLOps From Day One: Why It Matters for Hired Teams', 'excerpt' => "Deployment pipelines, monitoring and governance shouldn't be an afterthought.", 'featured_image' => asset('images/quantal/blog/Blog4-1.jpeg')],
+	['title' => 'How to Structure an AI Engineering Engagement', 'excerpt' => 'Dedicated hire vs team extension vs project delivery, and how to pick the right model for your roadmap.', 'featured_image' => asset('images/quantal/blog/Blog2-1.webp')],
+	['title' => 'What to Vet For When Hiring an LLM Engineer', 'excerpt' => 'The interview signals that actually predict production-grade Generative AI work.', 'featured_image' => asset('images/quantal/blog/Blog3-1.webp')],
+	['title' => 'MLOps From Day One: Why It Matters for Hired Teams', 'excerpt' => "Deployment pipelines, monitoring and governance shouldn't be an afterthought.", 'featured_image' => asset('images/quantal/blog/Blog4-1.webp')],
 ];
 $blog_cards = $latest_posts;
 $bi = 0;
@@ -403,42 +403,42 @@ $final_cta_btn_url = '/case-studies';
 					<div class="swiper-wrapper">
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/icici.png') ?>" alt="ICICI">
+								<img src="<?= asset('images/quantal/clients/icici.webp') ?>" alt="ICICI">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/waterfield.png') ?>" alt="Waterfield">
+								<img src="<?= asset('images/quantal/clients/waterfield.webp') ?>" alt="Waterfield">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/grip.png') ?>" alt="Grip">
+								<img src="<?= asset('images/quantal/clients/grip.webp') ?>" alt="Grip">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="Armstrong">
+								<img src="<?= asset('images/quantal/clients/armstrong.webp') ?>" alt="Armstrong">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Elunic">
+								<img src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Elunic">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/nortmaq.png') ?>" alt="Nortmaq">
+								<img src="<?= asset('images/quantal/clients/nortmaq.webp') ?>" alt="Nortmaq">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/xanevo.jpg') ?>" alt="Xanevo">
+								<img src="<?= asset('images/quantal/clients/xanevo.webp') ?>" alt="Xanevo">
 							</div>
 						</div>
 						<div class="swiper-slide">
 							<div class="brand-img2 image-fluid">
-								<img src="<?= asset('images/quantal/clients/ackuity.jpg') ?>" alt="Ackuity">
+								<img src="<?= asset('images/quantal/clients/ackuity.webp') ?>" alt="Ackuity">
 							</div>
 						</div>
 					</div>
@@ -1273,7 +1273,7 @@ $final_cta_btn_url = '/case-studies';
 										<?php
 										$cs_image = !empty($cs['image'])
 											? media_url($cs['image'])
-											: asset('images/quantal/case-studies/recruitment.png');
+											: asset('images/quantal/case-studies/recruitment.webp');
 										$cs_alt = !empty($cs['title']) ? $cs['title'] : 'Case study';
 										?>
 										<div class="image not-hide-cursor" data-cursor="View<br>Case">
@@ -1362,7 +1362,7 @@ $final_cta_btn_url = '/case-studies';
 								<img class="image-shape" src="<?= asset('images/home-1/team/image-shape.webp') ?>"
 									alt="">
 								<div class="image">
-									<img src="<?= asset('images/quantal/founders/shailesh-jain.png') ?>"
+									<img src="<?= asset('images/quantal/founders/shailesh-jain.webp') ?>"
 										alt="Shailesh Jain">
 								</div>
 							</div>
@@ -1387,7 +1387,7 @@ $final_cta_btn_url = '/case-studies';
 								<img class="image-shape" src="<?= asset('images/home-1/team/image-shape.png') ?>"
 									alt="">
 								<div class="image">
-									<img src="<?= asset('images/quantal/founders/nirav-shah.png') ?>" alt="Nirav Shah">
+									<img src="<?= asset('images/quantal/founders/nirav-shah.webp') ?>" alt="Nirav Shah">
 								</div>
 							</div>
 							<div class="social-icon">
@@ -1453,7 +1453,7 @@ $final_cta_btn_url = '/case-studies';
 											Recommended!&rdquo;</p>
 										<div class="infu">
 											<div class="image"><img
-													src="<?= asset('images/quantal/clients/myhomecarebiz.jpg') ?>"
+													src="<?= asset('images/quantal/clients/myhomecarebiz.webp') ?>"
 													alt="Melissa C"></div>
 											<div class="name-info">
 												<h5 class="name">Melissa C</h5>
@@ -1473,7 +1473,7 @@ $final_cta_btn_url = '/case-studies';
 											beautifully.&rdquo;</p>
 										<div class="infu">
 											<div class="image"><img
-													src="<?= asset('images/quantal/clients/osteopathic_healing_hands.png') ?>"
+													src="<?= asset('images/quantal/clients/osteopathic_healing_hands.webp') ?>"
 													alt="David F"></div>
 											<div class="name-info">
 												<h5 class="name">David F</h5><span>Osteopathic Healing
@@ -1491,7 +1491,7 @@ $final_cta_btn_url = '/case-studies';
 											again in the future. Recommended!&rdquo;</p>
 										<div class="infu">
 											<div class="image"><img
-													src="<?= asset('images/quantal/clients/elunic.jpg') ?>"
+													src="<?= asset('images/quantal/clients/elunic.webp') ?>"
 													alt="Ivana M"></div>
 											<div class="name-info">
 												<h5 class="name">Ivana M</h5><span>Elunic AG</span>
@@ -1537,7 +1537,7 @@ $final_cta_btn_url = '/case-studies';
 							$svc_url = !empty($item['slug']) ? url('/services/' . $item['slug']) : '#';
 							$svc_image = !empty($item['featured_image'])
 								? media_url($item['featured_image'])
-								: asset('images/quantal/services/image_ai.png');
+								: asset('images/quantal/services/image_ai.webp');
 							?>
 
 							<div class="swiper-slide">

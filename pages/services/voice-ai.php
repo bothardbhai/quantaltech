@@ -10,7 +10,7 @@ $active_page = 'services';
 $current_slug = 'voice';
 $page_label = 'Voice AI Services';
 $crumb = 'Voice AI';
-$hero_image = 'images/quantal/services/voice_ai.png';
+$hero_image = 'images/quantal/services/voice_ai.webp';
 
 $overview_h = 'Service Overview';
 $overview_p1 = 'Conversational, multilingual, sentiment-aware voice agents that transform customer interactions. Our voice AI solutions handle complex conversations with human-like understanding - from 24/7 multilingual customer service to lead nurturing, payment reminders, and interview coaching.';

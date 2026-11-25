@@ -6,7 +6,7 @@ $active_page = 'services';
 $current_slug = 'text';
 $page_label = 'Text AI Services';
 $crumb = 'Text AI';
-$hero_image = 'images/quantal/services/text_ai.png';
+$hero_image = 'images/quantal/services/text_ai.webp';
 
 $overview_h = 'Service Overview';
 $overview_p1 = 'Intelligent chatbots, NLP-powered insights, and automation that streamline text-based communications. Our text AI solutions leverage the latest LLMs (OpenAI, Anthropic, Gemini) to understand intent, respond contextually, and automate everything from customer support to outbound sales.';

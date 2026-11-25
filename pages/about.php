@@ -64,10 +64,10 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 	<div class="col-xl-6">
 		<div class="about-image-items1">
 		<div class="about-thumb fix img-reveal">
-			<img data-speed=".7" src="<?= asset('images/quantal/engineering-production-1.png') ?>" alt="img">
+			<img data-speed=".7" src="<?= asset('images/quantal/engineering-production-1.webp') ?>" alt="img">
 		</div>
 		<div class="about-image-2 fix">
-			<img data-speed=".7s" src="<?= asset('images/quantal/engineering-production-2.png') ?>" alt="img">
+			<img data-speed=".7s" src="<?= asset('images/quantal/engineering-production-2.webp') ?>" alt="img">
 		</div>
 		<div class="about-circle-box">
 			<div class="circle-text">
@@ -192,7 +192,7 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 		<div class="row g-4">
 			<div class="col-lg-6">
 			<div id="rotatable-image" class="feature-image-1 appear_left">
-				<img src="<?= asset('images/home-1/features/feature-image.png') ?>" alt="img">
+				<img src="<?= asset('images/home-1/features/feature-image.webp') ?>" alt="img">
 			</div>
 			</div>
 			<div class="col-lg-6">
@@ -258,67 +258,67 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 				<div class="swiper-wrapper">
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/icici.png') ?>" alt="ICICI">
+							<img src="<?= asset('images/quantal/clients/icici.webp') ?>" alt="ICICI">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/waterfield.png') ?>" alt="Waterfield">
+							<img src="<?= asset('images/quantal/clients/waterfield.webp') ?>" alt="Waterfield">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/grip.png') ?>" alt="Grip">
+							<img src="<?= asset('images/quantal/clients/grip.webp') ?>" alt="Grip">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="Armstrong">
+							<img src="<?= asset('images/quantal/clients/armstrong.webp') ?>" alt="Armstrong">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Elunic">
+							<img src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Elunic">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/nortmaq.png') ?>" alt="Nortmaq">
+							<img src="<?= asset('images/quantal/clients/nortmaq.webp') ?>" alt="Nortmaq">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/xanevo.jpg') ?>" alt="Xanevo">
+							<img src="<?= asset('images/quantal/clients/xanevo.webp') ?>" alt="Xanevo">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/ackuity.jpg') ?>" alt="Ackuity">
+							<img src="<?= asset('images/quantal/clients/ackuity.webp') ?>" alt="Ackuity">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/benow_logo.png') ?>" alt="Benow">
+							<img src="<?= asset('images/quantal/clients/benow_logo.webp') ?>" alt="Benow">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/brandtrust.jpg') ?>" alt="Brand Trust">
+							<img src="<?= asset('images/quantal/clients/brandtrust.webp') ?>" alt="Brand Trust">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/civiq.png') ?>" alt="Civiq">
+							<img src="<?= asset('images/quantal/clients/civiq.webp') ?>" alt="Civiq">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/corsano.png') ?>" alt="Corsano">
+							<img src="<?= asset('images/quantal/clients/corsano.webp') ?>" alt="Corsano">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/desert_recovery_center.png') ?>" alt="Desert Recovery Center">
+							<img src="<?= asset('images/quantal/clients/desert_recovery_center.webp') ?>" alt="Desert Recovery Center">
 						</div>
 					</div>
 					<div class="swiper-slide">
@@ -328,17 +328,17 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/osteopathic_healing_hands.png') ?>" alt="Osteopathic Healing Hands">
+							<img src="<?= asset('images/quantal/clients/osteopathic_healing_hands.webp') ?>" alt="Osteopathic Healing Hands">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/sanofi.png') ?>" alt="Sanofi">
+							<img src="<?= asset('images/quantal/clients/sanofi.webp') ?>" alt="Sanofi">
 						</div>
 					</div>
 					<div class="swiper-slide">
 						<div class="brand-img2 image-fluid">
-							<img src="<?= asset('images/quantal/clients/street.png') ?>" alt="Street">
+							<img src="<?= asset('images/quantal/clients/street.webp') ?>" alt="Street">
 						</div>
 					</div>
 					<div class="swiper-slide">
@@ -513,7 +513,7 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 						<p class="text">&ldquo;Quantal AI and Team are EXPERTS at building ANY AI functionality you&rsquo;re seeking! We&rsquo;ve hired them for 2 projects already &mdash; each completed ON TIME and UNDER BUDGET. Highly Recommended!&rdquo;</p>
 						<div class="infu">
 							<div class="image">
-							<img src="<?= asset('images/quantal/clients/myhomecarebiz.jpg') ?>" alt="Melissa C">
+							<img src="<?= asset('images/quantal/clients/myhomecarebiz.webp') ?>" alt="Melissa C">
 							</div>
 							<div class="name-info">
 							<h5 class="name">Melissa C</h5>
@@ -541,7 +541,7 @@ function about_service_card(array $svc, int $num, string $extra_class = ''): voi
 						<p class="text">&ldquo;It was a pleasure working with Quantal AI team. Communication was smooth, deadlines were respected, and the overall collaboration was professional and efficient. Recommended!&rdquo;</p>
 						<div class="infu">
 							<div class="image">
-							<img src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Ivana M">
+							<img src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Ivana M">
 							</div>
 							<div class="name-info">
 							<h5 class="name">Ivana M</h5>

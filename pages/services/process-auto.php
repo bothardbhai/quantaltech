@@ -9,7 +9,7 @@ $active_page = 'services';
 $current_slug = 'process-auto';
 $page_label   = 'Process Automation';
 $crumb        = 'Process Automation';
-$hero_image   = 'images/quantal/services/process_ai.png';
+$hero_image   = 'images/quantal/services/process_ai.webp';
 
 $overview_h   = 'Service Overview';
 $overview_p1  = 'Reporting, reconciliations, compliance monitoring, and end-to-end workflow automation that removes manual work and reduces errors. We use AI agents and workflow orchestration platforms (n8n, Zapier, custom) to connect the systems you already use.';

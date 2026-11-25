@@ -75,7 +75,7 @@ if ($pdo) {
       <div class="col-xl-3">
         <div class="hero-image">
           <div class="image fix">
-            <img data-speed=".7" src="<?= asset('images/quantal/services/hero_banner.png') ?>" alt="img">
+            <img data-speed=".7" src="<?= asset('images/quantal/services/hero_banner.webp') ?>" alt="img">
           </div>
           <div class="shape-1 float-bob-x">
             <img src="<?= asset('images/home-1/hero/shape1.png') ?>" alt="img">
@@ -96,10 +96,10 @@ if ($pdo) {
               <div class="bg-shape">
                 <img src="<?= asset('images/home-1/hero/info-mask.png') ?>" alt="img">
               </div>
-              <!-- <img src="<?= asset('images/quantal/clients/icici.png') ?>" alt="ICICI" class="icon-1">
-                  <img src="<?= asset('images/quantal/clients/waterfield.png') ?>" alt="Waterfield" class="icon-2">
-                  <img src="<?= asset('images/quantal/clients/grip.png') ?>" alt="Grip" class="icon-3">
-                      <img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="Armstrong" class="icon-4">
+              <!-- <img src="<?= asset('images/quantal/clients/icici.webp') ?>" alt="ICICI" class="icon-1">
+                  <img src="<?= asset('images/quantal/clients/waterfield.webp') ?>" alt="Waterfield" class="icon-2">
+                  <img src="<?= asset('images/quantal/clients/grip.webp') ?>" alt="Grip" class="icon-3">
+                      <img src="<?= asset('images/quantal/clients/armstrong.webp') ?>" alt="Armstrong" class="icon-4">
                   <span>+</span> -->
             </div>
           </div>
@@ -152,10 +152,10 @@ if ($pdo) {
       <div class="col-xl-6 col-lg-8">
         <div class="about-image-items1">
           <div class="about-thumb fix img-reveal">
-            <img src="<?= asset('images/quantal/engineering-production-1.png') ?>" alt="img">
+            <img src="<?= asset('images/quantal/engineering-production-1.webp') ?>" alt="img">
           </div>
           <div class="about-image-2 fix">
-            <img src="<?= asset('images/quantal/engineering-production-2.png') ?>" alt="img">
+            <img src="<?= asset('images/quantal/engineering-production-2.webp') ?>" alt="img">
           </div>
           <div class="about-circle-box">
             <div class="circle-text">
@@ -231,67 +231,67 @@ if ($pdo) {
         <div class="swiper-wrapper">
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/icici.png') ?>" alt="ICICI">
+              <img src="<?= asset('images/quantal/clients/icici.webp') ?>" alt="ICICI">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/waterfield.png') ?>" alt="Waterfield">
+              <img src="<?= asset('images/quantal/clients/waterfield.webp') ?>" alt="Waterfield">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/grip.png') ?>" alt="Grip">
+              <img src="<?= asset('images/quantal/clients/grip.webp') ?>" alt="Grip">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="Armstrong">
+              <img src="<?= asset('images/quantal/clients/armstrong.webp') ?>" alt="Armstrong">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Elunic">
+              <img src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Elunic">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/nortmaq.png') ?>" alt="Nortmaq">
+              <img src="<?= asset('images/quantal/clients/nortmaq.webp') ?>" alt="Nortmaq">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/xanevo.jpg') ?>" alt="Xanevo">
+              <img src="<?= asset('images/quantal/clients/xanevo.webp') ?>" alt="Xanevo">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/ackuity.jpg') ?>" alt="Ackuity">
+              <img src="<?= asset('images/quantal/clients/ackuity.webp') ?>" alt="Ackuity">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/benow_logo.png') ?>" alt="Benow">
+              <img src="<?= asset('images/quantal/clients/benow_logo.webp') ?>" alt="Benow">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/brandtrust.jpg') ?>" alt="Brand Trust">
+              <img src="<?= asset('images/quantal/clients/brandtrust.webp') ?>" alt="Brand Trust">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/civiq.png') ?>" alt="Civiq">
+              <img src="<?= asset('images/quantal/clients/civiq.webp') ?>" alt="Civiq">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/corsano.png') ?>" alt="Corsano">
+              <img src="<?= asset('images/quantal/clients/corsano.webp') ?>" alt="Corsano">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/desert_recovery_center.png') ?>" alt="Desert Recovery Center">
+              <img src="<?= asset('images/quantal/clients/desert_recovery_center.webp') ?>" alt="Desert Recovery Center">
             </div>
           </div>
           <div class="swiper-slide">
@@ -301,18 +301,18 @@ if ($pdo) {
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/osteopathic_healing_hands.png') ?>"
+              <img src="<?= asset('images/quantal/clients/osteopathic_healing_hands.webp') ?>"
                 alt="Osteopathic Healing Hands">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/sanofi.png') ?>" alt="Sanofi">
+              <img src="<?= asset('images/quantal/clients/sanofi.webp') ?>" alt="Sanofi">
             </div>
           </div>
           <div class="swiper-slide">
             <div class="brand-img2 image-fluid">
-              <img src="<?= asset('images/quantal/clients/street.png') ?>" alt="Street">
+              <img src="<?= asset('images/quantal/clients/street.webp') ?>" alt="Street">
             </div>
           </div>
           <div class="swiper-slide">
@@ -385,7 +385,7 @@ if ($pdo) {
     <div class="row g-4">
       <div class="col-lg-6">
         <div id="rotatable-image" class="feature-image-1 appear_left">
-          <img src="<?= asset('images/home-1/features/feature-image.png') ?>" alt="img">
+          <img src="<?= asset('images/home-1/features/feature-image.webp') ?>" alt="img">
         </div>
       </div>
       <div class="col-lg-6">
@@ -452,7 +452,7 @@ if ($pdo) {
       <?php
       foreach ($home_services as $svc):
         $svc_url = url('/services/' . $svc['slug']);
-        $svc_image = $svc['featured_image'] !== '' ? media_url($svc['featured_image']) : asset('images/quantal/services/image_ai.png');
+        $svc_image = $svc['featured_image'] !== '' ? media_url($svc['featured_image']) : asset('images/quantal/services/image_ai.webp');
         ?>
         <div class="swiper-slide">
           <div class="service-block">
@@ -498,63 +498,63 @@ if ($pdo) {
             <div class="col-lg-4 col-md-4 col-sm-4 col-6 wow fadeInLeft" data-wow-delay=".3s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/openai.png') ?>" alt="OpenAI">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/openai.webp') ?>" alt="OpenAI">
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6 wow fadeInLeft" data-wow-delay=".5s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/perplexity.png') ?>" alt="Perplexity">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/perplexity.webp') ?>" alt="Perplexity">
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6 wow fadeInLeft" data-wow-delay=".7s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/anthropic.png') ?>" alt="Anthropic">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/anthropic.webp') ?>" alt="Anthropic">
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6 wow fadeInRight" data-wow-delay=".3s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/lovable.png') ?>" alt="Lovable">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/lovable.webp') ?>" alt="Lovable">
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6 wow fadeInRight" data-wow-delay=".5s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/midjourney.png') ?>" alt="MidJourney">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/midjourney.webp') ?>" alt="MidJourney">
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6 wow fadeInRight" data-wow-delay=".7s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/gemini.png') ?>" alt="Gemini">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/gemini.webp') ?>" alt="Gemini">
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6 wow fadeInLeft" data-wow-delay=".3s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/salesforce.png') ?>" alt="Salesforce">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/salesforce.webp') ?>" alt="Salesforce">
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6 wow fadeInLeft" data-wow-delay=".5s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/jira.png') ?>" alt="Jira">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/jira.webp') ?>" alt="Jira">
                 </div>
               </div>
             </div>
             <div class="col-lg-4 col-md-3 col-sm-4 col-6 wow fadeInLeft" data-wow-delay=".7s">
               <div class="skill-box">
                 <div class="skill-thumb">
-                  <img class="img-fluid" src="<?= asset('images/quantal/skills/aws.png') ?>" alt="AWS">
+                  <img class="img-fluid" src="<?= asset('images/quantal/skills/aws.webp') ?>" alt="AWS">
                 </div>
               </div>
             </div>
@@ -707,7 +707,7 @@ if ($pdo) {
             <div class="image-wrap">
               <img class="image-shape" src="<?= asset('images/home-1/team/image-shape.webp') ?>" alt="">
               <div class="image">
-                <img src="<?= asset('images/quantal/founders/shailesh-jain.png') ?>" alt="Shailesh Jain">
+                <img src="<?= asset('images/quantal/founders/shailesh-jain.webp') ?>" alt="Shailesh Jain">
               </div>
             </div>
             <div class="social-icon">
@@ -730,7 +730,7 @@ if ($pdo) {
             <div class="image-wrap">
               <img class="image-shape" src="<?= asset('images/home-1/team/image-shape.png') ?>" alt="">
               <div class="image">
-                <img src="<?= asset('images/quantal/founders/nirav-shah.png') ?>" alt="Nirav Shah">
+                <img src="<?= asset('images/quantal/founders/nirav-shah.webp') ?>" alt="Nirav Shah">
               </div>
             </div>
             <div class="social-icon">
@@ -992,7 +992,7 @@ if ($pdo) {
                         TIME and UNDER BUDGET. Highly Recommended!&rdquo;</p>
                       <div class="infu">
                         <div class="image">
-                          <img src="<?= asset('images/quantal/clients/myhomecarebiz.jpg') ?>" alt="Melissa C">
+                          <img src="<?= asset('images/quantal/clients/myhomecarebiz.webp') ?>" alt="Melissa C">
                         </div>
                         <div class="name-info">
                           <h5 class="name">Melissa C</h5>
@@ -1025,7 +1025,7 @@ if ($pdo) {
                         definitely consider working together again in the future. Recommended!&rdquo;</p>
                       <div class="infu">
                         <div class="image">
-                          <img src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Ivana M">
+                          <img src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Ivana M">
                         </div>
                         <div class="name-info">
                           <h5 class="name">Ivana M</h5>
@@ -1053,42 +1053,42 @@ if ($pdo) {
     <div class="swiper-wrapper">
       <div class="swiper-slide">
         <div class="brand-image1">
-          <img class="img-fluid" src="<?= asset('images/quantal/clients/icici.png') ?>" alt="ICICI">
+          <img class="img-fluid" src="<?= asset('images/quantal/clients/icici.webp') ?>" alt="ICICI">
         </div>
       </div>
       <div class="swiper-slide">
         <div class="brand-image1">
-          <img class="img-fluid" src="<?= asset('images/quantal/clients/waterfield.png') ?>" alt="Waterfield">
+          <img class="img-fluid" src="<?= asset('images/quantal/clients/waterfield.webp') ?>" alt="Waterfield">
         </div>
       </div>
       <div class="swiper-slide">
         <div class="brand-image1">
-          <img class="img-fluid" src="<?= asset('images/quantal/clients/grip.png') ?>" alt="Grip">
+          <img class="img-fluid" src="<?= asset('images/quantal/clients/grip.webp') ?>" alt="Grip">
         </div>
       </div>
       <div class="swiper-slide">
         <div class="brand-image1">
-          <img class="img-fluid" src="<?= asset('images/quantal/clients/armstrong.png') ?>" alt="Armstrong">
+          <img class="img-fluid" src="<?= asset('images/quantal/clients/armstrong.webp') ?>" alt="Armstrong">
         </div>
       </div>
       <div class="swiper-slide">
         <div class="brand-image1">
-          <img class="img-fluid" src="<?= asset('images/quantal/clients/elunic.jpg') ?>" alt="Elunic">
+          <img class="img-fluid" src="<?= asset('images/quantal/clients/elunic.webp') ?>" alt="Elunic">
         </div>
       </div>
       <div class="swiper-slide">
         <div class="brand-image1">
-          <img class="img-fluid" src="<?= asset('images/quantal/clients/nortmaq.png') ?>" alt="Nortmaq">
+          <img class="img-fluid" src="<?= asset('images/quantal/clients/nortmaq.webp') ?>" alt="Nortmaq">
         </div>
       </div>
       <div class="swiper-slide">
         <div class="brand-image1">
-          <img class="img-fluid" src="<?= asset('images/quantal/clients/xanevo.jpg') ?>" alt="Xanevo">
+          <img class="img-fluid" src="<?= asset('images/quantal/clients/xanevo.webp') ?>" alt="Xanevo">
         </div>
       </div>
       <div class="swiper-slide">
         <div class="brand-image1">
-          <img class="img-fluid" src="<?= asset('images/quantal/clients/ackuity.jpg') ?>" alt="Ackuity">
+          <img class="img-fluid" src="<?= asset('images/quantal/clients/ackuity.webp') ?>" alt="Ackuity">
         </div>
       </div>
     </div>
@@ -1142,9 +1142,9 @@ if ($pdo) {
 
         // Placeholder content if we don't have 3 posts yet
         $placeholders = [
-          ['slug' => 'voice-ai-engineering', 'title' => 'Building Production Voice AI: Lessons from 40+ Deployments', 'excerpt' => 'Architecture decisions, latency tuning, and integration patterns from real voice agent rollouts.', 'featured_image' => asset('images/quantal/blog/Blog2-1.jpeg'), 'featured_alt' => 'Voice AI', 'published_at' => null, 'category' => 'Voice AI'],
-          ['slug' => 'kyc-document-ai', 'title' => 'KYC at Scale: How AI is Reshaping Document Verification', 'excerpt' => 'OCR, liveness detection, and fraud scoring &mdash; what works in production today.', 'featured_image' => asset('images/quantal/blog/Blog3-1.jpeg'), 'featured_alt' => 'KYC AI', 'published_at' => null, 'category' => 'Document AI'],
-          ['slug' => 'agent-automation', 'title' => 'AI Agents That Run Real Workflows: A Practical Playbook', 'excerpt' => 'Designing autonomous agents for multi-step business processes &mdash; from prototype to production.', 'featured_image' => asset('images/quantal/blog/Blog4-1.jpeg'), 'featured_alt' => 'AI Agents', 'published_at' => null, 'category' => 'Automation'],
+          ['slug' => 'voice-ai-engineering', 'title' => 'Building Production Voice AI: Lessons from 40+ Deployments', 'excerpt' => 'Architecture decisions, latency tuning, and integration patterns from real voice agent rollouts.', 'featured_image' => asset('images/quantal/blog/Blog2-1.webp'), 'featured_alt' => 'Voice AI', 'published_at' => null, 'category' => 'Voice AI'],
+          ['slug' => 'kyc-document-ai', 'title' => 'KYC at Scale: How AI is Reshaping Document Verification', 'excerpt' => 'OCR, liveness detection, and fraud scoring &mdash; what works in production today.', 'featured_image' => asset('images/quantal/blog/Blog3-1.webp'), 'featured_alt' => 'KYC AI', 'published_at' => null, 'category' => 'Document AI'],
+          ['slug' => 'agent-automation', 'title' => 'AI Agents That Run Real Workflows: A Practical Playbook', 'excerpt' => 'Designing autonomous agents for multi-step business processes &mdash; from prototype to production.', 'featured_image' => asset('images/quantal/blog/Blog4-1.webp'), 'featured_alt' => 'AI Agents', 'published_at' => null, 'category' => 'Automation'],
         ];
 
         // Combine real + placeholders, take first 3
