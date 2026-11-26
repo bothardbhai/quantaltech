@@ -169,7 +169,11 @@ if ($action === 'new' || $action === 'edit') {
                 'status'        => $status,
                 'published_at'  => $pub_at,
                 'featured'      => $is_featured,
-                'ourclient_show_excerpt' => isset($_POST['ourclient_show_excerpt']) ? 1 : 0,
+                // An unticked box posts nothing, so a marker field tells "unticked" apart from "this form
+                // predates the checkbox" (e.g. a tab left open across a deploy) — the latter keeps the saved value.
+                'ourclient_show_excerpt' => isset($_POST['ourclient_show_excerpt_present'])
+                    ? (isset($_POST['ourclient_show_excerpt']) ? 1 : 0)
+                    : (int) ($story['ourclient_show_excerpt'] ?? 1),
                 'author_id'     => $user['id'] ?? null,
                 'final_cta_desc' => trim((string) ($_POST['final_cta_desc'] ?? '')),
                 // Read from "why_section_title", not "why_title" — that POST
@@ -495,6 +499,7 @@ if ($action === 'new' || $action === 'edit') {
                         </div>
                         <div class="form-row" style="margin:14px 0 0;">
                             <label style="font-weight:normal;">
+                                <input type="hidden" name="ourclient_show_excerpt_present" value="1">
                                 <input type="checkbox" name="ourclient_show_excerpt" value="1" <?= !empty($f['ourclient_show_excerpt']) ? 'checked' : '' ?>>
                                 <strong>Show the Short Description in this section</strong>
                                 <span class="text-muted">(the Short Description / Excerpt from the Core tab, which already appears in the hero and the listing card — untick to hide it here)</span>
