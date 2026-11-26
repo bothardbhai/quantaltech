@@ -169,6 +169,7 @@ if ($action === 'new' || $action === 'edit') {
                 'status'        => $status,
                 'published_at'  => $pub_at,
                 'featured'      => $is_featured,
+                'ourclient_show_excerpt' => isset($_POST['ourclient_show_excerpt']) ? 1 : 0,
                 'author_id'     => $user['id'] ?? null,
                 'final_cta_desc' => trim((string) ($_POST['final_cta_desc'] ?? '')),
                 // Read from "why_section_title", not "why_title" — that POST
@@ -260,7 +261,7 @@ if ($action === 'new' || $action === 'edit') {
         'responsibilities_sub' => '', 'responsibilities_title' => '', 'responsibilities_text' => '',
         'future_sub' => '', 'future_title' => '', 'future_text' => '',
         'final_cta_sub' => '', 'final_cta_title' => '', 'final_cta_desc' => '',
-        'ourclient_sub' => '', 'ourclient_title' => '', 'ourclient_intro_html' => '',
+        'ourclient_sub' => '', 'ourclient_title' => '', 'ourclient_intro_html' => '', 'ourclient_show_excerpt' => 1,
         'objectives_sub' => '', 'objectives_title' => '', 'objectives_intro_html' => '',
         'architecture_sub' => '', 'architecture_title' => '', 'architecture_intro_html' => '',
         'workflow_sub' => '', 'workflow_title' => '', 'workflow_intro_html' => '',
@@ -491,6 +492,13 @@ if ($action === 'new' || $action === 'edit') {
                         <div class="form-row" style="margin-bottom:0;">
                             <label for="ourclient_intro_html">Extra Intro <span class="text-muted">(optional — shown above the Short Description below, only if filled in)</span></label>
                             <textarea id="ourclient_intro_html" name="ourclient_intro_html" rows="3"><?= e($f['ourclient_intro_html']) ?></textarea>
+                        </div>
+                        <div class="form-row" style="margin:14px 0 0;">
+                            <label style="font-weight:normal;">
+                                <input type="checkbox" name="ourclient_show_excerpt" value="1" <?= !empty($f['ourclient_show_excerpt']) ? 'checked' : '' ?>>
+                                <strong>Show the Short Description in this section</strong>
+                                <span class="text-muted">(the Short Description / Excerpt from the Core tab, which already appears in the hero and the listing card — untick to hide it here)</span>
+                            </label>
                         </div>
                     </div></div>
                     <div class="admin-card"><div class="admin-card__body">

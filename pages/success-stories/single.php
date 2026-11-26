@@ -274,9 +274,11 @@ $page_robots = $story['robots'];
                     <?php if (!empty($ourclient_head['intro'])): ?>
                         <div class="text mt-2 mb-3"><?= $ourclient_head['intro'] /* trusted HTML */ ?></div>
                     <?php endif; ?>
+                    <?php if (($story['ourclient_show_excerpt'] ?? 1) && trim((string) $cs['intro']) !== ''): /* admin can untick "Show the Short Description in this section" */ ?>
                     <p class="wow fadeInUp" style="color:#c7c7c7;line-height:1.9;margin-bottom:18px;font-size:17px;">
                         <?= e($cs['intro']) ?>
                     </p>
+                    <?php endif; ?>
                     <?php if (!empty($cs_body_html)): ?>
                         <div class="wow fadeInUp" style="color:#c7c7c7;line-height:1.9;"><?= $cs_body_html ?></div>
                     <?php endif; ?>
