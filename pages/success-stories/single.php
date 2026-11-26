@@ -52,6 +52,7 @@ $cs = [
     'title' => $story['title'],
     'intro' => $story['excerpt'],
     'image' => media_url($story['featured_image']),
+    'alt' => ($story['featured_alt'] ?? '') !== '' ? $story['featured_alt'] : media_alt($story['featured_image'], $story['title']),
     'client' => $story['company_name'],
     'industry' => $story['industry'],
     'services' => $story['services_provided'],
@@ -206,6 +207,7 @@ $related_stories = array_map(static function ($s) use ($category_map) {
         'category' => $category_map[(int) ($s['category_id'] ?? 0)] ?? '',
         'client' => $s['company_name'],
         'image' => media_url($s['featured_image']),
+        'alt' => ($s['featured_alt'] ?? '') !== '' ? $s['featured_alt'] : media_alt($s['featured_image'], $s['title']),
         'slug' => $s['slug'],
     ];
 }, $related_stories);
@@ -281,7 +283,7 @@ $page_robots = $story['robots'];
                 </div>
                 <div class="col-lg-5">
                     <div class="ss-detail-image img-reveal fix mb-0">
-                        <img src="<?= attr($cs['image']) ?>" alt="<?= attr($cs['title']) ?>">
+                        <img src="<?= attr($cs['image']) ?>" alt="<?= attr($cs['alt']) ?>">
                     </div>
                 </div>
             </div>
@@ -447,7 +449,7 @@ $page_robots = $story['robots'];
                 </div>
                 <?php if (!empty($challenge['image'])): ?>
                     <div class="ss-detail-image img-reveal fix mb-4" style="max-width:520px;">
-                        <img src="<?= attr(media_url($challenge['image'])) ?>" alt="<?= attr($challenge['title']) ?>">
+                        <img src="<?= attr(media_url($challenge['image'])) ?>" alt="<?= attr(media_alt($challenge['image'], $challenge['title'])) ?>">
                     </div>
                 <?php endif; ?>
                 <div class="wow fadeInUp" style="color:#c7c7c7;line-height:1.9;font-size:17px;">
@@ -478,7 +480,7 @@ $page_robots = $story['robots'];
                 </div>
                 <?php if (!empty($solution['image'])): ?>
                     <div class="ss-detail-image img-reveal fix mb-4" style="max-width:520px;">
-                        <img src="<?= attr(media_url($solution['image'])) ?>" alt="<?= attr($solution['title']) ?>">
+                        <img src="<?= attr(media_url($solution['image'])) ?>" alt="<?= attr(media_alt($solution['image'], $solution['title'])) ?>">
                     </div>
                 <?php endif; ?>
                 <div class="wow fadeInUp" style="color:#c7c7c7;line-height:1.9;font-size:17px;">

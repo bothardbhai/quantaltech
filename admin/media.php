@@ -102,7 +102,7 @@ const MEDIA_ALLOWED_TYPES = [
  * under the given category's folder. Returns
  * ['ok' => bool, 'name' => original filename, 'message' => string].
  */
-function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by, string $category): array
+function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by, string $category, string $alt_text = ''): array
 {
     $original_name = (string) $file['name'];
 
@@ -161,8 +161,8 @@ function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by, string $
 
     try {
         $stmt = $pdo->prepare(
-            'INSERT INTO media (path, original_name, category, mime_type, size_bytes, width, height, uploaded_by)
-             VALUES (:p, :on, :cat, :mt, :sz, :w, :h, :u)'
+            'INSERT INTO media (path, original_name, category, mime_type, size_bytes, width, height, alt_text, uploaded_by)
+             VALUES (:p, :on, :cat, :mt, :sz, :w, :h, :alt, :u)'
         );
         $stmt->execute([
             ':p' => $rel_path,
@@ -172,6 +172,7 @@ function media_process_upload(array $file, PDO $pdo, ?int $uploaded_by, string $
             ':sz' => (int) $file['size'],
             ':w' => $w,
             ':h' => $h,
+            ':alt' => $type === 'image' ? $alt_text : '',
             ':u' => $uploaded_by,
         ]);
     } catch (PDOException $e) {
@@ -196,6 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
         exit;
     }
 
+    $upload_alt = mb_substr(trim(preg_replace('/\s+/', ' ', strip_tags((string) ($_POST['alt_text'] ?? ''))) ?? ''), 0, 255);
     $successes = [];
     $failures = [];
     $files = $_FILES['media'] ?? null;
@@ -214,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
                 'size' => $files['size'][$i],
             ];
             $result = $pdo
-                ? media_process_upload($single, $pdo, $user['id'] ?? null, $category)
+                ? media_process_upload($single, $pdo, $user['id'] ?? null, $category, $upload_alt)
                 : ['ok' => false, 'name' => $single['name'], 'message' => 'Database unavailable.'];
             if ($result['ok']) {
                 $successes[] = $result['name'];
@@ -234,6 +236,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'uploa
         flash('error', 'Choose at least one file to upload.');
     }
     header('Location: ' . ADMIN_URL . '/media.php');
+    exit;
+}
+
+// Save alt text for one image (the per-card box in the grid below)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_alt') {
+    csrf_verify_or_die();
+    $id = (int) ($_POST['id'] ?? 0);
+    $alt = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($_POST['alt_text'] ?? ''))) ?? '');
+    $alt = mb_substr($alt, 0, 255);
+    if ($id > 0 && $pdo) {
+        $pdo->prepare('UPDATE media SET alt_text = :a WHERE id = :id')->execute([':a' => $alt, ':id' => $id]);
+        flash('success', $alt === '' ? 'Alt text cleared.' : 'Alt text saved.');
+    }
+    $back = [];
+    if (!empty($_POST['category'])) { $back['category'] = (string) $_POST['category']; }
+    if (!empty($_POST['missing_alt'])) { $back['missing_alt'] = '1'; }
+    header('Location: ' . ADMIN_URL . '/media.php' . ($back ? '?' . http_build_query($back) : '') . '#media-' . $id);
     exit;
 }
 
@@ -268,16 +287,24 @@ if (!isset(MEDIA_CATEGORY_LABELS[$category_filter])) {
     $category_filter = '';
 }
 
+$missing_alt = !empty($_GET['missing_alt']);
 $rows = [];
+$missing_alt_total = 0;
 if ($pdo) {
     try {
+        $where = [];
+        $params = [];
         if ($category_filter !== '') {
-            $stmt = $pdo->prepare('SELECT * FROM media WHERE category = :c ORDER BY created_at DESC LIMIT 200');
-            $stmt->execute([':c' => $category_filter]);
-            $rows = $stmt->fetchAll();
-        } else {
-            $rows = $pdo->query('SELECT * FROM media ORDER BY created_at DESC LIMIT 200')->fetchAll();
+            $where[] = 'category = :c';
+            $params[':c'] = $category_filter;
         }
+        if ($missing_alt) {
+            $where[] = "mime_type LIKE 'image/%' AND alt_text = ''";
+        }
+        $stmt = $pdo->prepare('SELECT * FROM media' . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY created_at DESC LIMIT 200');
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll();
+        $missing_alt_total = (int) $pdo->query("SELECT COUNT(*) FROM media WHERE mime_type LIKE 'image/%' AND alt_text = ''")->fetchColumn();
     } catch (PDOException $e) {
     }
 }
@@ -302,6 +329,7 @@ require __DIR__ . '/_header.php';
     <?php foreach (MEDIA_CATEGORY_LABELS as $cat_key => $cat_label): ?>
         <a href="?category=<?= urlencode($cat_key) ?>" class="<?= $category_filter === $cat_key ? 'admin-btn admin-btn--small' : 'admin-btn admin-btn--ghost admin-btn--small' ?>"><?= e($cat_label) ?></a>
     <?php endforeach; ?>
+    <a href="?<?= $category_filter !== '' ? 'category=' . urlencode($category_filter) . '&' : '' ?>missing_alt=1" class="<?= $missing_alt ? 'admin-btn admin-btn--small' : 'admin-btn admin-btn--ghost admin-btn--small' ?>" style="margin-left:10px;" title="Images that have no alt text yet">Missing alt text (<?= (int) $missing_alt_total ?>)</a>
 </div>
 
 <div class="admin-modal-overlay" id="upload-modal-overlay">
@@ -322,6 +350,11 @@ require __DIR__ . '/_header.php';
                             <option value="<?= attr($cat_key) ?>"><?= e($cat_label) ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="form-row">
+                    <label for="media-alt">Alt text <span class="text-muted">(optional — images only; describes the image for screen readers and search engines)</span></label>
+                    <input type="text" id="media-alt" name="alt_text" maxlength="255" placeholder="e.g. Brokers reviewing an AI-generated listing video">
+                    <div class="help">Applied to every image in this upload. You can give each image its own alt text afterwards from the library.</div>
                 </div>
                 <div class="form-row" style="margin-bottom:0;">
                     <label for="media-files">Choose one or more files</label>
@@ -359,7 +392,7 @@ require __DIR__ . '/_header.php';
                     $ext = strtoupper((string) pathinfo((string) $r['path'], PATHINFO_EXTENSION));
                     $display_name = pathinfo((string) $r['original_name'], PATHINFO_FILENAME);
                     ?>
-                    <div style="border:1px solid var(--admin-border);border-radius:6px;padding:8px;background:#fff;">
+                    <div id="media-<?= (int) $r['id'] ?>" style="border:1px solid var(--admin-border);border-radius:6px;padding:8px;background:#fff;">
                         <div style="aspect-ratio:1;background:#f6f7fb;border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px;">
                             <?php if ($is_image): ?>
                                 <img src="<?= attr(media_url($r['path'])) ?>" alt="<?= attr($r['alt_text']) ?>" style="max-width:100%;max-height:100%;object-fit:cover;">
@@ -369,6 +402,20 @@ require __DIR__ . '/_header.php';
                         </div>
                         <div style="font-size:12px;font-weight:600;word-break:break-word;" title="<?= attr($r['original_name']) ?>"><?= e($display_name !== '' ? $display_name : $r['original_name']) ?></div>
                         <div class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px;"><?= e(MEDIA_CATEGORY_LABELS[$r['category']] ?? $r['category']) ?></div>
+                        <?php if ($is_image): ?>
+                            <form method="post" style="margin-top:8px;">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="save_alt">
+                                <input type="hidden" name="id" value="<?= (int) $r['id'] ?>">
+                                <input type="hidden" name="category" value="<?= attr($category_filter) ?>">
+                                <?php if ($missing_alt): ?><input type="hidden" name="missing_alt" value="1"><?php endif; ?>
+                                <label for="alt-<?= (int) $r['id'] ?>" style="font-size:11px;display:block;margin-bottom:2px;<?= trim((string) $r['alt_text']) === '' ? 'color:#b45309;' : '' ?>">Alt text<?= trim((string) $r['alt_text']) === '' ? ' — missing' : '' ?></label>
+                                <div style="display:flex;gap:4px;">
+                                    <input type="text" id="alt-<?= (int) $r['id'] ?>" name="alt_text" maxlength="255" value="<?= attr($r['alt_text']) ?>" placeholder="Describe the image" style="flex:1;min-width:0;font-size:12px;padding:4px 6px;">
+                                    <button type="submit" class="admin-btn admin-btn--small">Save</button>
+                                </div>
+                            </form>
+                        <?php endif; ?>
                         <div class="media-card__actions">
                             <button type="button" class="admin-btn admin-btn--ghost admin-btn--small copy-path" data-path="<?= attr($r['path']) ?>">Copy</button>
                             <form method="post" onsubmit="return confirm('Delete this file permanently? This cannot be undone.');">

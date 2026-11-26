@@ -50,6 +50,7 @@ if (!empty($ss_featured_rows)) {
         'title' => $fr['title'],
         'excerpt' => $fr['excerpt'],
         'image' => media_url($fr['featured_image']),
+        'alt' => ($fr['featured_alt'] ?? '') !== '' ? $fr['featured_alt'] : media_alt($fr['featured_image'], $fr['title']),
         'client' => $fr['company_name'],
         'slug' => $fr['slug'],
     ];
@@ -67,6 +68,7 @@ if ($pdo) {
             'excerpt' => $ss_story['excerpt'],
             'client' => $ss_story['company_name'],
             'image' => media_url($ss_story['featured_image']),
+            'alt' => ($ss_story['featured_alt'] ?? '') !== '' ? $ss_story['featured_alt'] : media_alt($ss_story['featured_image'], $ss_story['title']),
             'slug' => $ss_story['slug'],
         ];
     }
@@ -175,7 +177,7 @@ if ($pdo) {
                         <div class="col-lg-5 col-md-6 col-12">
                             <div class="ss-featured-image">
                                 <span class="ss-featured-badge">Featured</span>
-                                <img src="<?= attr($ss_featured['image']) ?>" alt="<?= attr($ss_featured['title']) ?>">
+                                <img src="<?= attr($ss_featured['image']) ?>" alt="<?= attr($ss_featured['alt'] ?? $ss_featured['title']) ?>">
                             </div>
                         </div>
                         <div class="col-lg-7 col-md-6 col-12">
@@ -247,7 +249,7 @@ if ($pdo) {
                             <a href="<?= attr($project_url) ?>" class="cursor-hide tp--hover-img"
                                 data-displacement="<?= attr($project['image']) ?>" data-intensity="0.6" data-speedin="1"
                                 data-speedout="1">
-                                <img src="<?= attr($project['image']) ?>" alt="<?= attr($project['title']) ?>">
+                                <img src="<?= attr($project['image']) ?>" alt="<?= attr($project['alt'] ?? $project['title']) ?>">
                             </a>
                         </div>
                         <div class="content">

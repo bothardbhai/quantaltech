@@ -20,7 +20,7 @@ $slot_class = $slot_class ?? 'case-block';
     <div class="image not-hide-cursor" data-cursor="View<br>Case">
         <a href="<?= attr($story['url']) ?>" class="cursor-hide tp--hover-img"
             data-displacement="<?= attr($story['image']) ?>" data-intensity="0.6" data-speedin="1" data-speedout="1">
-            <img src="<?= attr($story['image']) ?>" alt="<?= attr($story['title']) ?>">
+            <img src="<?= attr($story['image']) ?>" alt="<?= attr($story['alt'] ?? media_alt($story['image'], $story['title'])) ?>">
         </a>
     </div>
     <div class="content">

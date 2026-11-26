@@ -239,6 +239,42 @@ function strip_wrapping_p(string $html): string
 }
 
 /**
+ * Alt text saved for an image in the admin Media library (Media > Alt text), looked up by the image's
+ * path or full URL (as stored on a page, or as returned by media_url()). Returns $fallback when the image
+ * isn't in the library or has no alt text yet — pass whatever the template used before (usually the
+ * title) so nothing changes until an admin writes one. One query per request.
+ */
+function media_alt(?string $path_or_url, string $fallback = ''): string
+{
+    static $map = null;
+    $key = static function (string $p): string {
+        $p = preg_replace('#^https?://[^/]+#i', '', trim($p)) ?? '';
+        $p = (string) strtok($p, '?#');
+        $p = ltrim($p, '/');
+        $base = defined('BASE_URL') ? trim((string) parse_url(BASE_URL, PHP_URL_PATH), '/') : '';
+        if ($base !== '' && str_starts_with($p, $base . '/')) {
+            $p = substr($p, strlen($base) + 1);
+        }
+        return $p;
+    };
+    if ($map === null) {
+        $map = [];
+        try {
+            $pdo = function_exists('db') ? db() : null;
+            if ($pdo) {
+                foreach ($pdo->query("SELECT path, alt_text FROM media WHERE alt_text <> ''") as $r) {
+                    $map[$key((string) $r['path'])] = (string) $r['alt_text'];
+                }
+            }
+        } catch (\Throwable $e) {
+            // media table missing/unavailable: fall back silently
+        }
+    }
+    $k = $key((string) $path_or_url);
+    return ($k !== '' && isset($map[$k])) ? $map[$k] : $fallback;
+}
+
+/**
  * Validate a CTA button URL typed in the admin. Returns the cleaned value, or
  * '' if it isn't an allowed kind: a site path ("/contact"), an anchor ("#form"),
  * http(s)://, mailto: or tel:. Anything else (javascript:, data:, bare words)
