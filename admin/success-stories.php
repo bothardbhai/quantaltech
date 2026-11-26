@@ -182,6 +182,10 @@ if ($action === 'new' || $action === 'edit') {
                 'expert_member_id' => ((int) ($_POST['expert_member_id'] ?? 0)) > 0 ? (int) $_POST['expert_member_id'] : null,
                 'expert_expertise_json' => json_encode(array_values(array_filter(array_map('trim', $_POST['expert_expertise'] ?? [])))),
                 'techstack_display_mode' => ($_POST['techstack_display_mode'] ?? '') === 'pills' ? 'pills' : 'list',
+                // A form opened before this option existed posts no value; keep what's saved instead of resetting it.
+                'workflow_display_mode' => isset($_POST['workflow_display_mode'])
+                    ? ($_POST['workflow_display_mode'] === 'flow' ? 'flow' : 'accordion')
+                    : (($story['workflow_display_mode'] ?? 'accordion') === 'flow' ? 'flow' : 'accordion'),
             ];
             foreach ($plain_fields as $fld) {
                 $cols[$fld] = trim((string) ($_POST[$fld] ?? ''));
@@ -197,7 +201,7 @@ if ($action === 'new' || $action === 'edit') {
                 ['icon' => 'arch_icon', 'title' => 'arch_title', 'subtitle' => 'arch_subtitle'],
                 ['items' => 'arch_items'], ['active' => 'arch_active']));
             $cols['workflow_json'] = json_encode(svc_build_repeater($_POST,
-                ['title' => 'wf_title', 'desc' => 'wf_desc'], ['items' => 'wf_items'], ['active' => 'wf_active']));
+                ['icon' => 'wf_icon', 'title' => 'wf_title', 'desc' => 'wf_desc'], ['items' => 'wf_items'], ['active' => 'wf_active']));
             $cols['results_json'] = json_encode(svc_build_repeater($_POST,
                 ['title' => 'res_title', 'desc' => 'res_desc'], [], ['active' => 'res_active']));
             $cols['deliverables_json'] = json_encode(svc_build_repeater($_POST,
@@ -274,7 +278,7 @@ if ($action === 'new' || $action === 'edit') {
         'techstack_sub' => '', 'techstack_title' => '', 'techstack_intro_html' => '',
         'why_sub' => '', 'why_title' => '', 'why_intro_html' => '',
         'expert_tag' => '', 'expert_title' => '', 'expert_member_id' => 0, 'expert_expertise_json' => null,
-        'techstack_display_mode' => 'list',
+        'techstack_display_mode' => 'list', 'workflow_display_mode' => 'accordion',
     ], (array) $story);
 
     // JSON-backed data for the JS repeaters (edit mode) — empty arrays for "new"
@@ -658,13 +662,24 @@ if ($action === 'new' || $action === 'edit') {
                         </div>
                     </div></div>
                     <div class="admin-card"><div class="admin-card__body">
+                        <div class="form-row" style="margin-bottom:0;">
+                            <label>Display Style</label>
+                            <div style="display:flex;flex-wrap:wrap;gap:20px;margin-top:4px;">
+                                <label style="font-weight:normal;"><input type="radio" name="workflow_display_mode" value="accordion" <?= $f['workflow_display_mode'] !== 'flow' ? 'checked' : '' ?>> Accordion <span class="text-muted">(numbered steps that expand — the original look)</span></label>
+                                <label style="font-weight:normal;"><input type="radio" name="workflow_display_mode" value="flow" <?= $f['workflow_display_mode'] === 'flow' ? 'checked' : '' ?>> Flow cards <span class="text-muted">(numbered cards joined by arrows, like the Architecture section — description shows as the card subtitle, highlighted points as bullets)</span></label>
+                            </div>
+                        </div>
+                    </div></div>
+                    <div class="admin-card"><div class="admin-card__body">
                         <?php svc_repeater_field('workflow', 'Workflow Steps', '+ Add step',
+                            '<div class="form-row"><label>Icon <span class="text-muted">(optional — only used by the Flow cards style)</span></label><input type="text" class="icon-input" name="wf_icon[]" placeholder="fas fa-gear"></div>' .
                             '<div class="form-row"><label>Title</label><input type="text" name="wf_title[]"></div>' .
                             '<div class="form-row"><label>Description</label><textarea name="wf_desc[]" rows="3"></textarea></div>' .
                             '<div class="form-row"><label>Highlighted Points <span class="text-muted">(optional — one per line)</span></label><textarea name="wf_items[]" rows="3" placeholder="Prospect identification&#10;Company research"></textarea></div>' .
                             '<div class="form-row" style="margin-bottom:0;"><label><input type="checkbox" class="active-checkbox" name="wf_active[]" value="1" checked> Active</label></div>',
                             $repeater_data['workflow'],
-                            ['input[name="wf_title[]"]' => 'title', 'textarea[name="wf_desc[]"]' => 'desc',
+                            ['input.icon-input' => ['key' => 'icon', 'type' => 'icon'],
+                             'input[name="wf_title[]"]' => 'title', 'textarea[name="wf_desc[]"]' => 'desc',
                              'textarea[name="wf_items[]"]' => 'items',
                              'input.active-checkbox' => ['key' => 'active', 'type' => 'checkbox']]
                         ); ?>

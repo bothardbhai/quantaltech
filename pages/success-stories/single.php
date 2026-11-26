@@ -131,6 +131,8 @@ $solution = [
 ];
 
 $workflow = ss_json($story['workflow_json']);
+// 'accordion' (default, the original look) or 'flow' (numbered arrow-connected cards, like Architecture).
+$workflow_flow = ($story['workflow_display_mode'] ?? 'accordion') === 'flow';
 $results_impact = ss_json($story['results_json']);
 $deliverables = ss_json($story['deliverables_json']);
 $tech_stack_list = ss_json($story['tech_stack_items_json']);
@@ -392,34 +394,7 @@ $page_robots = $story['robots'];
                 <!-- 5-step flow diagram: numbered card per step, connected by
                  arrows on desktop/tablet and a vertical timeline on mobile.
                  Scoped entirely under .ss-architecture — see CSS. -->
-                <div class="ss-architecture">
-                    <?php foreach ($architecture as $i => $node): ?>
-                        <div class="ss-arch-item wow fadeInUp" data-wow-delay="<?= 0.1 + $i * 0.15 ?>s">
-                            <div class="ss-arch-number"><?= $i + 1 ?></div>
-                            <div class="ss-arch-connector"></div>
-                            <div class="ss-arch-card">
-                                <div class="ss-arch-icon"><i class="<?= attr($node['icon']) ?>"></i></div>
-                                <h4><?= e($node['title']) ?></h4>
-                                <?php if (!empty($node['subtitle'])): ?>
-                                    <span class="ss-arch-subtitle"><?= e($node['subtitle']) ?></span>
-                                <?php endif; ?>
-                                <?php if (!empty($node['items'])): ?>
-                                    <ul class="ss-arch-list">
-                                        <?php foreach ($node['items'] as $item): ?>
-                                            <li><?= e($item) ?></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <?php if ($i < count($architecture) - 1): ?>
-                            <div class="ss-arch-arrow<?= $i === 2 ? ' ss-arch-arrow--break' : '' ?>" aria-hidden="true">
-                                <div class="ss-arch-arrow-spacer"></div>
-                                <div class="ss-arch-arrow-icon"><i class="far fa-long-arrow-right"></i></div>
-                            </div>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </div>
+                <?php $flow_nodes = $architecture; require PARTIALS_DIR . '/ss-flow-diagram.php'; ?>
             </div>
             <?= section_cta_html($sec_cta ?? [], 'architecture') ?>
         </section>
@@ -489,8 +464,13 @@ $page_robots = $story['robots'];
 
     <!-- ============== 7. OUR WORKFLOW ============== -->
     <?php if (!empty($workflow)): ?>
-        <section class="process-accordion-section pb-100">
+        <section class="<?= $workflow_flow ? 'pb-100 dark-bg ss-architecture-section' : 'process-accordion-section pb-100' ?>">
             <div class="decor-glow decor-glow--right decor-glow--top" aria-hidden="true"></div>
+            <?php if ($workflow_flow): ?>
+                <div class="line-shape" aria-hidden="true">
+                    <img src="<?= asset('images/home-1/features/line-shape.png') ?>" alt="">
+                </div>
+            <?php endif; ?>
             <div class="container">
                 <div class="section-title text-center mb-70">
                     <div class="sub-title">
@@ -507,6 +487,18 @@ $page_robots = $story['robots'];
                     <?php endif; ?>
                 </div>
 
+                <?php if ($workflow_flow): ?>
+                    <?php
+                    // Same steps, shown as the Architecture-style flow cards (description becomes the card subtitle).
+                    $flow_nodes = array_map(static fn($step) => [
+                        'icon' => $step['icon'] ?? '',
+                        'title' => $step['title'] ?? '',
+                        'subtitle' => $step['desc'] ?? '',
+                        'items' => $step['items'] ?? [],
+                    ], $workflow);
+                    require PARTIALS_DIR . '/ss-flow-diagram.php';
+                    ?>
+                <?php else: ?>
                 <div class="accordion process-accordion" id="workflowAccordion">
                     <?php foreach ($workflow as $i => $step): ?>
                         <div class="accordion-item">
@@ -548,6 +540,7 @@ $page_robots = $story['robots'];
                         </div>
                     <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
             </div>
             <?= section_cta_html($sec_cta ?? [], 'workflow') ?>
         </section>
