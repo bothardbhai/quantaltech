@@ -182,6 +182,7 @@ if ($action === 'new' || $action === 'edit') {
                 'expert_member_id' => ((int) ($_POST['expert_member_id'] ?? 0)) > 0 ? (int) $_POST['expert_member_id'] : null,
                 'expert_expertise_json' => json_encode(array_values(array_filter(array_map('trim', $_POST['expert_expertise'] ?? [])))),
                 'hero_buttons_json' => ss_hero_buttons_from_post($_POST, $story['hero_buttons_json'] ?? null),
+                'final_cta_buttons_json' => ss_final_cta_buttons_from_post($_POST, $story['final_cta_buttons_json'] ?? null),
                 'techstack_display_mode' => ($_POST['techstack_display_mode'] ?? '') === 'pills' ? 'pills' : 'list',
                 // A form opened before this option existed posts no value; keep what's saved instead of resetting it.
                 'workflow_display_mode' => isset($_POST['workflow_display_mode'])
@@ -263,7 +264,7 @@ if ($action === 'new' || $action === 'edit') {
         'meta_title' => '', 'meta_description' => '', 'meta_keywords' => '',
         'og_image' => '', 'canonical' => '', 'robots' => '', 'schema_json' => '',
         'status' => 'draft', 'featured' => 0, 'published_at' => null,
-        'page_label' => '', 'crumb' => '', 'hero_eyebrow' => '', 'hero_buttons_json' => null,
+        'page_label' => '', 'crumb' => '', 'hero_eyebrow' => '', 'hero_buttons_json' => null, 'final_cta_buttons_json' => null,
         'services_provided' => '', 'tech_stack_summary' => '', 'third_party_services' => '', 'outcome_summary' => '',
         'challenge_sub' => '', 'challenge_title' => '', 'challenge_image' => '',
         'solution_sub' => '', 'solution_title' => '', 'solution_image' => '',
@@ -972,6 +973,33 @@ if ($action === 'new' || $action === 'edit') {
                         <div class="form-row" style="margin-bottom:0;">
                             <label for="final_cta_desc">Description</label>
                             <textarea id="final_cta_desc" name="final_cta_desc" rows="3"><?= e($f['final_cta_desc']) ?></textarea>
+                        </div>
+                    </div></div>
+                    <?php $fcb = svc_json_decode($f['final_cta_buttons_json'] ?? null); $fcb_walk = is_array($fcb['walk'] ?? null) ? $fcb['walk'] : []; ?>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <div class="repeater-row__title" style="margin-bottom:4px;">Walkthrough Button <span class="text-muted">(optional — shown under the phone and email; only appears when both text and link are filled in)</span></div>
+                        <div class="form-row">
+                            <label for="final_cta_btn_walk_text">Button Text</label>
+                            <input type="text" id="final_cta_btn_walk_text" name="final_cta_btn[walk_text]" value="<?= attr($fcb_walk['text'] ?? '') ?>" placeholder="Book a 30-min walkthrough">
+                        </div>
+                        <div class="form-row">
+                            <label for="final_cta_btn_walk_url">Button Link <span class="text-muted">(a site path like /contact, an #anchor, or a full https:// link)</span></label>
+                            <input type="text" id="final_cta_btn_walk_url" name="final_cta_btn[walk_url]" value="<?= attr($fcb_walk['url'] ?? '') ?>" placeholder="https://calendly.com/…">
+                            <label style="display:block;margin-top:6px;font-weight:normal;"><input type="checkbox" name="final_cta_btn[walk_new_tab]" value="1" <?= !empty($fcb_walk['new_tab']) ? 'checked' : '' ?>> Open in a new tab</label>
+                        </div>
+                        <div style="border-top:1px solid #3a3a3a;padding-top:12px;margin-top:6px;">
+                            <div class="repeater-row__title" style="margin-bottom:4px;">Contact Form Buttons <span class="text-muted">(leave blank to keep the defaults)</span></div>
+                            <div class="form-row">
+                                <label for="final_cta_btn_send_text">Send Button Text</label>
+                                <input type="text" id="final_cta_btn_send_text" name="final_cta_btn[send_text]" value="<?= attr($fcb['send_text'] ?? '') ?>" placeholder="Send message">
+                            </div>
+                            <div class="form-row">
+                                <label for="final_cta_btn_reset_text">Reset Button Text</label>
+                                <input type="text" id="final_cta_btn_reset_text" name="final_cta_btn[reset_text]" value="<?= attr($fcb['reset_text'] ?? '') ?>" placeholder="Reset">
+                            </div>
+                            <div class="form-row" style="margin-bottom:0;">
+                                <label style="font-weight:normal;"><input type="checkbox" name="final_cta_btn[hide_reset]" value="1" <?= !empty($fcb['hide_reset']) ? 'checked' : '' ?>> Hide the Reset button</label>
+                            </div>
                         </div>
                     </div></div>
                 </div>

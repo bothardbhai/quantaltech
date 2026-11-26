@@ -179,6 +179,11 @@ if (!empty($story['expert_member_id']) && $pdo) {
     }
 }
 
+// Bottom contact section extras (Final CTA tab): optional walkthrough button + form button labels.
+// Read here, not where they're printed — the "More Success Stories" cards reuse the name $story further down.
+$fcb_cfg = json_decode((string) ($story['final_cta_buttons_json'] ?? ''), true);
+$fcb_cfg = is_array($fcb_cfg) ? $fcb_cfg : [];
+
 $final_cta = [
     'sub' => $story['final_cta_sub'],
     'title' => $story['final_cta_title'],
@@ -980,6 +985,17 @@ $page_robots = $story['robots'];
                             </div>
                         </li>
                     </ul>
+                    <?php
+                    $fcb_walk =is_array($fcb_cfg['walk'] ?? null) ? $fcb_cfg['walk'] : [];
+                    $fcb_walk_href = section_cta_safe_url($fcb_walk['url'] ?? '');
+                    $fcb_send = trim((string) ($fcb_cfg['send_text'] ?? '')) !== '' ? trim((string) $fcb_cfg['send_text']) : 'Send message';
+                    $fcb_reset = trim((string) ($fcb_cfg['reset_text'] ?? '')) !== '' ? trim((string) $fcb_cfg['reset_text']) : 'Reset';
+                    ?>
+                    <?php if (trim((string) ($fcb_walk['text'] ?? '')) !== '' && $fcb_walk_href !== ''): ?>
+                        <div class="mt-4 theme-btn-main">
+                            <a href="<?= attr(cta_link_url($fcb_walk_href, '/contact')) ?>" class="theme-btn btn-style-one transform"<?= !empty($fcb_walk['new_tab']) ? ' target="_blank" rel="noopener"' : '' ?>><span class="btn-title"><?= e($fcb_walk['text']) ?></span></a>
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Right: existing Contact Form (shared, site-wide — same component/backend/JS as pages/contact.php) -->
@@ -1017,10 +1033,11 @@ $page_robots = $story['robots'];
                             <input name="form_botcheck" type="hidden" value="">
                             <?= honeypot_field() ?>
                             <button type="submit" id="contact-submit-btn"
-                                class="theme-btn btn-style-one transform"><span class="btn-title">Send
-                                    message</span></button>
-                            <button type="reset" class="theme-btn btn-style-one transform"><span
-                                    class="btn-title">Reset</span></button>
+                                class="theme-btn btn-style-one transform"><span class="btn-title"><?= e($fcb_send) ?></span></button>
+                            <?php if (empty($fcb_cfg['hide_reset'])): ?>
+                                <button type="reset" class="theme-btn btn-style-one transform"><span
+                                        class="btn-title"><?= e($fcb_reset) ?></span></button>
+                            <?php endif; ?>
                         </div>
                     </form>
                     <?= recaptcha_script() ?>

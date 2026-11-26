@@ -238,6 +238,35 @@ function ss_hero_buttons_from_post(array $post, ?string $existing_json): ?string
 }
 
 /**
+ * JSON for a Success Story's `final_cta_buttons_json` from the posted final_cta_btn[...] fields: an extra
+ * "walkthrough" button (text/url/new_tab) shown with the phone + email, and the contact form's Send / Reset
+ * labels (hide_reset hides Reset). Not posting final_cta_btn at all (a form opened before these existed)
+ * keeps the saved value. Unsafe links are dropped with a flash.
+ */
+function ss_final_cta_buttons_from_post(array $post, ?string $existing_json): ?string
+{
+    if (!isset($post['final_cta_btn']) || !is_array($post['final_cta_btn'])) {
+        return $existing_json;
+    }
+    $p = $post['final_cta_btn'];
+    $raw_url = trim((string) ($p['walk_url'] ?? ''));
+    $url = section_cta_safe_url($raw_url);
+    if ($raw_url !== '' && $url === '') {
+        flash('error', 'The walkthrough button link was not saved: it must start with /, #, http://, https://, mailto: or tel:.');
+    }
+    return json_encode([
+        'walk' => [
+            'text'    => trim(strip_tags((string) ($p['walk_text'] ?? ''))),
+            'url'     => $url,
+            'new_tab' => !empty($p['walk_new_tab']) ? 1 : 0,
+        ],
+        'send_text'  => trim(strip_tags((string) ($p['send_text'] ?? ''))),
+        'reset_text' => trim(strip_tags((string) ($p['reset_text'] ?? ''))),
+        'hide_reset' => !empty($p['hide_reset']) ? 1 : 0,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
+/**
  * Cleaned posted value for a page's `cs_story_ids_json` column (max 4 IDs).
  */
 function svc_case_study_ids_from_post(array $post): string
