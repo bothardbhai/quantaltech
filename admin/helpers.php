@@ -210,6 +210,34 @@ function svc_section_cta_from_post(array $post, array &$warnings = []): string
 }
 
 /**
+ * JSON for a Success Story's `hero_buttons_json` from the posted hero_btn[btn1|btn2][text|url|new_tab|hide]
+ * fields. A form that doesn't post hero_btn at all (opened before the fields existed) keeps the saved value
+ * instead of wiping it. A link that isn't a site path, #anchor, http(s), mailto: or tel: is dropped with a flash.
+ */
+function ss_hero_buttons_from_post(array $post, ?string $existing_json): ?string
+{
+    if (!isset($post['hero_btn']) || !is_array($post['hero_btn'])) {
+        return $existing_json;
+    }
+    $out = [];
+    foreach (['btn1' => 1, 'btn2' => 2] as $key => $n) {
+        $c = is_array($post['hero_btn'][$key] ?? null) ? $post['hero_btn'][$key] : [];
+        $raw_url = trim((string) ($c['url'] ?? ''));
+        $url = section_cta_safe_url($raw_url);
+        if ($raw_url !== '' && $url === '') {
+            flash('error', 'The link for hero button ' . $n . ' was not saved: it must start with /, #, http://, https://, mailto: or tel:.');
+        }
+        $out[$key] = [
+            'text'    => trim(strip_tags((string) ($c['text'] ?? ''))),
+            'url'     => $url,
+            'new_tab' => !empty($c['new_tab']) ? 1 : 0,
+            'hide'    => !empty($c['hide']) ? 1 : 0,
+        ];
+    }
+    return json_encode($out, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
+/**
  * Cleaned posted value for a page's `cs_story_ids_json` column (max 4 IDs).
  */
 function svc_case_study_ids_from_post(array $post): string

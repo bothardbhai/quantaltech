@@ -243,14 +243,36 @@ $page_robots = $story['robots'];
                     <p class="mb-4" style="color:#c7c7c7;font-size:17px;line-height:30px;max-width:600px;">
                         <?= e($cs['intro']) ?>
                     </p>
+                    <?php
+                    // Admin-editable hero buttons (Hero tab). Blank text/link = the original defaults.
+                    $hero_btn_cfg = json_decode((string) ($story['hero_buttons_json'] ?? ''), true);
+                    $hero_btn_cfg = is_array($hero_btn_cfg) ? $hero_btn_cfg : [];
+                    $hero_btns = [];
+                    foreach ([
+                        'btn1' => ['Book a Free Scoping Call', '/contact', 'theme-btn btn-style-one me-3'],
+                        'btn2' => ['View Case Studies', '/success-stories', 'theme-btn btn-style-border'],
+                    ] as $hb_key => [$hb_text, $hb_url, $hb_class]) {
+                        $hb = is_array($hero_btn_cfg[$hb_key] ?? null) ? $hero_btn_cfg[$hb_key] : [];
+                        if (!empty($hb['hide'])) {
+                            continue;
+                        }
+                        $hero_btns[] = [
+                            'text' => trim((string) ($hb['text'] ?? '')) !== '' ? trim((string) $hb['text']) : $hb_text,
+                            'href' => cta_link_url($hb['url'] ?? '', $hb_url),
+                            'class' => $hb_class,
+                            'new_tab' => !empty($hb['new_tab']),
+                        ];
+                    }
+                    ?>
+                    <?php if ($hero_btns): ?>
                     <div class="service-btns">
-                        <a href="<?= url('/contact') ?>" class="theme-btn btn-style-one me-3">
-                            <span class="btn-title">Book a Free Scoping Call</span>
-                        </a>
-                        <a href="<?= url('/success-stories') ?>" class="theme-btn btn-style-border">
-                            <span class="btn-title">View Case Studies</span>
-                        </a>
+                        <?php foreach ($hero_btns as $hb): ?>
+                            <a href="<?= attr($hb['href']) ?>" class="<?= attr($hb['class']) ?>"<?= $hb['new_tab'] ? ' target="_blank" rel="noopener"' : '' ?>>
+                                <span class="btn-title"><?= e($hb['text']) ?></span>
+                            </a>
+                        <?php endforeach; ?>
                     </div>
+                    <?php endif; ?>
                 </div>
                 <div class="col-lg-5">
                     <div class="ss-detail-image img-reveal fix mb-0">

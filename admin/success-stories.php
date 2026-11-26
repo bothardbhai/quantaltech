@@ -181,6 +181,7 @@ if ($action === 'new' || $action === 'edit') {
                 'why_title' => trim((string) ($_POST['why_section_title'] ?? '')),
                 'expert_member_id' => ((int) ($_POST['expert_member_id'] ?? 0)) > 0 ? (int) $_POST['expert_member_id'] : null,
                 'expert_expertise_json' => json_encode(array_values(array_filter(array_map('trim', $_POST['expert_expertise'] ?? [])))),
+                'hero_buttons_json' => ss_hero_buttons_from_post($_POST, $story['hero_buttons_json'] ?? null),
                 'techstack_display_mode' => ($_POST['techstack_display_mode'] ?? '') === 'pills' ? 'pills' : 'list',
                 // A form opened before this option existed posts no value; keep what's saved instead of resetting it.
                 'workflow_display_mode' => isset($_POST['workflow_display_mode'])
@@ -262,7 +263,7 @@ if ($action === 'new' || $action === 'edit') {
         'meta_title' => '', 'meta_description' => '', 'meta_keywords' => '',
         'og_image' => '', 'canonical' => '', 'robots' => '', 'schema_json' => '',
         'status' => 'draft', 'featured' => 0, 'published_at' => null,
-        'page_label' => '', 'crumb' => '', 'hero_eyebrow' => '',
+        'page_label' => '', 'crumb' => '', 'hero_eyebrow' => '', 'hero_buttons_json' => null,
         'services_provided' => '', 'tech_stack_summary' => '', 'third_party_services' => '', 'outcome_summary' => '',
         'challenge_sub' => '', 'challenge_title' => '', 'challenge_image' => '',
         'solution_sub' => '', 'solution_title' => '', 'solution_image' => '',
@@ -483,6 +484,33 @@ if ($action === 'new' || $action === 'edit') {
                             <label for="hero_eyebrow">Hero Eyebrow / Subtitle <span class="text-muted">(optional)</span></label>
                             <input type="text" id="hero_eyebrow" name="hero_eyebrow" value="<?= attr($f['hero_eyebrow']) ?>">
                         </div>
+                    </div></div>
+                    <?php
+                    $hero_btns = svc_json_decode($f['hero_buttons_json'] ?? null);
+                    $hero_btn_defaults = [
+                        'btn1' => ['label' => 'Button 1 (filled)', 'text' => 'Book a Free Scoping Call', 'url' => '/contact'],
+                        'btn2' => ['label' => 'Button 2 (outlined)', 'text' => 'View Case Studies', 'url' => '/success-stories'],
+                    ];
+                    ?>
+                    <div class="admin-card"><div class="admin-card__body">
+                        <p class="text-muted" style="font-size:13px;margin-top:0;">Hero Buttons — the two buttons under the hero text. Leave text or link blank to keep the default shown in grey.</p>
+                        <?php foreach ($hero_btn_defaults as $bk => $bd): $bv = $hero_btns[$bk] ?? []; ?>
+                            <div style="border-top:1px solid #3a3a3a;padding-top:12px;margin-top:12px;">
+                                <div class="repeater-row__title" style="margin-bottom:6px;"><?= e($bd['label']) ?></div>
+                                <div class="form-row">
+                                    <label for="hero_btn_<?= $bk ?>_text">Button Text</label>
+                                    <input type="text" id="hero_btn_<?= $bk ?>_text" name="hero_btn[<?= $bk ?>][text]" value="<?= attr($bv['text'] ?? '') ?>" placeholder="<?= attr($bd['text']) ?>">
+                                </div>
+                                <div class="form-row">
+                                    <label for="hero_btn_<?= $bk ?>_url">Button Link <span class="text-muted">(a site path like /contact, an #anchor, or a full https:// link)</span></label>
+                                    <input type="text" id="hero_btn_<?= $bk ?>_url" name="hero_btn[<?= $bk ?>][url]" value="<?= attr($bv['url'] ?? '') ?>" placeholder="<?= attr($bd['url']) ?>">
+                                </div>
+                                <div class="form-row" style="margin-bottom:0;display:flex;gap:24px;flex-wrap:wrap;">
+                                    <label style="font-weight:normal;"><input type="checkbox" name="hero_btn[<?= $bk ?>][new_tab]" value="1" <?= !empty($bv['new_tab']) ? 'checked' : '' ?>> Open in a new tab</label>
+                                    <label style="font-weight:normal;"><input type="checkbox" name="hero_btn[<?= $bk ?>][hide]" value="1" <?= !empty($bv['hide']) ? 'checked' : '' ?>> Hide this button</label>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div></div>
                 </div>
 
